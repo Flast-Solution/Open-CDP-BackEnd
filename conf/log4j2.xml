@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <property name="LOG_FILE" value="logs/log"/>
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+    <appender
+		name="CDR_FILE_DESIGN"
+	    class="ch.qos.logback.core.rolling.RollingFileAppender"
+	>
+	    <file>cdrs/log</file>
+	    <rollingPolicy
+	      class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+	        <fileNamePattern>
+	            cdrs/%d{yyyyMMdd}.%i.log
+	        </fileNamePattern>
+	        <maxFileSize>5MB</maxFileSize>
+	        <maxHistory>50</maxHistory>
+	        <totalSizeCap>5MB</totalSizeCap>
+	    </rollingPolicy>
+	    <encoder>
+	        <pattern>%d{yyyyMMdd} %p %m%n</pattern>
+	    </encoder>
+	</appender>
+	<logger level="info" name="cdrFileDesign">
+	    <appender-ref ref="CDR_FILE" />
+	</logger>
+    <root level="INFO">
+    	<appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
