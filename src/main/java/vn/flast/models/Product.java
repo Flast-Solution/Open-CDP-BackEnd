@@ -1,6 +1,5 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,13 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Date;
 
 @Table(name = "product")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class Product {
 
     @Id
@@ -25,6 +22,9 @@ public class Product {
 
     @Column(name = "category_id")
     private Long categoryId;
+
+    @Column(name = "service_id")
+    private Long serviceId;
 
     @Column(name = "quality_in_stock")
     private Long qualityInStock;

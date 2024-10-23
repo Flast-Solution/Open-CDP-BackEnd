@@ -1,4 +1,4 @@
-package vn.flast.dtos;
+package vn.flast.searchs;
 
 import vn.flast.utils.NumberUtils;
 

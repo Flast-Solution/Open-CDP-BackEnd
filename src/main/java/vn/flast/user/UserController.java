@@ -1,6 +1,6 @@
 package vn.flast.user;
 
-import vn.flast.dtos.UserFilter;
+import vn.flast.searchs.UserFilter;
 import vn.flast.entities.MyResponse;
 import vn.flast.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

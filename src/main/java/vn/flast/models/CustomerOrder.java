@@ -1,6 +1,5 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,13 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Date;
 
 @Table(name = "customer_order")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class CustomerOrder {
 
     @Id
@@ -155,6 +152,4 @@ public class CustomerOrder {
 
     @Column(name = "opportunity_at")
     private Date opportunityAt;
-
-
 }

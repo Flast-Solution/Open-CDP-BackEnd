@@ -1,6 +1,6 @@
 package vn.flast.user;
 
-import vn.flast.dtos.UserFilter;
+import vn.flast.searchs.UserFilter;
 import vn.flast.models.User;
 import vn.flast.pagination.Ipage;
 import vn.flast.utils.EntityQuery;

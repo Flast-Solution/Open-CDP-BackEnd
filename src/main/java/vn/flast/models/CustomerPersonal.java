@@ -8,14 +8,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Date;
 
-@Table(name = "customer_persional")
+@Table(name = "customer_personal")
 @Entity
 @Getter
 @Setter
-public class CustomerPersional {
+public class CustomerPersonal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -96,6 +95,4 @@ public class CustomerPersional {
 
     @Column(name = "diem_danh_gia")
     private Date diemDanhGia;
-
-
 }
