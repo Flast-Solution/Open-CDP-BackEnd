@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-10-22 08:07:43 +0000
+# Generation Time: 2024-10-23 08:13:08 +0000
 # ************************************************************
 
 
@@ -371,6 +371,7 @@ DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `category_id` int DEFAULT '0',
+  `service_id` int DEFAULT '0',
   `quality_in_stock` int DEFAULT '0',
   `total_import_stock` int DEFAULT '0',
   `name` varchar(255) DEFAULT NULL,
@@ -451,6 +452,19 @@ DROP TABLE IF EXISTS `product_property`;
 CREATE TABLE `product_property` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
+
+
+
+# Dump of table product_service
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_service`;
+
+CREATE TABLE `product_service` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
 
