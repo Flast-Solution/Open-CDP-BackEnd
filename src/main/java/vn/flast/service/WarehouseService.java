@@ -6,7 +6,6 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.models.WareHouseHistory;
 import vn.flast.models.Warehouse;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.WarehouseRepository;
