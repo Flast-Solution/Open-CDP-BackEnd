@@ -1,5 +1,6 @@
 package vn.flast.jwt;
 
+import org.springframework.stereotype.Component;
 import vn.flast.entities.MyResponse;
 import vn.flast.user.MyUserDetailsService;
 import vn.flast.utils.JsonUtils;
@@ -18,6 +19,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
+
+@Component("jwtAuthTokenFilter")
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthTokenFilter.class);

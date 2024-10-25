@@ -3,12 +3,16 @@ package vn.flast.security;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serial;
 import java.util.Collection;
+
+import lombok.Getter;
+import lombok.Setter;
 import vn.flast.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.List;
 import java.util.Objects;
+
 
 public class UserPrinciple implements UserDetails {
 
@@ -18,6 +22,8 @@ public class UserPrinciple implements UserDetails {
     private final Integer id;
     private final String ssoId;
     private final String username;
+
+    private String name;
     private final String email;
 
     @JsonIgnore
@@ -60,6 +66,10 @@ public class UserPrinciple implements UserDetails {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getSsoId() {
