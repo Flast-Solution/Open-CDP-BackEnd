@@ -22,11 +22,7 @@ public class WarehouseHistoryService {
     private WareHouseHistoryRepository wareHouseHistoryRepository;
 
     public WareHouseHistory created(WareHouseHistory input){
-        if(input.getProductId() == null){
-            throw new RuntimeException("Data null");
-        }
-        var data = wareHouseHistoryRepository.save(input);
-        return data;
+        return wareHouseHistoryRepository.save(input);
     }
 
     public WareHouseHistory updated(WareHouseHistory input) {
@@ -34,8 +30,7 @@ public class WarehouseHistoryService {
                 () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, warehouseHistory);
-        var data = wareHouseHistoryRepository.save(warehouseHistory);
-        return data;
+        return wareHouseHistoryRepository.save(warehouseHistory);
     }
 
     public Ipage<?> fetch(Integer page){

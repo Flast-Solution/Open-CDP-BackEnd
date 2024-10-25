@@ -1,10 +1,12 @@
 package vn.flast.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Data;
 import vn.flast.service.DataService;
+import vn.flast.validator.ValidationErrorBuilder;
 
 import java.util.Optional;
 
@@ -26,8 +29,11 @@ public class DataController extends BaseController {
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public MyResponse<?> create(@RequestParam(defaultValue = "0") Integer sessionId, @RequestBody Data iodata ) {
-
+    public MyResponse<?> create(@Valid @RequestParam(defaultValue = "0") Integer sessionId, @RequestBody Data iodata, Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+        }
         iodata.setFromDepartment(Data.FROM_DEPARTMENT.FROM_DATA.value());
         iodata.setStaff(getUsername());
         iodata.setStatus(DataService.DATA_STATUS.CREATE_DATA.getStatusCode());

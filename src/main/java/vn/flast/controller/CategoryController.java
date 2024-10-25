@@ -1,6 +1,7 @@
 package vn.flast.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,8 @@ import vn.flast.models.Attributed;
 import vn.flast.models.Category;
 import vn.flast.service.AttributedService;
 import vn.flast.service.CategoryService;
+import vn.flast.validator.ValidationErrorBuilder;
+import org.springframework.validation.Errors;
 
 @RestController
 @RequestMapping("/category")
@@ -23,13 +26,21 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/created")
-    public MyResponse<?> created(@RequestBody Category input) {
+    public MyResponse<?> created(@Valid @RequestBody Category input, Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+        }
         var data = categoryService.created(input);
         return MyResponse.response(data, "Nhập thành công .!");
     }
 
     @PostMapping("/updated")
-    public MyResponse<?> updated(@RequestBody Category input) {
+    public MyResponse<?> updated(@RequestBody Category input, Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+        }
         var data = categoryService.updated(input);
         return MyResponse.response(data, "Cập nhật thành công .!");
     }

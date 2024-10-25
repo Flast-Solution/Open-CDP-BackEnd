@@ -1,7 +1,9 @@
 package vn.flast.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,7 @@ import vn.flast.models.ProductAttributed;
 import vn.flast.models.WareHouseHistory;
 import vn.flast.service.ProductAttributedService;
 import vn.flast.service.WarehouseHistoryService;
+import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
 @RequestMapping("/warehouse-history")
@@ -22,7 +25,11 @@ public class WarehouseHistoryController {
     private WarehouseHistoryService warehouseHistoryService;
 
     @PostMapping("/created")
-    public MyResponse<?> created(@RequestBody WareHouseHistory input) {
+    public MyResponse<?> created(@Valid @RequestBody WareHouseHistory input, Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+        }
         var data = warehouseHistoryService.created(input);
         return MyResponse.response(data, "Nhập thành công .!");
     }

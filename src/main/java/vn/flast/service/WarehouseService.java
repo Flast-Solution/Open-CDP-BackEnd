@@ -23,11 +23,7 @@ public class WarehouseService {
 
 
     public Warehouse created(Warehouse input){
-        if(input.getProductId() == null){
-            throw new RuntimeException("Data null");
-        }
-        var data = wareHouseRepository.save(input);
-        return data;
+        return wareHouseRepository.save(input);
     }
 
     public Warehouse updated(Warehouse input) {

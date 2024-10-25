@@ -25,11 +25,7 @@ public class ProductpropertyService {
 
 
     public ProductProperty created(ProductProperty input){
-        if(input.getName() == null){
-            throw new RuntimeException("Data null");
-        }
-        var data = productPropertyRepository.save(input);
-        return data;
+        return productPropertyRepository.save(input);
     }
 
     public ProductProperty updated(ProductProperty input) {
@@ -37,8 +33,7 @@ public class ProductpropertyService {
                 () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, productProperty);
-        var data = productPropertyRepository.save(productProperty);
-        return data;
+        return productPropertyRepository.save(productProperty);
     }
 
     public Ipage<?> fetch(Integer page){

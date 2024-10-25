@@ -32,7 +32,11 @@ public class StockController {
     }
 
     @PostMapping("/updated")
-    public MyResponse<?> updated(@RequestBody Stock input) {
+    public MyResponse<?> updated(@Valid @RequestBody Stock input,  Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+        }
         var data = stockService.updated(input);
         return MyResponse.response(data, "Cập nhật thành công .!");
     }
@@ -46,6 +50,6 @@ public class StockController {
     @PostMapping("/delete")
     public MyResponse<?> delete(@RequestParam Integer id) {
         stockService.delete(id);
-        return MyResponse.response("Xáo bản ghi thành công .!");
+        return MyResponse.response("Xóa bản ghi thành công .!");
     }
 }

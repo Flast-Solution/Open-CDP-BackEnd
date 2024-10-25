@@ -25,11 +25,7 @@ public class ShippingService {
 
 
     public Shipping created(Shipping input){
-        if(input.getProductId() == null){
-            throw new RuntimeException("Data null");
-        }
-        var data = shippingRepository.save(input);
-        return data;
+        return shippingRepository.save(input);
     }
 
     public Shipping updated(Shipping input) {
@@ -37,8 +33,7 @@ public class ShippingService {
                 () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, shipping);
-        var data = shippingRepository.save(shipping);
-        return data;
+        return shippingRepository.save(shipping);
     }
 
     public Ipage<?> fetch(Integer page){

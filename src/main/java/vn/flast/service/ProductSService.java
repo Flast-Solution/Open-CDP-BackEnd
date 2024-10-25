@@ -26,11 +26,7 @@ public class ProductSService {
 
 
     public ProductService created(ProductService input){
-        if(input.getName() == null){
-            throw new RuntimeException("Data null");
-        }
-        var data = productsRepository.save(input);
-        return data;
+        return productsRepository.save(input);
     }
 
     public ProductService updated(ProductService input) {
@@ -38,8 +34,7 @@ public class ProductSService {
                 () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, productService);
-        var data = productsRepository.save(productService);
-        return data;
+        return productsRepository.save(productService);
     }
 
     public Ipage<?> fetch(Integer page){
