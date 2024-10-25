@@ -1,16 +1,13 @@
 package vn.flast.service;
 
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.models.Stock;
-import vn.flast.models.Warehouse;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.StockRepository;
-import vn.flast.repositories.WarehouseRepository;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 
@@ -25,20 +22,15 @@ public class StockService {
 
 
     public Stock created(Stock input){
-        if(input.getMobile() == null){
-            throw new RuntimeException("Data null");
-        }
-        var data = stockRepository.save(input);
-        return data;
+        return stockRepository.save(input);
     }
 
     public Stock updated(Stock input) {
         var stock = stockRepository.findById(input.getId()).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, stock);
-        var data = stockRepository.save(stock);
-        return data;
+        return stockRepository.save(stock);
     }
 
     public Ipage<?> fetch(Integer page){
@@ -53,7 +45,7 @@ public class StockService {
     @Transactional(rollbackFor = Exception.class)
     public void delete(Integer id){
         var data = stockRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         stockRepository.delete(data);
     }
