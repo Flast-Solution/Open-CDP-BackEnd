@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-10-23 08:13:08 +0000
+# Generation Time: 2024-10-25 04:44:47 +0000
 # ************************************************************
 
 
@@ -215,12 +215,26 @@ CREATE TABLE `customer_order_note` (
 
 
 
-# Dump of table customer_persional
+# Dump of table customer_order_status
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `customer_persional`;
+DROP TABLE IF EXISTS `customer_order_status`;
 
-CREATE TABLE `customer_persional` (
+CREATE TABLE `customer_order_status` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `del_flag` tinyint DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb3;
+
+
+
+# Dump of table customer_personal
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `customer_personal`;
+
+CREATE TABLE `customer_personal` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `type` varchar(100) DEFAULT NULL,
   `id_card` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
@@ -253,14 +267,14 @@ CREATE TABLE `customer_persional` (
   KEY `token_idx` (`token_confirm`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 
-LOCK TABLES `customer_persional` WRITE;
-/*!40000 ALTER TABLE `customer_persional` DISABLE KEYS */;
+LOCK TABLES `customer_personal` WRITE;
+/*!40000 ALTER TABLE `customer_personal` DISABLE KEYS */;
 
-INSERT INTO `customer_persional` (`id`, `type`, `id_card`, `sale_id`, `gender`, `source_id`, `level`, `facebook_id`, `name`, `province_id`, `district_id`, `ward_id`, `address`, `company_name`, `company_id`, `avatar`, `email`, `is_trust_email`, `mobile`, `password`, `token_confirm`, `status`, `date_of_birth`, `created_at`, `updated_at`, `diem_danh_gia`)
+INSERT INTO `customer_personal` (`id`, `type`, `id_card`, `sale_id`, `gender`, `source_id`, `level`, `facebook_id`, `name`, `province_id`, `district_id`, `ward_id`, `address`, `company_name`, `company_id`, `avatar`, `email`, `is_trust_email`, `mobile`, `password`, `token_confirm`, `status`, `date_of_birth`, `created_at`, `updated_at`, `diem_danh_gia`)
 VALUES
 	(7,'customer','03902930390392',NULL,'other',3,NULL,NULL,'Hà NAm',NULL,NULL,NULL,'Hà Nội',NULL,NULL,NULL,'long.huu.100@gmail.com',NULL,'0936295123',NULL,NULL,NULL,'1989-11-07 13:32:22','2022-11-19 13:32:22','2024-10-21 16:16:40',NULL);
 
-/*!40000 ALTER TABLE `customer_persional` ENABLE KEYS */;
+/*!40000 ALTER TABLE `customer_personal` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
