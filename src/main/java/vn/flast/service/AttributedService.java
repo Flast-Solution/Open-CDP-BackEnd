@@ -25,11 +25,7 @@ public class AttributedService {
 
 
     public Attributed created(Attributed input){
-        if(input.getName() == null){
-            throw new RuntimeException("Data null");
-        }
-        var data = attributedRepository.save(input);
-        return data;
+        return attributedRepository.save(input);
     }
 
     public Attributed updated(Attributed input) {
@@ -37,8 +33,7 @@ public class AttributedService {
                 () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, attributed);
-        var data = attributedRepository.save(attributed);
-        return data;
+        return attributedRepository.save(attributed);
     }
 
     public Ipage<?> fetch(Integer page){

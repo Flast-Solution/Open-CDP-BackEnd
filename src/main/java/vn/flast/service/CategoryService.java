@@ -25,11 +25,7 @@ public class CategoryService {
 
 
     public Category created(Category input){
-        if(input.getName() == null){
-            throw new RuntimeException("Data null");
-        }
-        var data = categoryRepository.save(input);
-        return data;
+        return categoryRepository.save(input);
     }
 
     public Category updated(Category input) {
@@ -37,8 +33,7 @@ public class CategoryService {
                 () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, category);
-        var data = categoryRepository.save(category);
-        return data;
+        return categoryRepository.save(category);
     }
 
     public Ipage<?> fetch(Integer page){
