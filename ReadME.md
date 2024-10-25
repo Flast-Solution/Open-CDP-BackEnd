@@ -15,11 +15,9 @@ mvn package
 java -jar open-service-0.0.1.jar
 ```
 
-Sau khi build được file trong target có open-service-0.0.1.jar. Để chạy chương trình thì cần tạo cấu trúc folder như sau
+<p align="center"> <img src="uploads/app-folder-structure.png" /></p>
 
-<p align="center">
-  <img src="uploads/app-folder-structure.png" style="max-width: 100%;margin: 0 auto;display: block;" />
-</p>
+Sau khi build được file trong target có open-service-0.0.1.jar. Để chạy chương trình thì cần tạo cấu trúc folder như trên.
 
 ![screenshot](public/img/intro.png)
 
