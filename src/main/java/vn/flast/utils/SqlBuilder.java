@@ -25,6 +25,11 @@ public class SqlBuilder {
     private Map<String, Object> maps;
     private List<String> nonColumn;
 
+    private String COUNT_QUERY = "COUNT(*)";
+
+    /* DISTINCT(a.id) as 'id2d', a.*  */
+    private String SELECT_QUERY = "*";
+
     public static SqlBuilder init(String query) {
         var instances = new SqlBuilder();
         instances.query = query;
@@ -104,6 +109,45 @@ public class SqlBuilder {
     public SqlBuilder addQueryNonColumn(String q) {
         nonColumn.add(q);
         return this;
+    }
+
+    public String countQueryString() {
+        String PRE_FIX_COUNT = COUNT_QUERY.toUpperCase().startsWith("SELECT") ? "" : "SELECT ";
+        return PRE_FIX_COUNT + COUNT_QUERY + " " + this.builderCount();
+    }
+
+    public String builderCount() {
+        StringBuilder stringBuilder = new StringBuilder(this.query);
+        if(maps == null || maps.isEmpty()) {
+            return stringBuilder.toString();
+        }
+        mapToStringBuilder(stringBuilder);
+        return stringBuilder.toString();
+    }
+
+    private void mapToStringBuilder(StringBuilder stringBuilder) {
+        int index = 0;
+        for(var entry : maps.entrySet()) {
+            var key = entry.getKey();
+            var value = entry.getValue();
+            index ++;
+            if(index == 1) {
+                stringBuilder.append(" WHERE ").append(stripFirst(key)).append(value);
+                continue;
+            }
+            if(value instanceof Integer intVal) {
+                stringBuilder.append(key).append(intVal);
+            }
+            if(value instanceof String strVal) {
+                stringBuilder.append(key).append(strVal);
+            }
+        }
+        /* Các query dạng nhóm điều kiện như này nó sẽ không cho vào column nào được
+         * AND (b.warehouse_status = 0 OR b.warehouse_status IS NULL OR b.`status` = 26) */
+        if(!nonColumn.isEmpty()) {
+            String joinNonColumn = String.join(" ", nonColumn);
+            stringBuilder.append(" ").append(joinNonColumn);
+        }
     }
 
     public SqlBuilder like(String column, String value) {

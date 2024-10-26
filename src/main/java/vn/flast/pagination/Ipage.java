@@ -28,6 +28,7 @@ public class Ipage <T> {
         return new Ipage<>(size, totalElements, currentPage, embedded);
     }
 
+
     private void setPage() {
         this.page = new PageDetail(this.pageSize, this.totalElements, total);
     }

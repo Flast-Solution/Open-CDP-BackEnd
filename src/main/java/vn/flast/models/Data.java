@@ -9,6 +9,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
+import vn.flast.repositories.DataMediaRepository;
+import vn.flast.utils.BeanUtil;
+import vn.flast.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -168,7 +171,19 @@ public class Data {
     @Column(name = "is_order")
     private Long isOrder;
 
+    public static String UPLOAD_PATH = "/uploads/data/";
+
     @Transient
     private List<String> fileUrls = new ArrayList<>();
+
+    public void createListFileUploads(){
+        DataMediaRepository dataMediaRepository = BeanUtil.getBean(DataMediaRepository.class);
+        var listFileUploads = dataMediaRepository.findByDataId(this.id).orElse(new ArrayList<>());
+    }
+
+    public String createFolderUpload() {
+        var pathProject = DateUtils.getMonthYearCode();
+        return System.getProperty("user.dir") + UPLOAD_PATH + pathProject;
+    }
 
 }

@@ -69,4 +69,15 @@ public class DateUtils {
             return null;
         }
     }
+
+    public static String getMonthYearCode() {
+        // Lấy thời điểm hiện tại
+        Date currentDate = new Date();
+
+        // Định dạng tháng và năm thành "MMyyyy"
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy");
+        String formattedDate = dateFormat.format(currentDate);
+
+        return formattedDate;
+    }
 }
