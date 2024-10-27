@@ -148,7 +148,7 @@ public class Data {
     private Long categoryId;
 
     @Column(name = "sale_id")
-    private Long saleId;
+    private Integer saleId;
 
     @Column(name = "note")
     private String note;

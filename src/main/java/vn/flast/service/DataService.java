@@ -96,10 +96,24 @@ public class DataService {
         dataRepository.save(data);
     }
 
-    @Transactional
-    public void delete(Data data) {
-        dataRepository.delete(data);
+
+    public Boolean delete(Long id) {
+        Data dd = this.findById(id);
+        if(dd != null) {
+            this.remove(dd);
+        }
+        return dd != null;
     }
+
+    @Transactional
+    public void remove(Data data) {
+        Integer priToRep = DATA_STATUS.CREATE_DATA.getStatusCode();
+        if (!priToRep.equals(data.getStatus())) {
+            throw new RuntimeException("Lead không thể xoá vì đã được xử lý .!");
+        }
+        entityManager.remove(data);
+    }
+
 
     @Transactional
     public void Update(Data input) {
