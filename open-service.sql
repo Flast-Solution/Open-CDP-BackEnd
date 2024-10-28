@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-10-25 04:44:47 +0000
+# Generation Time: 2024-10-28 03:13:38 +0000
 # ************************************************************
 
 
@@ -613,7 +613,7 @@ CREATE TABLE `user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `sso_id` varchar(30) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `token` text,
+  `firebase_token` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
   `layout` varchar(255) DEFAULT '',
   `full_name` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `phone` varchar(20) DEFAULT '',
@@ -626,7 +626,7 @@ CREATE TABLE `user` (
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 
-INSERT INTO `user` (`id`, `sso_id`, `password`, `token`, `layout`, `full_name`, `phone`, `email`, `status`)
+INSERT INTO `user` (`id`, `sso_id`, `password`, `firebase_token`, `layout`, `full_name`, `phone`, `email`, `status`)
 VALUES
 	(2,'administrator','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','fqSSpT_mou2h1B_ygwekc1:APA91bE3xxIiIMzFivcG6liPBlW-6CspSPwAo4yQ6bXY8h4Y_Y9XdoITmRF-URsXm8KUhS71f6km37Kx8JnDeIJ8e2E21-4Wt9X-e7p2aL6YnIPTAmgRnv4qF16aR6vBrxQNtuZ6WIRc','UserLayout','Administrator','','long.huu.100@gmail.com',1),
 	(67,'longhuu','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','Hữu Long','','bp@gmail.com',0);

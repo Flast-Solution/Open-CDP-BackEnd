@@ -1,4 +1,4 @@
-package vn.flast.controller.auth;
+package vn.flast.controller.user;
 
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
@@ -15,9 +15,7 @@ import vn.flast.models.User;
 import vn.flast.repositories.UserRepository;
 import vn.flast.security.UserPrinciple;
 import vn.flast.user.MyUserDetailsService;
-
 import java.util.Optional;
-
 
 @RestController
 @RequestMapping("/auth")
@@ -37,13 +35,12 @@ public class AuthController {
     @Autowired
     private MyUserDetailsService userService;
 
-
     @PostMapping(value = "/sign-in")
     public MyResponse<?> authenticateUser(@RequestBody LoginForm loginForm) {
         String passEncoder = passwordEncoder.encode(loginForm.password);
         logger.info(loginForm.username + "|" + loginForm.password + "|" + passEncoder);
         User user = Optional.ofNullable(userRepository.findBySsoId( loginForm.username )).orElseThrow(
-                () -> new RuntimeException("User not found !")
+            () -> new RuntimeException("User not found !")
         );
         if(!passwordEncoder.matches(loginForm.password, user.getPassword())) {
             throw new RuntimeException("User not found !");
@@ -61,7 +58,7 @@ public class AuthController {
         Claims claims = jwtProvider.getClaims(rToken.token);
         Integer uId = Integer.parseInt((String) claims.get("userId"));
         User user = userRepository.findById(uId).orElseThrow(
-                () -> new RuntimeException("user token invalid .!")
+            () -> new RuntimeException("user token invalid .!")
         );
         user.setUserProfiles(userService.findProfile(user.getId()));
         DataUser dataUser = new DataUser(user, rToken.token);
