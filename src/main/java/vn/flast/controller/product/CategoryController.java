@@ -1,6 +1,5 @@
 package vn.flast.controller.product;
 
-
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
-import vn.flast.models.Attributed;
 import vn.flast.models.Category;
-import vn.flast.service.AttributedService;
 import vn.flast.service.CategoryService;
 import vn.flast.validator.ValidationErrorBuilder;
 import org.springframework.validation.Errors;
@@ -20,7 +17,6 @@ import org.springframework.validation.Errors;
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
-
 
     @Autowired
     private CategoryService categoryService;

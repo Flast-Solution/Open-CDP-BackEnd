@@ -1,6 +1,5 @@
 package vn.flast.controller.product;
 
-
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -11,10 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
-import vn.flast.models.ProductAttributed;
 import vn.flast.models.ProductProperty;
-import vn.flast.service.ProductAttributedService;
-import vn.flast.service.ProductpropertyService;
+import vn.flast.searchs.AttributedFilter;
+import vn.flast.service.ProductPropertyService;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
@@ -22,9 +20,9 @@ import vn.flast.validator.ValidationErrorBuilder;
 public class ProductPropertyController {
 
     @Autowired
-    private ProductpropertyService productpropertyService;
+    private ProductPropertyService productpropertyService;
 
-    @PostMapping("/created")
+    @PostMapping("/save")
     public MyResponse<?> created(@Valid @RequestBody ProductProperty input, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
@@ -34,19 +32,9 @@ public class ProductPropertyController {
         return MyResponse.response(data, "Nhập thành công .!");
     }
 
-    @PostMapping("/updated")
-    public MyResponse<?> updated(@Valid @RequestBody ProductProperty input, Errors errors) {
-        if(errors.hasErrors()) {
-            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
-            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
-        }
-        var data = productpropertyService.updated(input);
-        return MyResponse.response(data, "Cập nhật thành công .!");
-    }
-
     @GetMapping("/fetch")
-    public MyResponse<?> fetch(@RequestParam Integer page) {
-        var data = productpropertyService.fetch(page);
+    public MyResponse<?> fetch(AttributedFilter filter) {
+        var data = productpropertyService.fetch(filter);
         return MyResponse.response(data);
     }
 

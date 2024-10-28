@@ -10,12 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
-import vn.flast.models.Category;
 import vn.flast.models.ProductAttributed;
-import vn.flast.service.CategoryService;
+import vn.flast.searchs.ProductAttributedFilter;
 import vn.flast.service.ProductAttributedService;
 import vn.flast.validator.ValidationErrorBuilder;
-
 
 @RestController
 @RequestMapping("/product-attributed")
@@ -45,8 +43,8 @@ public class ProductAttributedController {
     }
 
     @GetMapping("/fetch")
-    public MyResponse<?> fetch(@RequestParam Integer page) {
-        var data = productAttributedService.fetch(page);
+    public MyResponse<?> fetch(ProductAttributedFilter filter) {
+        var data = productAttributedService.fetch(filter);
         return MyResponse.response(data);
     }
 

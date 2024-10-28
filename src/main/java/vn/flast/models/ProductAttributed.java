@@ -11,8 +11,7 @@ import lombok.Setter;
 
 @Table(name = "product_attributed")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class ProductAttributed {
 
     @Id

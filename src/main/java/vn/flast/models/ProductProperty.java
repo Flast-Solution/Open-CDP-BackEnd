@@ -1,6 +1,5 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,8 +11,7 @@ import lombok.Setter;
 
 @Table(name = "product_property")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class ProductProperty {
 
     @Id

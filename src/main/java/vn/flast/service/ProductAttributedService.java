@@ -1,6 +1,5 @@
 package vn.flast.service;
 
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.flast.models.ProductAttributed;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.ProductAttributedRepository;
+import vn.flast.searchs.ProductAttributedFilter;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 
@@ -21,23 +21,24 @@ public class ProductAttributedService {
     @Autowired
     private ProductAttributedRepository productAttributedRepository;
 
-
     public ProductAttributed created(ProductAttributed input){
         return productAttributedRepository.save(input);
     }
 
     public ProductAttributed updated(ProductAttributed input) {
         var productAttributed = productAttributedRepository.findById(input.getId()).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, productAttributed);
         return productAttributedRepository.save(productAttributed);
     }
 
-    public Ipage<?> fetch(Integer page){
+    public Ipage<?> fetch(ProductAttributedFilter filter){
         int LIMIT = 10;
-        int currentPage = page - 1;
+        int currentPage = filter.page();
         var et = EntityQuery.create(entityManager, ProductAttributed.class);
+        et.like("name", filter.name());
+        et.integerEqualsTo("productId", filter.productId());
         et.setMaxResults(LIMIT).setFirstResult(LIMIT * currentPage);
         var lists = et.list();
         return  Ipage.generator(LIMIT, et.count(), currentPage, lists);
@@ -46,7 +47,7 @@ public class ProductAttributedService {
     @Transactional(rollbackFor = Exception.class)
     public void delete(Integer id){
         var data = productAttributedRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         productAttributedRepository.delete(data);
     }
