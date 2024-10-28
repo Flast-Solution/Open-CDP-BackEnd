@@ -2,11 +2,10 @@ package vn.flast.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.entities.DataFilter;
+import vn.flast.searchs.DataFilter;
 import vn.flast.models.Data;
 import vn.flast.models.DataMedia;
 import vn.flast.models.DataWork;

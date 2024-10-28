@@ -4,7 +4,7 @@ package vn.flast.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
-import vn.flast.entities.DataFilter;
+import vn.flast.searchs.DataFilter;
 import vn.flast.models.DataWork;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;

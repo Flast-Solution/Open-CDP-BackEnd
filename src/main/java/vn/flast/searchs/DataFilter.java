@@ -1,4 +1,4 @@
-package vn.flast.entities;
+package vn.flast.searchs;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
