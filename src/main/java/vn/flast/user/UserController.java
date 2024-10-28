@@ -28,12 +28,6 @@ public class UserController {
     @Autowired
     private MyUserService myUserService;
 
-    @GetMapping("/fetch-all")
-    public MyResponse<?> fetchAll() {
-        var users = userRepository.findAll();
-        return MyResponse.response(users);
-    }
-
     @GetMapping("/list")
     public MyResponse<?> list(UserFilter filter) {
         var iPage = myUserService.list(filter);
@@ -52,16 +46,15 @@ public class UserController {
             user.setPassword(enPass);
             userRepository.save(user);
             return MyResponse.response(user);
-        }catch (RuntimeException ex){
+        } catch (RuntimeException ex){
             throw new RuntimeException(ex.getMessage());
         }
     }
 
     @PostMapping(value = "/update")
-    public MyResponse<?> updateUser(@RequestBody User data,
-                                    @RequestParam(name = "id") Integer id){
+    public MyResponse<?> updateUser(@RequestBody User data, @RequestParam Integer id){
         var user = userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Tài khoản này không tồn tại trong hệ thống")
+            () -> new RuntimeException("Tài khoản này không tồn tại trong hệ thống")
         );
         CopyProperty.CopyIgnoreNull(data, user);
         if(data.getPassword() != null) {
@@ -75,7 +68,7 @@ public class UserController {
     @GetMapping(value = "/find-id")
     public MyResponse<?> findUser(@RequestParam Integer id) {
         var user = userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("This ID does not exist in the system ")
+            () -> new RuntimeException("This ID does not exist in the system ")
         );
         return MyResponse.response(user);
     }

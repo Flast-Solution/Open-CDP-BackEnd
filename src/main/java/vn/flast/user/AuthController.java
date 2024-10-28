@@ -1,4 +1,4 @@
-package vn.flast.controller.user;
+package vn.flast.user;
 
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
@@ -14,7 +14,7 @@ import vn.flast.jwt.JwtProvider;
 import vn.flast.models.User;
 import vn.flast.repositories.UserRepository;
 import vn.flast.security.UserPrinciple;
-import vn.flast.user.MyUserDetailsService;
+
 import java.util.Optional;
 
 @RestController
