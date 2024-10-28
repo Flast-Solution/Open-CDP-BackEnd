@@ -1,4 +1,4 @@
-package vn.flast.controller;
+package vn.flast.controller.stock;
 
 
 import jakarta.validation.Valid;
@@ -12,47 +12,47 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.ProductAttributed;
-import vn.flast.models.Shipping;
+import vn.flast.models.Warehouse;
 import vn.flast.service.ProductAttributedService;
-import vn.flast.service.ShippingService;
+import vn.flast.service.WarehouseService;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
-@RequestMapping("/shipping")
-public class ShippingController {
+@RequestMapping("/warehouse")
+public class WarehouseController {
 
     @Autowired
-    private ShippingService shippingService;
+    private WarehouseService warehouseService;
 
     @PostMapping("/created")
-    public MyResponse<?> created(@Valid @RequestBody Shipping input, Errors errors) {
+    public MyResponse<?> created(@Valid @RequestBody Warehouse input, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var data = shippingService.created(input);
+        var data = warehouseService.created(input);
         return MyResponse.response(data, "Nhập thành công .!");
     }
 
     @PostMapping("/updated")
-    public MyResponse<?> updated(@Valid @RequestBody Shipping input, Errors errors) {
+    public MyResponse<?> updated(@Valid @RequestBody Warehouse input, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var data = shippingService.updated(input);
+        var data = warehouseService.updated(input);
         return MyResponse.response(data, "Cập nhật thành công .!");
     }
 
     @GetMapping("/fetch")
     public MyResponse<?> fetch(@RequestParam Integer page) {
-        var data = shippingService.fetch(page);
+        var data = warehouseService.fetch(page);
         return MyResponse.response(data);
     }
 
     @PostMapping("/delete")
     public MyResponse<?> delete(@RequestParam Integer id) {
-        shippingService.delete(id);
+        warehouseService.delete(id);
         return MyResponse.response("Xáo bản ghi thành công .!");
     }
 }

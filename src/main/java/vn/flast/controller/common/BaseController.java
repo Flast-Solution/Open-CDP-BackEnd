@@ -1,4 +1,4 @@
-package vn.flast.controller;
+package vn.flast.controller.common;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import vn.flast.security.UserPrinciple;

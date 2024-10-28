@@ -1,4 +1,4 @@
-package vn.flast.controller;
+package vn.flast.controller.auth;
 
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package vn.flast.controller;
+package vn.flast.controller.lead;
 
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import vn.flast.controller.common.BaseController;
 import vn.flast.searchs.DataFilter;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Data;

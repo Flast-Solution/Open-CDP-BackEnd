@@ -1,4 +1,4 @@
-package vn.flast.controller;
+package vn.flast.controller.stock;
 
 
 import jakarta.validation.Valid;
@@ -12,47 +12,43 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.ProductAttributed;
-import vn.flast.models.ProductProperty;
+import vn.flast.models.WareHouseHistory;
 import vn.flast.service.ProductAttributedService;
-import vn.flast.service.ProductpropertyService;
+import vn.flast.service.WarehouseHistoryService;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
-@RequestMapping("/product-property")
-public class ProductPropertyController {
+@RequestMapping("/warehouse-history")
+public class WarehouseHistoryController {
 
     @Autowired
-    private ProductpropertyService productpropertyService;
+    private WarehouseHistoryService warehouseHistoryService;
 
     @PostMapping("/created")
-    public MyResponse<?> created(@Valid @RequestBody ProductProperty input, Errors errors) {
+    public MyResponse<?> created(@Valid @RequestBody WareHouseHistory input, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var data = productpropertyService.created(input);
+        var data = warehouseHistoryService.created(input);
         return MyResponse.response(data, "Nhập thành công .!");
     }
 
     @PostMapping("/updated")
-    public MyResponse<?> updated(@Valid @RequestBody ProductProperty input, Errors errors) {
-        if(errors.hasErrors()) {
-            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
-            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
-        }
-        var data = productpropertyService.updated(input);
+    public MyResponse<?> updated(@RequestBody WareHouseHistory input) {
+        var data = warehouseHistoryService.updated(input);
         return MyResponse.response(data, "Cập nhật thành công .!");
     }
 
     @GetMapping("/fetch")
     public MyResponse<?> fetch(@RequestParam Integer page) {
-        var data = productpropertyService.fetch(page);
+        var data = warehouseHistoryService.fetch(page);
         return MyResponse.response(data);
     }
 
     @PostMapping("/delete")
     public MyResponse<?> delete(@RequestParam Integer id) {
-        productpropertyService.delete(id);
+        warehouseHistoryService.delete(id);
         return MyResponse.response("Xáo bản ghi thành công .!");
     }
 }
