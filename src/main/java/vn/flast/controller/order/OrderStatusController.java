@@ -1,7 +1,6 @@
 package vn.flast.controller.order;
 
 import jakarta.validation.Valid;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +12,6 @@ import vn.flast.models.CustomerOrderStatus;
 import vn.flast.repositories.CustomerOrderStatusRepository;
 import vn.flast.validator.ValidationErrorBuilder;
 
-@Log4j2
 @RestController
 @RequestMapping("/order-status")
 public class OrderStatusController {
