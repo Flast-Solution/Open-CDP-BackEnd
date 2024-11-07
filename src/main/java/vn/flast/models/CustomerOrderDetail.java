@@ -1,10 +1,13 @@
 package vn.flast.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,4 +58,9 @@ public class CustomerOrderDetail {
 
     @Column(name = "ship_done_at")
     private Date shipDoneAt;
+
+    @JsonBackReference(value = "customerOrder")
+    @ManyToOne
+    @JoinColumn(name = "customer_order_id",referencedColumnName = "id", insertable=false, updatable=false)
+    private CustomerOrder customerOrder;
 }

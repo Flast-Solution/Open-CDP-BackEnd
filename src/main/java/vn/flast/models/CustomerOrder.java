@@ -1,13 +1,19 @@
 package vn.flast.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 @Table(name = "customer_order")
@@ -62,7 +68,6 @@ public class CustomerOrder {
     @Column(name = "customer_province_id")
     private Long customerProvinceId;
 
-
     @Column(name = "customer_mobile_phone")
     private String customerMobilePhone;
 
@@ -108,8 +113,8 @@ public class CustomerOrder {
     @Column(name = "paid")
     private Long paid;
 
-    @Column(name = "flag_freeship")
-    private String flagFreeship;
+    @Column(name = "flag_free_ship")
+    private String flagFreeShip;
 
     @Column(name = "shipping_status")
     private Long shippingStatus;
@@ -152,4 +157,31 @@ public class CustomerOrder {
 
     @Column(name = "opportunity_at")
     private Date opportunityAt;
+
+    @OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+    private Collection<CustomerOrderDetail> orderDetails;
+
+    public CustomerOrderDetail takeDetailByCode(String dtCode) {
+        return this.getOrderDetails().stream().filter(detail -> detail.getCode().equals(dtCode))
+            .findFirst().orElse(null);
+    }
+
+    @Override
+    public CustomerOrder clone() {
+        try {
+            return (CustomerOrder) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    public CustomerOrder cloneNoDetail() {
+        try {
+            CustomerOrder newOrder = (CustomerOrder) super.clone();
+            newOrder.setOrderDetails(new ArrayList<>());
+            return newOrder;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }
