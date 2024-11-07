@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-10-28 03:13:38 +0000
+# Generation Time: 2024-11-07 10:33:58 +0000
 # ************************************************************
 
 
@@ -144,7 +144,7 @@ CREATE TABLE `customer_order` (
   `vat` tinyint DEFAULT '0',
   `fee_import` int DEFAULT '0',
   `paid` bigint unsigned DEFAULT '0',
-  `flag_freeship` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT 'false',
+  `flag_free_ship` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT 'false',
   `shipping_status` enum('na','danggiao','dagiao','giaoloi') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT 'na',
   `payment_status` int DEFAULT '0',
   `cancel_at` timestamp NULL DEFAULT NULL,
@@ -601,6 +601,19 @@ CREATE TABLE `stock` (
   `in_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb3;
+
+
+
+# Dump of table transporter
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `transporter`;
+
+CREATE TABLE `transporter` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
 
 
 
