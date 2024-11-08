@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-11-07 10:33:58 +0000
+# Generation Time: 2024-11-08 03:41:58 +0000
 # ************************************************************
 
 
@@ -515,6 +515,22 @@ CREATE TABLE `product_skus_details` (
   `price_ref` int NOT NULL DEFAULT '0',
   `price` int NOT NULL DEFAULT '0',
   `price_import` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
+
+
+
+# Dump of table provider
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `provider`;
+
+CREATE TABLE `provider` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `mobile` varchar(20) DEFAULT NULL,
+  `status` int DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
 
