@@ -28,8 +28,10 @@ public class ProviderService {
         int LIMIT = 20;
         int currentPage = filter.page();
         var et = EntityQuery.create(entityManager, Provider.class);
-        et.like("name", filter.name());
-        et.setMaxResults(LIMIT).setFirstResult(LIMIT * currentPage);
+        et.like("name", filter.name())
+            .stringEqualsTo("mobile", filter.mobile())
+            .setMaxResults(LIMIT)
+            .setFirstResult(LIMIT * currentPage);
         var lists = et.list();
         return  Ipage.generator(LIMIT, et.count(), currentPage, lists);
     }

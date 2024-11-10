@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-11-08 03:41:58 +0000
+# Generation Time: 2024-11-08 07:16:30 +0000
 # ************************************************************
 
 
@@ -529,6 +529,7 @@ CREATE TABLE `provider` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
+  `presentation` varchar(255) DEFAULT NULL,
   `mobile` varchar(20) DEFAULT NULL,
   `status` int DEFAULT '1',
   PRIMARY KEY (`id`)

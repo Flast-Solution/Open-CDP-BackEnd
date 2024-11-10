@@ -22,6 +22,9 @@ public class Provider {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "presentation")
+    private String presentation;
+
     @Column(name = "mobile")
     private String mobile;
 

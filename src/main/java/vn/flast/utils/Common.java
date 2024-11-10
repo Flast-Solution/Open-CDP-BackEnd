@@ -9,21 +9,15 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class Common {
-    public static String pathNameFile(String name) {
-        String[] fileFrags = name.split("\\.");
-        try {
-            return fileFrags[fileFrags.length - 1];
-        } catch (Exception e) {
-            return "txt";
-        }
-    }
 
     public static String deAccent(String str) {
-        String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
+        String nStr = str
+            .replaceAll("Đ", "D")
+            .replaceAll("đ", "")
+            .replaceAll(" ", "-");
+        String nfdNormalizedString = Normalizer.normalize(nStr, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        String ret = pattern.matcher(nfdNormalizedString).replaceAll("")
-                .replaceAll("Đ", "D").replace("đ", "");
-        return ret.replace(" ", "_");
+        return pattern.matcher(nfdNormalizedString).toString();
     }
 
     public static String escape(String s){

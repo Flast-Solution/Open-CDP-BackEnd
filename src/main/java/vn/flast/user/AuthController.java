@@ -39,7 +39,7 @@ public class AuthController {
     public MyResponse<?> authenticateUser(@RequestBody LoginForm loginForm) {
         String passEncoder = passwordEncoder.encode(loginForm.password);
         logger.info(loginForm.username + "|" + loginForm.password + "|" + passEncoder);
-        User user = Optional.ofNullable(userRepository.findBySsoId( loginForm.username )).orElseThrow(
+        User user = Optional.ofNullable(userRepository.findByEmail( loginForm.username )).orElseThrow(
             () -> new RuntimeException("User not found !")
         );
         if(!passwordEncoder.matches(loginForm.password, user.getPassword())) {
