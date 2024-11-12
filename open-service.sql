@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-11-12 06:34:06 +0000
+# Generation Time: 2024-11-12 11:16:45 +0000
 # ************************************************************
 
 
@@ -28,9 +28,24 @@ DROP TABLE IF EXISTS `attributed`;
 CREATE TABLE `attributed` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  `value` varchar(255) DEFAULT NULL,
+  `status` int DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10009 DEFAULT CHARSET=utf8mb3;
+
+
+
+# Dump of table attributed_value
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `attributed_value`;
+
+CREATE TABLE `attributed_value` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `attributed_id` int NOT NULL,
+  `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `status` int DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10010 DEFAULT CHARSET=utf8mb3;
 
 
 
@@ -524,7 +539,7 @@ CREATE TABLE `provider` (
   `mobile` varchar(20) DEFAULT NULL,
   `status` int DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10009 DEFAULT CHARSET=utf8mb3;
 
 
 

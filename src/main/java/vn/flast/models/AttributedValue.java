@@ -12,19 +12,22 @@ import lombok.Getter;
 import lombok.Setter;
 import vn.flast.utils.NumberUtils;
 
-@Table(name = "attributed")
+@Table(name = "attributed_value")
 @Entity
 @Getter @Setter
-public class Attributed {
+public class AttributedValue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "attributed_id", nullable = false)
     @NotNull(message = "Name attributed not empty .!")
-    private String name;
+    private Integer attributedId;
+
+    @Column(name = "value")
+    private String value;
 
     @Column(name = "status")
     private Integer status;
