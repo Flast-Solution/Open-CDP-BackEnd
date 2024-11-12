@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-11-08 07:16:30 +0000
+# Generation Time: 2024-11-12 06:34:06 +0000
 # ************************************************************
 
 
@@ -267,15 +267,6 @@ CREATE TABLE `customer_personal` (
   KEY `token_idx` (`token_confirm`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 
-LOCK TABLES `customer_personal` WRITE;
-/*!40000 ALTER TABLE `customer_personal` DISABLE KEYS */;
-
-INSERT INTO `customer_personal` (`id`, `type`, `id_card`, `sale_id`, `gender`, `source_id`, `level`, `facebook_id`, `name`, `province_id`, `district_id`, `ward_id`, `address`, `company_name`, `company_id`, `avatar`, `email`, `is_trust_email`, `mobile`, `password`, `token_confirm`, `status`, `date_of_birth`, `created_at`, `updated_at`, `diem_danh_gia`)
-VALUES
-	(7,'customer','03902930390392',NULL,'other',3,NULL,NULL,'Hà NAm',NULL,NULL,NULL,'Hà Nội',NULL,NULL,NULL,'long.huu.100@gmail.com',NULL,'0936295123',NULL,NULL,NULL,'1989-11-07 13:32:22','2022-11-19 13:32:22','2024-10-21 16:16:40',NULL);
-
-/*!40000 ALTER TABLE `customer_personal` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table data
@@ -471,19 +462,6 @@ CREATE TABLE `product_property` (
 
 
 
-# Dump of table product_service
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `product_service`;
-
-CREATE TABLE `product_service` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
-
-
-
 # Dump of table product_skus
 # ------------------------------------------------------------
 
@@ -517,6 +495,19 @@ CREATE TABLE `product_skus_details` (
   `price_import` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
+
+
+
+# Dump of table product_type
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_type`;
+
+CREATE TABLE `product_type` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10011 DEFAULT CHARSET=utf8mb3;
 
 
 
@@ -653,16 +644,6 @@ CREATE TABLE `user` (
   UNIQUE KEY `sso_id` (`sso_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1637 DEFAULT CHARSET=utf8mb3;
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-
-INSERT INTO `user` (`id`, `sso_id`, `password`, `firebase_token`, `layout`, `full_name`, `phone`, `email`, `status`)
-VALUES
-	(2,'administrator','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','fqSSpT_mou2h1B_ygwekc1:APA91bE3xxIiIMzFivcG6liPBlW-6CspSPwAo4yQ6bXY8h4Y_Y9XdoITmRF-URsXm8KUhS71f6km37Kx8JnDeIJ8e2E21-4Wt9X-e7p2aL6YnIPTAmgRnv4qF16aR6vBrxQNtuZ6WIRc','UserLayout','Administrator','','long.huu.100@gmail.com',1),
-	(67,'longhuu','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','Hữu Long','','bp@gmail.com',0);
-
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table user_kpi
@@ -698,17 +679,6 @@ CREATE TABLE `user_link_profile` (
   CONSTRAINT `FK_USER_PROFILE` FOREIGN KEY (`user_profile_id`) REFERENCES `user_profile` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-LOCK TABLES `user_link_profile` WRITE;
-/*!40000 ALTER TABLE `user_link_profile` DISABLE KEYS */;
-
-INSERT INTO `user_link_profile` (`user_id`, `user_profile_id`)
-VALUES
-	(2,2),
-	(67,3),
-	(67,5);
-
-/*!40000 ALTER TABLE `user_link_profile` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table user_permision
@@ -723,32 +693,6 @@ CREATE TABLE `user_permision` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb3;
 
-LOCK TABLES `user_permision` WRITE;
-/*!40000 ALTER TABLE `user_permision` DISABLE KEYS */;
-
-INSERT INTO `user_permision` (`id`, `action`, `roles`)
-VALUES
-	(16,'/data/**','any'),
-	(20,'/user-group/**','any'),
-	(28,'/sale/list-file','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(38,'/sale/lists-data','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(39,'/sale/lists-order','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(40,'/sale/list-order-types','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(42,'/sale/create-order-detail','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(43,'/sale/update-order-detail','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(44,'/sale/update-order','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(46,'/sale/delete-order','hasRole(\'ADMIN\')'),
-	(47,'/sale/delete-order-detail','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(51,'/sale/report','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(52,'/sale/uploads','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(56,'/sale/month-sale-report','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(57,'/sale/weekly-sale-report','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(63,'/customer/**','any'),
-	(64,'/admin/**','hasRole(\'ADMIN\') '),
-	(67,'/sale/lists-cohoi','hasRole(\'ADMIN\') or hasRole(\'SALE\')');
-
-/*!40000 ALTER TABLE `user_permision` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table user_profile
@@ -763,19 +707,6 @@ CREATE TABLE `user_profile` (
   UNIQUE KEY `type` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
 
-LOCK TABLES `user_profile` WRITE;
-/*!40000 ALTER TABLE `user_profile` DISABLE KEYS */;
-
-INSERT INTO `user_profile` (`id`, `type`)
-VALUES
-	(2,'ROLE_ADMIN'),
-	(3,'ROLE_DBA'),
-	(5,'ROLE_SALE'),
-	(13,'ROLE_SALE_MANAGER'),
-	(1,'ROLE_USER');
-
-/*!40000 ALTER TABLE `user_profile` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table warehouse
