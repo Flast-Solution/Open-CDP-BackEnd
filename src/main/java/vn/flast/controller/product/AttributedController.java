@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Attributed;
+import vn.flast.models.AttributedValue;
+import vn.flast.repositories.AttributedValueRepository;
 import vn.flast.searchs.AttributedFilter;
 import vn.flast.service.AttributedService;
 import vn.flast.validator.ValidationErrorBuilder;
@@ -21,6 +23,9 @@ public class AttributedController {
 
     @Autowired
     private AttributedService attributedService;
+
+    @Autowired
+    private AttributedValueRepository valueRepository;
 
     @PostMapping("/save")
     public MyResponse<?> created(@Valid  @RequestBody Attributed input, Errors errors) {
@@ -36,6 +41,25 @@ public class AttributedController {
     public MyResponse<?> fetch(AttributedFilter filter) {
         var data = attributedService.fetch(filter);
         return MyResponse.response(data);
+    }
+
+    @GetMapping("/fetch-value-by-id")
+    public MyResponse<?> fetchValueById(AttributedFilter input) {
+        var data = attributedService.fetchAttributedValue(input);
+        return MyResponse.response(data);
+    }
+
+    @PostMapping("/save-value-by-id")
+    public MyResponse<?> saveValueById(@Valid  @RequestBody AttributedValue input, Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Invalid input .!");
+        }
+        valueRepository.findAttrIdAndValue(input.getAttributedId(), input.getValue()).ifPresentOrElse(
+            (item) -> {},
+            () -> valueRepository.save(input)
+        );
+        return MyResponse.response(input, "Tạo mới thuộc tính thành công .!");
     }
 
     @PostMapping("/delete")

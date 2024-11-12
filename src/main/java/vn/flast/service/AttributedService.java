@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.models.Attributed;
+import vn.flast.models.AttributedValue;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.AttributedRepository;
 import vn.flast.searchs.AttributedFilter;
@@ -23,17 +24,10 @@ public class AttributedService {
 
     @Transactional(rollbackFor = Exception.class)
     public Attributed save(Attributed input) {
-        if(StringUtils.isNotEmpty(input.getName()) && StringUtils.isNotEmpty(input.getValue())) {
-            attributedRepository.findOneByNameAndValue(input.getName(), input.getValue()).ifPresentOrElse(
-                (item) -> { /* Đã có rồi thì không lưu nữa */ },
-                () -> attributedRepository.save(input)
-            );
-        } else {
-            attributedRepository.findOneByName(input.getName()).ifPresentOrElse(
-                (item) -> { /* Đã có rồi thì không lưu nữa */ },
-                () -> attributedRepository.save(input)
-            );
-        }
+        attributedRepository.findOneByName(input.getName()).ifPresentOrElse(
+            (item) -> { /* Đã có rồi thì không lưu nữa */ },
+            () -> attributedRepository.save(input)
+        );
         return input;
     }
 
@@ -42,6 +36,17 @@ public class AttributedService {
         int currentPage = filter.page();
         var et = EntityQuery.create(entityManager, Attributed.class);
         et.like("name", filter.name());
+        et.like("value", filter.value());
+        et.setMaxResults(LIMIT).setFirstResult(LIMIT * currentPage);
+        var lists = et.list();
+        return  Ipage.generator(LIMIT, et.count(), currentPage, lists);
+    }
+
+    public Ipage<?> fetchAttributedValue(AttributedFilter filter) {
+        int LIMIT = 20;
+        int currentPage = filter.page();
+        var et = EntityQuery.create(entityManager, AttributedValue.class);
+        et.integerEqualsTo("attributedId", filter.attributedId());
         et.like("value", filter.value());
         et.setMaxResults(LIMIT).setFirstResult(LIMIT * currentPage);
         var lists = et.list();
