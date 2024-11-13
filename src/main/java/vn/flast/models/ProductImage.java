@@ -1,6 +1,5 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,8 +11,7 @@ import lombok.Setter;
 
 @Table(name = "product_image")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class ProductImage {
 
     @Id
@@ -27,13 +25,6 @@ public class ProductImage {
     @Column(name = "file_name")
     private String fileName;
 
-    @Column(name = "section_id")
-    private Long section_id;
-
-    @Column(name = "is_featured")
-    private Long isFeatured;
-
     @Column(name = "is_slideshow")
-    private Long isSlideshow;
-
+    private Integer isSlideshow;
 }

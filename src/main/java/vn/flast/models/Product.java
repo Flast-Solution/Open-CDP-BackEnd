@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.util.Date;
 
 @Table(name = "product")
@@ -19,9 +21,6 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @Column(name = "category_id")
-    private Long categoryId;
 
     @Column(name = "service_id")
     private Long serviceId;
@@ -38,8 +37,8 @@ public class Product {
     @Column(name = "slug")
     private String slug;
 
-    @Column(name = "provider_code")
-    private String providerCode;
+    @Column(name = "provider_id")
+    private String providerId;
 
     @Column(name = "unit")
     private String unit;
@@ -48,10 +47,10 @@ public class Product {
     private Integer price;
 
     @Column(name = "price_ref")
-    private Long price_ref;
+    private Long priceRef;
 
     @Column(name = "seo_title")
-    private String seo_title;
+    private String seoTitle;
 
     @Column(name = "seo_description")
     private String seoDescription;
@@ -62,9 +61,6 @@ public class Product {
     @Column(name = "image")
     private String image;
 
-    @Column(name = "attributed")
-    private String attributed;
-
     @Column(name = "social")
     private String social;
 
@@ -72,8 +68,10 @@ public class Product {
     private Long status;
 
     @Column(name = "created_time")
+    @CreationTimestamp
     private Date createdTime;
 
     @Column(name = "updated_time")
+    @UpdateTimestamp
     private Date updatedTime;
 }

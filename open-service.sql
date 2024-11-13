@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-11-13 11:07:00 +0000
+# Generation Time: 2024-11-13 14:57:15 +0000
 # ************************************************************
 
 
@@ -431,13 +431,12 @@ DROP TABLE IF EXISTS `product`;
 
 CREATE TABLE `product` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `category_id` int DEFAULT '0',
   `service_id` int DEFAULT '0',
   `quality_in_stock` int DEFAULT '0',
   `total_import_stock` int DEFAULT '0',
   `name` varchar(255) DEFAULT NULL,
   `slug` varchar(255) DEFAULT NULL,
-  `provider_code` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `provider_id` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `unit` varchar(100) DEFAULT NULL,
   `price` int DEFAULT '0',
   `price_ref` int DEFAULT '0',
@@ -445,7 +444,6 @@ CREATE TABLE `product` (
   `seo_description` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `seo_content` text,
   `image` varchar(255) DEFAULT NULL,
-  `attributed` json DEFAULT NULL,
   `social` varchar(255) DEFAULT '{"view":139,"like":0,"shear":49}',
   `status` int DEFAULT '0',
   `created_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -480,8 +478,6 @@ CREATE TABLE `product_image` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `product_id` int unsigned DEFAULT '0',
   `file_name` varchar(255) DEFAULT '',
-  `section_id` int DEFAULT NULL,
-  `is_featured` int unsigned DEFAULT '0',
   `is_slideshow` int unsigned DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `product_id_index` (`product_id`) USING BTREE
