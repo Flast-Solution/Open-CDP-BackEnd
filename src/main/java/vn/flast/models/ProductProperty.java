@@ -19,6 +19,12 @@ public class ProductProperty {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @Column(name = "product_id")
+    private Long productId;
+
     @Column(name = "name")
     private String name;
+
+    @Column(name = "value")
+    private String value;
 }

@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
-import vn.flast.models.ProductAttributed;
 import vn.flast.models.WareHouseHistory;
-import vn.flast.service.ProductAttributedService;
 import vn.flast.service.WarehouseHistoryService;
 import vn.flast.validator.ValidationErrorBuilder;
 

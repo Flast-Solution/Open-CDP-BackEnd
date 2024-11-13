@@ -11,8 +11,7 @@ import lombok.Setter;
 
 @Table(name = "product_skus_details")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class ProductSkusDetails {
 
     @Id
@@ -22,9 +21,6 @@ public class ProductSkusDetails {
 
     @Column(name = "product_skus_id")
     private Long productSkusId;
-
-    @Column(name = "priduct_unit")
-    private String priductUnit;
 
     @Column(name = "product_id")
     private Long productId;

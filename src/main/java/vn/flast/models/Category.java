@@ -5,16 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
+import vn.flast.utils.NumberUtils;
 import java.util.Date;
 
-@Table(name = "attributed")
+@Table(name = "category")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class Category {
 
     @Id
@@ -32,7 +32,7 @@ public class Category {
     private String slug;
 
     @Column(name = "status")
-    private Long status;
+    private Integer status;
 
     @Column(name = "icon")
     private String icon;
@@ -49,9 +49,6 @@ public class Category {
     @Column(name = "seo_description")
     private String seoDescription;
 
-    @Column(name = "seo_keyword")
-    private String seoKeyword;
-
     @Column(name = "seo_content")
     private String seoContent;
 
@@ -61,5 +58,10 @@ public class Category {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-
+    @PrePersist
+    public void beforeSave() {
+        if(NumberUtils.isNull(status)) {
+            status = 0;
+        }
+    }
 }

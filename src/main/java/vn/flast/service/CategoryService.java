@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.models.Category;
-import vn.flast.models.ProductAttributed;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CategoryRepository;
-import vn.flast.repositories.ProductAttributedRepository;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 

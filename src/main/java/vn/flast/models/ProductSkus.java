@@ -1,6 +1,5 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,8 +11,7 @@ import lombok.Setter;
 
 @Table(name = "product_skus")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class ProductSkus {
 
     @Id
@@ -30,7 +28,9 @@ public class ProductSkus {
     @Column(name = "product_id")
     private Long productId;
 
-    @Column(name = "product_property_id")
-    private Long productPropertyId;
+    @Column(name = "attributed_id")
+    private Long attributedId;
 
+    @Column(name = "attributed_value_id")
+    private Long attributedValueId;
 }

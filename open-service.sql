@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-11-12 15:38:32 +0000
+# Generation Time: 2024-11-13 11:07:00 +0000
 # ************************************************************
 
 
@@ -30,8 +30,19 @@ CREATE TABLE `attributed` (
   `name` varchar(255) DEFAULT NULL,
   `status` int DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10010 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10011 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `attributed` WRITE;
+/*!40000 ALTER TABLE `attributed` DISABLE KEYS */;
+
+INSERT INTO `attributed` (`id`, `name`, `status`)
+VALUES
+	(10008,'PHong cách',1),
+	(10009,'Kích thước',1),
+	(10010,'Màu sắc',1);
+
+/*!40000 ALTER TABLE `attributed` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table attributed_value
@@ -45,8 +56,21 @@ CREATE TABLE `attributed_value` (
   `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `status` int DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10012 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10014 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `attributed_value` WRITE;
+/*!40000 ALTER TABLE `attributed_value` DISABLE KEYS */;
+
+INSERT INTO `attributed_value` (`id`, `attributed_id`, `value`, `status`)
+VALUES
+	(10009,10008,'Tối giản B+',1),
+	(10010,10009,'30x55x30',1),
+	(10011,10009,'10x40x55',1),
+	(10012,10010,'Đen',1),
+	(10013,10010,'Đỏ',1);
+
+/*!40000 ALTER TABLE `attributed_value` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table category
@@ -57,21 +81,29 @@ DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
   `id` int NOT NULL AUTO_INCREMENT,
   `parent_id` int DEFAULT '0',
-  `name` varchar(45) DEFAULT NULL,
+  `name` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `slug` varchar(255) DEFAULT NULL,
-  `status` int DEFAULT '0',
+  `status` int NOT NULL DEFAULT '0',
   `icon` varchar(255) DEFAULT '',
   `image` varchar(100) DEFAULT NULL,
   `order_no` int DEFAULT '0',
   `seo_title` varchar(255) DEFAULT '',
   `seo_description` varchar(255) DEFAULT '',
-  `seo_keyword` varchar(255) DEFAULT '',
   `seo_content` text,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10009 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `category` WRITE;
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
+
+INSERT INTO `category` (`id`, `parent_id`, `name`, `slug`, `status`, `icon`, `image`, `order_no`, `seo_title`, `seo_description`, `seo_content`, `created_at`, `updated_at`)
+VALUES
+	(10008,0,'React.Js',NULL,0,'',NULL,0,'','',NULL,'2024-11-13 18:05:31','2024-11-13 18:05:31');
+
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table customer_address
@@ -282,6 +314,15 @@ CREATE TABLE `customer_personal` (
   KEY `token_idx` (`token_confirm`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `customer_personal` WRITE;
+/*!40000 ALTER TABLE `customer_personal` DISABLE KEYS */;
+
+INSERT INTO `customer_personal` (`id`, `type`, `id_card`, `sale_id`, `gender`, `source_id`, `level`, `facebook_id`, `name`, `province_id`, `district_id`, `ward_id`, `address`, `company_name`, `company_id`, `avatar`, `email`, `is_trust_email`, `mobile`, `password`, `token_confirm`, `status`, `date_of_birth`, `created_at`, `updated_at`, `diem_danh_gia`)
+VALUES
+	(7,'customer','03902930390392',NULL,'other',3,NULL,NULL,'Hà NAm',NULL,NULL,NULL,'Hà Nội',NULL,NULL,NULL,'long.huu.100@gmail.com',NULL,'0936295123',NULL,NULL,NULL,'1989-11-07 13:32:22','2022-11-19 13:32:22','2024-10-21 16:16:40',NULL);
+
+/*!40000 ALTER TABLE `customer_personal` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table data
@@ -414,22 +455,6 @@ CREATE TABLE `product` (
 
 
 
-# Dump of table product_attributed
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `product_attributed`;
-
-CREATE TABLE `product_attributed` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `product_id` int NOT NULL,
-  `attributed_id` int NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
-
-
-
 # Dump of table product_category
 # ------------------------------------------------------------
 
@@ -471,7 +496,9 @@ DROP TABLE IF EXISTS `product_property`;
 
 CREATE TABLE `product_property` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) DEFAULT NULL,
+  `product_id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
 
@@ -484,10 +511,11 @@ DROP TABLE IF EXISTS `product_skus`;
 
 CREATE TABLE `product_skus` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `value` varchar(255) DEFAULT NULL,
   `product_id` int NOT NULL,
-  `product_property_id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `attributed_id` int NOT NULL,
+  `attributed_value_id` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
 
@@ -502,7 +530,6 @@ CREATE TABLE `product_skus_details` (
   `id` int NOT NULL AUTO_INCREMENT,
   `product_skus_id` int NOT NULL,
   `product_id` int NOT NULL,
-  `priduct_unit` varchar(255) DEFAULT '',
   `quantity_from` int NOT NULL,
   `quantity_to` int NOT NULL,
   `price_ref` int NOT NULL DEFAULT '0',
@@ -524,6 +551,17 @@ CREATE TABLE `product_type` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10011 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `product_type` WRITE;
+/*!40000 ALTER TABLE `product_type` DISABLE KEYS */;
+
+INSERT INTO `product_type` (`id`, `name`)
+VALUES
+	(10008,'Software'),
+	(10009,'Hardware'),
+	(10010,'Co.Center');
+
+/*!40000 ALTER TABLE `product_type` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table provider
@@ -541,6 +579,15 @@ CREATE TABLE `provider` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10009 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `provider` WRITE;
+/*!40000 ALTER TABLE `provider` DISABLE KEYS */;
+
+INSERT INTO `provider` (`id`, `name`, `address`, `presentation`, `mobile`, `status`)
+VALUES
+	(10008,'Flast Solution','35  Lê Văn Lương','H.T.M.D','098793891',1);
+
+/*!40000 ALTER TABLE `provider` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table shipping
@@ -659,6 +706,16 @@ CREATE TABLE `user` (
   UNIQUE KEY `sso_id` (`sso_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1637 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+
+INSERT INTO `user` (`id`, `sso_id`, `password`, `firebase_token`, `layout`, `full_name`, `phone`, `email`, `status`)
+VALUES
+	(2,'admin','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','fqSSpT_mou2h1B_ygwekc1:APA91bE3xxIiIMzFivcG6liPBlW-6CspSPwAo4yQ6bXY8h4Y_Y9XdoITmRF-URsXm8KUhS71f6km37Kx8JnDeIJ8e2E21-4Wt9X-e7p2aL6YnIPTAmgRnv4qF16aR6vBrxQNtuZ6WIRc','UserLayout','Administrator','','flast.vn@gmail.com',1),
+	(67,'longhuu','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','Hữu Long','','long.huu.100@gmail.com',1);
+
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table user_kpi
@@ -694,6 +751,17 @@ CREATE TABLE `user_link_profile` (
   CONSTRAINT `FK_USER_PROFILE` FOREIGN KEY (`user_profile_id`) REFERENCES `user_profile` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `user_link_profile` WRITE;
+/*!40000 ALTER TABLE `user_link_profile` DISABLE KEYS */;
+
+INSERT INTO `user_link_profile` (`user_id`, `user_profile_id`)
+VALUES
+	(2,2),
+	(67,3),
+	(67,5);
+
+/*!40000 ALTER TABLE `user_link_profile` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table user_permision
@@ -708,6 +776,32 @@ CREATE TABLE `user_permision` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `user_permision` WRITE;
+/*!40000 ALTER TABLE `user_permision` DISABLE KEYS */;
+
+INSERT INTO `user_permision` (`id`, `action`, `roles`)
+VALUES
+	(16,'/data/**','any'),
+	(20,'/user-group/**','any'),
+	(28,'/sale/list-file','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(38,'/sale/lists-data','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(39,'/sale/lists-order','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(40,'/sale/list-order-types','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(42,'/sale/create-order-detail','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(43,'/sale/update-order-detail','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(44,'/sale/update-order','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(46,'/sale/delete-order','hasRole(\'ADMIN\')'),
+	(47,'/sale/delete-order-detail','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(51,'/sale/report','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(52,'/sale/uploads','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(56,'/sale/month-sale-report','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(57,'/sale/weekly-sale-report','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(63,'/customer/**','any'),
+	(64,'/admin/**','hasRole(\'ADMIN\') '),
+	(67,'/sale/lists-cohoi','hasRole(\'ADMIN\') or hasRole(\'SALE\')');
+
+/*!40000 ALTER TABLE `user_permision` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table user_profile
@@ -722,6 +816,19 @@ CREATE TABLE `user_profile` (
   UNIQUE KEY `type` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `user_profile` WRITE;
+/*!40000 ALTER TABLE `user_profile` DISABLE KEYS */;
+
+INSERT INTO `user_profile` (`id`, `type`)
+VALUES
+	(2,'ROLE_ADMIN'),
+	(3,'ROLE_DBA'),
+	(5,'ROLE_SALE'),
+	(13,'ROLE_SALE_MANAGER'),
+	(1,'ROLE_USER');
+
+/*!40000 ALTER TABLE `user_profile` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table warehouse

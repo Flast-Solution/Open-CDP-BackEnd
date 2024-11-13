@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Attributed;
 import vn.flast.models.AttributedValue;
+import vn.flast.repositories.AttributedRepository;
 import vn.flast.repositories.AttributedValueRepository;
 import vn.flast.searchs.AttributedFilter;
 import vn.flast.service.AttributedService;
 import vn.flast.validator.ValidationErrorBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/attributed")
@@ -26,6 +29,9 @@ public class AttributedController {
 
     @Autowired
     private AttributedValueRepository valueRepository;
+
+    @Autowired
+    private AttributedRepository attributedRepository;
 
     @PostMapping("/save")
     public MyResponse<?> created(@Valid  @RequestBody Attributed input, Errors errors) {
@@ -43,9 +49,21 @@ public class AttributedController {
         return MyResponse.response(data);
     }
 
+    @GetMapping("/fetch-attr-ids")
+    public MyResponse<?> fetchByIDs(@RequestParam List<Long> ids) {
+        var data = attributedRepository.findAllById(ids);
+        return MyResponse.response(data);
+    }
+
     @GetMapping("/fetch-value-by-id")
     public MyResponse<?> fetchValueById(AttributedFilter input) {
         var data = attributedService.fetchAttributedValue(input);
+        return MyResponse.response(data);
+    }
+
+    @GetMapping("/fetch-value-by-ids")
+    public MyResponse<?> fetchValueByIds(@RequestParam List<Long> ids) {
+        var data = valueRepository.findAllById(ids);
         return MyResponse.response(data);
     }
 
