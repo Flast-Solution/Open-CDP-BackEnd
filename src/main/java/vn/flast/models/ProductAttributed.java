@@ -26,10 +26,10 @@ public class ProductAttributed {
     private Long productId;
 
     @Column(name = "attributed_id")
-    private Integer attributedId;
+    private Long attributedId;
 
     @Column(name = "attributed_value_id")
-    private Integer attributedValueId;
+    private Long attributedValueId;
 
     @Column(name = "name")
     private String name;
@@ -38,5 +38,5 @@ public class ProductAttributed {
     private String value;
 
     @Transient
-    private List<Integer> propertyValueId;
+    private List<Long> propertyValueId;
 }

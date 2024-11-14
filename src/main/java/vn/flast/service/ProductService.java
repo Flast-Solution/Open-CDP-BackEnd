@@ -7,14 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.entities.SaleProduct;
+import vn.flast.models.Attributed;
+import vn.flast.models.AttributedValue;
 import vn.flast.models.Product;
 import vn.flast.models.ProductAttributed;
 import vn.flast.models.ProductProperty;
+import vn.flast.models.ProductSkus;
+import vn.flast.models.ProductSkusDetails;
+import vn.flast.models.ProductSkusPrice;
 import vn.flast.models.Provider;
 import vn.flast.pagination.Ipage;
+import vn.flast.repositories.AttributedRepository;
+import vn.flast.repositories.AttributedValueRepository;
 import vn.flast.repositories.ProductAttributedRepository;
 import vn.flast.repositories.ProductPropertyRepository;
 import vn.flast.repositories.ProductRepository;
+import vn.flast.repositories.ProductSkusDetailsRepository;
+import vn.flast.repositories.ProductSkusPriceRepository;
+import vn.flast.repositories.ProductSkusRepository;
 import vn.flast.repositories.ProviderRepository;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
@@ -43,6 +53,21 @@ public class ProductService {
     @Autowired
     private ProductAttributedRepository productAttributedRepository;
 
+    @Autowired
+    private ProductSkusRepository productSkusRepository;
+
+    @Autowired
+    private ProductSkusPriceRepository skusPriceRepository;
+
+    @Autowired
+    private ProductSkusDetailsRepository productSkusDetailsRepository;
+
+    @Autowired
+    private AttributedRepository attributedRepository;
+
+    @Autowired
+    private AttributedValueRepository attributedValueRepository;
+
     public Product createdSeo(Product input){
         input.setImage(JsonUtils.toJson(input.getImageLists()));
         return productsRepository.save(input);
@@ -66,12 +91,18 @@ public class ProductService {
         List<ProductAttributed> productAttributedList = input.getListProperties().stream()
                 .flatMap(property -> property.getPropertyValueId().stream()
                         .map(propertyValueId -> {
+                            Attributed attributed = attributedRepository.findById(property.getAttributedId()).orElseThrow(
+                                    () -> new RuntimeException("không tồn tại bản ghi")
+                            );
+                            AttributedValue attributedValue = attributedValueRepository.findById(propertyValueId).orElseThrow(
+                                    () -> new RuntimeException("không tồn tại bản ghi")
+                            );
                             ProductAttributed productAttributed = new ProductAttributed();
                             productAttributed.setProductId(data.getId());
                             productAttributed.setAttributedId(property.getAttributedId());
                             productAttributed.setAttributedValueId(propertyValueId);
-                            productAttributed.setName(property.getName());
-                            productAttributed.setValue(property.getValue());
+                            productAttributed.setName(attributed.getName());
+                            productAttributed.setValue(attributedValue.getValue());
                             return productAttributed;
                         }))
                 .collect(Collectors.toList());
@@ -86,6 +117,42 @@ public class ProductService {
                 })
                 .collect(Collectors.toList());
         productPropertyRepository.saveAll(productPropertyList);
+        List<ProductSkus> productSkuses = input.getSkus().stream()
+                .map(productSkus -> {
+                    ProductSkus skus = new ProductSkus();
+                    skus.setProductId(data.getId());
+                    ProductSkus savedSku = productSkusRepository.save(skus);
+                    productSkus.getListPriceRange().forEach(priceRange -> {
+                        // Tạo đối tượng ProductPriceRange
+                        ProductSkusPrice price = new ProductSkusPrice();
+                        CopyProperty.CopyIgnoreNull(priceRange, price);
+                        price.setProductId(data.getId());
+                        price.setSkuId(savedSku.getId());
+                        price.setQuantityFrom(priceRange.getStart());
+                        price.setQuantityTo(priceRange.getEnd());
+                        price.setPrice(priceRange.getPrice());
+
+                        // Lưu ProductPriceRange vào cơ sở dữ liệu
+                        skusPriceRepository.save(price);
+                    });
+                    productSkus.getSku().forEach(sku ->{
+                        ProductSkusDetails skusDetails = new ProductSkusDetails();
+                        Attributed attributed = attributedRepository.findById(sku.getAttributedId()).orElseThrow(
+                                () -> new RuntimeException("không tồn tại bản ghi")
+                        );
+                        AttributedValue attributedValue = attributedValueRepository.findById(sku.getAttributedValueId()).orElseThrow(
+                                () -> new RuntimeException("không tồn tại bản ghi")
+                        );
+                        CopyProperty.CopyIgnoreNull(sku, skusDetails);
+                        skusDetails.setSkuId(savedSku.getId());
+                        skusDetails.setProductId(data.getId());
+                        skusDetails.setName(attributed.getName());
+                        skusDetails.setValue(attributedValue.getValue());
+                        productSkusDetailsRepository.save(skusDetails);
+                    });
+                    return savedSku;
+                })
+                .collect(Collectors.toList());
         return data;
     };
 

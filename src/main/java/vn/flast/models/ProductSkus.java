@@ -22,7 +22,7 @@ public class ProductSkus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "product_id")
     private Long productId;

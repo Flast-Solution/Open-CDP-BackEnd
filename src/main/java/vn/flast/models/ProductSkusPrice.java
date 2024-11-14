@@ -32,11 +32,11 @@ public class ProductSkusPrice {
     private Long quantityTo;
 
     @Column(name = "price_ref")
-    private Long priceRef;
+    private Long priceRef = 0l;
 
     @Column(name = "price")
     private Long price;
 
     @Column(name = "price_import")
-    private Long priceImport;
+    private Long priceImport = 0l;
 }

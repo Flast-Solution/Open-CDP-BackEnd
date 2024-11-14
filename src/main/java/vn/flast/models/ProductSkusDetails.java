@@ -32,8 +32,8 @@ public class ProductSkusDetails {
     private String value;
 
     @Column(name = "attributed_id")
-    private Long attributedId;
+    private Long attributedId = 0l;
 
     @Column(name = "attributed_value_id")
-    private Long attributedValueId;
+    private Long attributedValueId =0l;
 }
