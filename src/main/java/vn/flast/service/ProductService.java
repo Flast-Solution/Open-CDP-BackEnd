@@ -79,12 +79,15 @@ public class ProductService {
         );
         String twoLetterService = provider.getName().substring(0, 2);
         String name = Common.deAccent(input.getName());
-        String twoLetterName = name.substring(0, 2);
-        if (StringUtils.isEmpty(input.getCode())) {
+        String twoLetterName = name.length() >= 2 ? name.substring(0, 2) : name;
+        String code;
+        do {
             String random = Common.getAlphaNumericString(4, false);
-            String code = twoLetterService + twoLetterName + random;
-            input.setCode(code.toUpperCase());
-        }
+            code = (twoLetterService + twoLetterName + random).toUpperCase();
+        } while (productsRepository.findByCode(code) != null);
+
+// Đặt mã code vào đối tượng input
+        input.setCode(code);
         Product product = new Product();
         CopyProperty.CopyIgnoreNull(input, product);
         var data = productsRepository.save(product);
