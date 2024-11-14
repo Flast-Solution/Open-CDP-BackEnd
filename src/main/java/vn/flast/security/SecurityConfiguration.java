@@ -58,7 +58,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**", "/lables/find-code", "/uploads/**", "/user/create").permitAll()
+                        .requestMatchers("/auth/**", "/lables/find-code", "/uploads/**", "/user/create","/product-type/**").permitAll()
                         .requestMatchers("/stock-product/**", "/lables/**", "/lot-lables/**", "/stock-product/**", "/order/**", "/pay-order/**", "/user/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

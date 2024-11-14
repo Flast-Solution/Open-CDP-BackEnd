@@ -99,10 +99,7 @@ public class EntityQuery<E> {
         try {
             TypedQuery<Long> typedQuery = entityManager.createQuery(countCriteriaQuery);
             return typedQuery.getSingleResult();
-        } catch (Exception e){
-            log.error("===== Lỗi count entityQuery: {} ======", e.getMessage());
-            return 0L;
-        }
+        } catch (Exception e){ log.error("===== Lỗi count entityQuery: {} ======", e.getMessage(), e); return 0L; }
     }
 
     private TypedQuery<E> prepareSelectTypedQuery() {

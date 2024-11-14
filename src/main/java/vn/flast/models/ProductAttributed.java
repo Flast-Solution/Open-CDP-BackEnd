@@ -6,8 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Table(name = "product_attributed")
 @Entity
@@ -33,4 +36,7 @@ public class ProductAttributed {
 
     @Column(name = "value")
     private String value;
+
+    @Transient
+    private List<Integer> propertyValueId;
 }

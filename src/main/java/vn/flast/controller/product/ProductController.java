@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
+import vn.flast.entities.SaleProduct;
 import vn.flast.models.Product;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.ProductRepository;
 import vn.flast.searchs.ProductFilter;
+import vn.flast.service.ProductService;
 import vn.flast.utils.EntityQuery;
 import vn.flast.validator.ValidationErrorBuilder;
 
@@ -26,16 +28,29 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private ProductService productService;
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    @PostMapping("/save")
-    public MyResponse<?> updated(@Valid @RequestBody Product input, Errors errors) {
+    @PostMapping("/seo-create")
+    public MyResponse<?> seoCreate(@Valid @RequestBody Product input, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var data = productRepository.save(input);
+        var data = productService.createdSeo(input);
+        return MyResponse.response(data, "Cập nhật thành công .!");
+    }
+
+    @PostMapping("/sale-create")
+    public MyResponse<?> saleCreate(@Valid @RequestBody SaleProduct input, Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+        }
+        var data = productService.createdSale(input);
         return MyResponse.response(data, "Cập nhật thành công .!");
     }
 

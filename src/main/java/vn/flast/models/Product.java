@@ -1,16 +1,23 @@
 package vn.flast.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import vn.flast.entities.ImagesProduct;
+
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "product")
 @Entity
@@ -34,11 +41,14 @@ public class Product {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "code")
+    private String code;
+
     @Column(name = "slug")
     private String slug;
 
     @Column(name = "provider_id")
-    private String providerId;
+    private Long providerId;
 
     @Column(name = "unit")
     private String unit;
@@ -69,9 +79,16 @@ public class Product {
 
     @Column(name = "created_time")
     @CreationTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
     @Column(name = "updated_time")
     @UpdateTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
+
+    @Transient
+    private List<ImagesProduct> imageLists;
 }
