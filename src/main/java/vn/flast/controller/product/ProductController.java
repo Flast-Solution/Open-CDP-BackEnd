@@ -56,14 +56,8 @@ public class ProductController {
 
     @GetMapping("/fetch")
     public MyResponse<?> fetch(ProductFilter filter) {
-        int LIMIT = filter.limit();
-        int currentPage = filter.page();
-        var et = EntityQuery.create(entityManager, Product.class);
-        et.like("name", filter.name());
-        et.setMaxResults(LIMIT).setFirstResult(LIMIT * currentPage);
-        var lists = et.list();
-        var ipage = Ipage.generator(LIMIT, et.count(), currentPage, lists);
-        return MyResponse.response(ipage);
+        var data = productService.fetch(filter);
+        return MyResponse.response(data);
     }
 
     @PostMapping("/delete")

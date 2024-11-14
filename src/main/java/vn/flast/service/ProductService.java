@@ -25,10 +25,13 @@ import vn.flast.repositories.ProductSkusDetailsRepository;
 import vn.flast.repositories.ProductSkusPriceRepository;
 import vn.flast.repositories.ProductSkusRepository;
 import vn.flast.repositories.ProviderRepository;
+import vn.flast.searchs.ProductFilter;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
+import vn.flast.utils.SqlBuilder;
+
 import java.util.List;
 
 @Service
@@ -64,6 +67,9 @@ public class ProductService {
     @Autowired
     private AttributedValueRepository attributedValueRepository;
 
+    @Autowired
+    private SkuService skuService;
+
     public Product createdSeo(Product input){
         input.setImage(JsonUtils.toJson(input.getImageLists()));
         return productsRepository.save(input);
@@ -71,19 +77,21 @@ public class ProductService {
 
     @Transactional(rollbackFor = Exception.class)
     public Product createdProduct(SaleProduct input){
-        Provider provider = providerRepository.findById(input.getProviderId()).orElseThrow(
-            () -> new RuntimeException("Nhà cung cấp chưa tồn tại")
-        );
-        String twoLetterService = provider.getName().substring(0, 2);
-        String name = Common.deAccent(input.getName());
-        String twoLetterName = name.length() >= 2 ? name.substring(0, 2) : name;
-        String code;
-        do {
-            String random = Common.getAlphaNumericString(4, false);
-            code = (twoLetterService + twoLetterName + random).toUpperCase();
-        } while (productsRepository.findByCode(code) != null);
-        input.setCode(code);
-
+        if(input.getCode() == null) {
+            Provider provider = providerRepository.findById(input.getProviderId()).orElseThrow(
+                    () -> new RuntimeException("Nhà cung cấp chưa tồn tại")
+            );
+            String twoLetterService = provider.getName().substring(0, 2);
+            String name = Common.deAccent(input.getName());
+            String twoLetterName = name.length() >= 2 ? name.substring(0, 2) : name;
+            String code;
+            do {
+                String random = Common.getAlphaNumericString(4, false);
+                code = (twoLetterService + twoLetterName + random).toUpperCase();
+            } while (productsRepository.findByCode(code) != null);
+            // Đặt mã code vào đối tượng input
+            input.setCode(code);
+        }
         Product product = new Product();
         CopyProperty.CopyIgnoreNull(input, product);
         var data = productsRepository.save(product);
@@ -161,13 +169,33 @@ public class ProductService {
         return productsRepository.save(entity);
     }
 
-    public Ipage<?> fetch(Integer page){
-        int LIMIT = 10;
-        int currentPage = page - 1;
-        var et = EntityQuery.create(entityManager, Product.class);
-        et.setMaxResults(LIMIT).setFirstResult(LIMIT * currentPage);
-        var lists = et.list();
-        return  Ipage.generator(LIMIT, et.count(), currentPage, lists);
+    public Ipage<?> fetch(ProductFilter filter){
+        int LIMIT = filter.limit();
+        int PAGE = filter.page();
+        int OFFSET = (filter.page()) * LIMIT;
+        final String totalSQL = "FROM `product` p ";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+        sqlBuilder.addIntegerEquals("p.status", filter.status());
+        sqlBuilder.addStringEquals("p.code", filter.code());
+        sqlBuilder.addStringEquals("p.name", filter.name());
+        sqlBuilder.addIntegerEquals("p.provider_id", filter.providerId());
+        sqlBuilder.addOrderBy("ORDER BY p.id DESC");
+        String finalQuery = sqlBuilder.builder();
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+        var nativeQuery = entityManager.createNativeQuery("SELECT p.* " + finalQuery, Product.class);
+        nativeQuery.setMaxResults(LIMIT);
+        nativeQuery.setFirstResult(OFFSET);
+        var lists = EntityQuery.getListOfNativeQuery(nativeQuery, Product.class);
+        List<SaleProduct> listSaleProduct = lists.stream().map(product -> {
+            SaleProduct saleProduct = new SaleProduct();
+            CopyProperty.CopyIgnoreNull(product, saleProduct);
+            saleProduct.setListProperties(productAttributedRepository.findByProduct(product.getId()));
+            saleProduct.setSkus(skuService.listProductSkuAndDetail(product.getId()));
+            saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(product.getId()));
+            return saleProduct;
+        }).toList();
+        return  Ipage.generator(LIMIT, count, PAGE, listSaleProduct);
     }
 
     @Transactional(rollbackFor = Exception.class)

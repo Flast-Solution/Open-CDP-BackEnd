@@ -32,4 +32,7 @@ public class ProductSkus {
 
     @Transient
     private List<SkuAttributed> sku;
+
+    @Transient
+    private List<ProductSkusDetails> skuDetail;
 }
