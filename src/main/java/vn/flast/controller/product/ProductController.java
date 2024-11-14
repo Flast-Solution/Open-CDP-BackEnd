@@ -34,7 +34,7 @@ public class ProductController {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @PostMapping("/seo-create")
+    @PostMapping("/update-content-seo")
     public MyResponse<?> seoCreate(@Valid @RequestBody Product input, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
@@ -44,13 +44,13 @@ public class ProductController {
         return MyResponse.response(data, "Cập nhật thành công .!");
     }
 
-    @PostMapping("/sale-create")
-    public MyResponse<?> saleCreate(@Valid @RequestBody SaleProduct input, Errors errors) {
+    @PostMapping("/create")
+    public MyResponse<?> create(@Valid @RequestBody SaleProduct input, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var data = productService.createdSale(input);
+        var data = productService.createdProduct(input);
         return MyResponse.response(data, "Cập nhật thành công .!");
     }
 
