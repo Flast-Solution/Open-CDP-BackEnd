@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-11-14 02:30:06 +0000
+# Generation Time: 2024-11-14 07:51:33 +0000
 # ************************************************************
 
 
@@ -453,12 +453,12 @@ CREATE TABLE `product` (
 
 
 
-# Dump of table product_attrbuted
+# Dump of table product_attributed
 # ------------------------------------------------------------
 
-DROP TABLE IF EXISTS `product_attrbuted`;
+DROP TABLE IF EXISTS `product_attributed`;
 
-CREATE TABLE `product_attrbuted` (
+CREATE TABLE `product_attributed` (
   `id` int NOT NULL AUTO_INCREMENT,
   `product_id` int NOT NULL,
   `attributed_id` int DEFAULT NULL,
@@ -525,10 +525,6 @@ DROP TABLE IF EXISTS `product_skus`;
 CREATE TABLE `product_skus` (
   `id` int NOT NULL AUTO_INCREMENT,
   `product_id` int NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `attributed_id` int NOT NULL,
-  `attributed_value_id` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
 
@@ -541,7 +537,25 @@ DROP TABLE IF EXISTS `product_skus_details`;
 
 CREATE TABLE `product_skus_details` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `product_skus_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `sku_id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `attributed_id` int NOT NULL,
+  `attributed_value_id` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
+
+
+
+# Dump of table product_skus_price
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_skus_price`;
+
+CREATE TABLE `product_skus_price` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sku_id` int NOT NULL,
   `product_id` int NOT NULL,
   `quantity_from` int NOT NULL,
   `quantity_to` int NOT NULL,

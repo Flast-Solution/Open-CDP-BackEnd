@@ -19,24 +19,21 @@ public class ProductSkusDetails {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "product_skus_id")
-    private Long productSkusId;
-
     @Column(name = "product_id")
     private Long productId;
 
-    @Column(name = "quantity_from")
-    private Long quantityFrom;
+    @Column(name = "sku_id")
+    private Long skuId;
 
-    @Column(name = "quantity_to")
-    private Long quantityTo;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "price_ref")
-    private Long priceRef;
+    @Column(name = "value")
+    private String value;
 
-    @Column(name = "price")
-    private Long price;
+    @Column(name = "attributed_id")
+    private Long attributedId;
 
-    @Column(name = "price_import")
-    private Long price_import;
+    @Column(name = "attributed_value_id")
+    private Long attributedValueId;
 }
