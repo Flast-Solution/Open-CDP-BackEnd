@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_service
-# Generation Time: 2024-11-13 14:57:15 +0000
+# Generation Time: 2024-11-14 02:30:06 +0000
 # ************************************************************
 
 
@@ -450,6 +450,23 @@ CREATE TABLE `product` (
   `updated_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=733 DEFAULT CHARSET=utf8mb3;
+
+
+
+# Dump of table product_attrbuted
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_attrbuted`;
+
+CREATE TABLE `product_attrbuted` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
+  `attributed_id` int DEFAULT NULL,
+  `attributed_value_id` int DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
 
 
 
