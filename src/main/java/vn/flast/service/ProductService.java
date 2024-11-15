@@ -105,7 +105,8 @@ public class ProductService {
                 productAttributed.setName(attributed.getName());
                 productAttributed.setValue(attributedValue.getValue());
                 return productAttributed;
-        })).toList();
+            }
+        )).toList();
         productAttributedRepository.saveAll(productAttributedList);
 
         /* Save Property */
