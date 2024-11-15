@@ -1,41 +1,56 @@
--- --------------------------------------------------------
--- Máy chủ:                      127.0.0.1
--- Server version:               8.0.32 - MySQL Community Server - GPL
--- Server OS:                    Win64
--- HeidiSQL Phiên bản:           12.5.0.6677
--- --------------------------------------------------------
+# ************************************************************
+# Sequel Ace SQL dump
+# Version 20062
+#
+# https://sequel-ace.com/
+# https://github.com/Sequel-Ace/Sequel-Ace
+#
+# Host: 127.0.0.1 (MySQL 8.0.30)
+# Database: open_cdp
+# Generation Time: 2024-11-15 08:16:11 +0000
+# ************************************************************
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8 */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+SET NAMES utf8mb4;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40101 SET @OLD_SQL_MODE='NO_AUTO_VALUE_ON_ZERO', SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- Dumping database structure for open_cdp
-CREATE DATABASE IF NOT EXISTS `open_cdp` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `open_cdp`;
+# Dump of table attributed
+# ------------------------------------------------------------
 
--- Dumping structure for table open_cdp.attributed
-CREATE TABLE IF NOT EXISTS `attributed` (
+DROP TABLE IF EXISTS `attributed`;
+
+CREATE TABLE `attributed` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `status` int DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10011 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.attributed: ~3 rows (approximately)
-DELETE FROM `attributed`;
-INSERT INTO `attributed` (`id`, `name`, `status`) VALUES
-	(10008, 'PHong cách', 1),
-	(10009, 'Kích thước', 1),
-	(10010, 'Màu sắc', 1);
+LOCK TABLES `attributed` WRITE;
+/*!40000 ALTER TABLE `attributed` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.attributed_value
-CREATE TABLE IF NOT EXISTS `attributed_value` (
+INSERT INTO `attributed` (`id`, `name`, `status`)
+VALUES
+	(10008,'PHong cách',1),
+	(10009,'Kích thước',1),
+	(10010,'Màu sắc',1);
+
+/*!40000 ALTER TABLE `attributed` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table attributed_value
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `attributed_value`;
+
+CREATE TABLE `attributed_value` (
   `id` int NOT NULL AUTO_INCREMENT,
   `attributed_id` int NOT NULL,
   `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
@@ -43,17 +58,27 @@ CREATE TABLE IF NOT EXISTS `attributed_value` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10014 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.attributed_value: ~5 rows (approximately)
-DELETE FROM `attributed_value`;
-INSERT INTO `attributed_value` (`id`, `attributed_id`, `value`, `status`) VALUES
-	(10009, 10008, 'Tối giản B+', 1),
-	(10010, 10009, '30x55x30', 1),
-	(10011, 10009, '10x40x55', 1),
-	(10012, 10010, 'Đen', 1),
-	(10013, 10010, 'Đỏ', 1);
+LOCK TABLES `attributed_value` WRITE;
+/*!40000 ALTER TABLE `attributed_value` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.category
-CREATE TABLE IF NOT EXISTS `category` (
+INSERT INTO `attributed_value` (`id`, `attributed_id`, `value`, `status`)
+VALUES
+	(10009,10008,'Tối giản B+',1),
+	(10010,10009,'30x55x30',1),
+	(10011,10009,'10x40x55',1),
+	(10012,10010,'Đen',1),
+	(10013,10010,'Đỏ',1);
+
+/*!40000 ALTER TABLE `attributed_value` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table category
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `category`;
+
+CREATE TABLE `category` (
   `id` int NOT NULL AUTO_INCREMENT,
   `parent_id` int DEFAULT '0',
   `name` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
@@ -70,13 +95,23 @@ CREATE TABLE IF NOT EXISTS `category` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10009 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.category: ~0 rows (approximately)
-DELETE FROM `category`;
-INSERT INTO `category` (`id`, `parent_id`, `name`, `slug`, `status`, `icon`, `image`, `order_no`, `seo_title`, `seo_description`, `seo_content`, `created_at`, `updated_at`) VALUES
-	(10008, 0, 'React.Js', NULL, 0, '', NULL, 0, '', '', NULL, '2024-11-13 11:05:31', '2024-11-13 11:05:31');
+LOCK TABLES `category` WRITE;
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.customer_address
-CREATE TABLE IF NOT EXISTS `customer_address` (
+INSERT INTO `category` (`id`, `parent_id`, `name`, `slug`, `status`, `icon`, `image`, `order_no`, `seo_title`, `seo_description`, `seo_content`, `created_at`, `updated_at`)
+VALUES
+	(10008,0,'React.Js',NULL,0,'',NULL,0,'','',NULL,'2024-11-13 18:05:31','2024-11-13 18:05:31');
+
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table customer_address
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `customer_address`;
+
+CREATE TABLE `customer_address` (
   `id` int NOT NULL AUTO_INCREMENT,
   `customer_id` int unsigned DEFAULT '0',
   `name_address` varchar(255) DEFAULT NULL,
@@ -92,11 +127,14 @@ CREATE TABLE IF NOT EXISTS `customer_address` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8204 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.customer_address: ~0 rows (approximately)
-DELETE FROM `customer_address`;
 
--- Dumping structure for table open_cdp.customer_enterprise
-CREATE TABLE IF NOT EXISTS `customer_enterprise` (
+
+# Dump of table customer_enterprise
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `customer_enterprise`;
+
+CREATE TABLE `customer_enterprise` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `company_name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `total_fee` bigint DEFAULT '0',
@@ -115,11 +153,14 @@ CREATE TABLE IF NOT EXISTS `customer_enterprise` (
   UNIQUE KEY `uc_tax_code_mobile_phone` (`tax_code`,`mobile_phone`)
 ) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table open_cdp.customer_enterprise: ~0 rows (approximately)
-DELETE FROM `customer_enterprise`;
 
--- Dumping structure for table open_cdp.customer_order
-CREATE TABLE IF NOT EXISTS `customer_order` (
+
+# Dump of table customer_order
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `customer_order`;
+
+CREATE TABLE `customer_order` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `data_id` bigint DEFAULT '0',
   `service_id` int DEFAULT '0',
@@ -175,18 +216,20 @@ CREATE TABLE IF NOT EXISTS `customer_order` (
   KEY `customer_id_idx` (`customer_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33820 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table open_cdp.customer_order: ~0 rows (approximately)
-DELETE FROM `customer_order`;
 
--- Dumping structure for table open_cdp.customer_order_detail
-CREATE TABLE IF NOT EXISTS `customer_order_detail` (
+
+# Dump of table customer_order_detail
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `customer_order_detail`;
+
+CREATE TABLE `customer_order_detail` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `customer_order_id` bigint DEFAULT '0',
   `product_id` int NOT NULL,
   `product_info` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
   `sku_id` int DEFAULT '0',
-  `sku_name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `sku_info` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `price` int DEFAULT '0',
   `price_off` int DEFAULT '0',
@@ -197,11 +240,14 @@ CREATE TABLE IF NOT EXISTS `customer_order_detail` (
   KEY `customer_order_id` (`customer_order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33820 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table open_cdp.customer_order_detail: ~0 rows (approximately)
-DELETE FROM `customer_order_detail`;
 
--- Dumping structure for table open_cdp.customer_order_note
-CREATE TABLE IF NOT EXISTS `customer_order_note` (
+
+# Dump of table customer_order_note
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `customer_order_note`;
+
+CREATE TABLE `customer_order_note` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(50) DEFAULT '',
   `type` varchar(30) DEFAULT NULL,
@@ -213,22 +259,28 @@ CREATE TABLE IF NOT EXISTS `customer_order_note` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=583 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.customer_order_note: ~0 rows (approximately)
-DELETE FROM `customer_order_note`;
 
--- Dumping structure for table open_cdp.customer_order_status
-CREATE TABLE IF NOT EXISTS `customer_order_status` (
+
+# Dump of table customer_order_status
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `customer_order_status`;
+
+CREATE TABLE `customer_order_status` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `del_flag` tinyint DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.customer_order_status: ~0 rows (approximately)
-DELETE FROM `customer_order_status`;
 
--- Dumping structure for table open_cdp.customer_personal
-CREATE TABLE IF NOT EXISTS `customer_personal` (
+
+# Dump of table customer_personal
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `customer_personal`;
+
+CREATE TABLE `customer_personal` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `type` varchar(100) DEFAULT NULL,
   `id_card` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
@@ -261,13 +313,23 @@ CREATE TABLE IF NOT EXISTS `customer_personal` (
   KEY `token_idx` (`token_confirm`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.customer_personal: ~0 rows (approximately)
-DELETE FROM `customer_personal`;
-INSERT INTO `customer_personal` (`id`, `type`, `id_card`, `sale_id`, `gender`, `source_id`, `level`, `facebook_id`, `name`, `province_id`, `district_id`, `ward_id`, `address`, `company_name`, `company_id`, `avatar`, `email`, `is_trust_email`, `mobile`, `password`, `token_confirm`, `status`, `date_of_birth`, `created_at`, `updated_at`, `diem_danh_gia`) VALUES
-	(7, 'customer', '03902930390392', NULL, 'other', 3, NULL, NULL, 'Hà NAm', NULL, NULL, NULL, 'Hà Nội', NULL, NULL, NULL, 'long.huu.100@gmail.com', NULL, '0936295123', NULL, NULL, NULL, '1989-11-07 06:32:22', '2022-11-19 06:32:22', '2024-10-21 09:16:40', NULL);
+LOCK TABLES `customer_personal` WRITE;
+/*!40000 ALTER TABLE `customer_personal` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.data
-CREATE TABLE IF NOT EXISTS `data` (
+INSERT INTO `customer_personal` (`id`, `type`, `id_card`, `sale_id`, `gender`, `source_id`, `level`, `facebook_id`, `name`, `province_id`, `district_id`, `ward_id`, `address`, `company_name`, `company_id`, `avatar`, `email`, `is_trust_email`, `mobile`, `password`, `token_confirm`, `status`, `date_of_birth`, `created_at`, `updated_at`, `diem_danh_gia`)
+VALUES
+	(7,'customer','03902930390392',NULL,'other',3,NULL,NULL,'Hà NAm',NULL,NULL,NULL,'Hà Nội',NULL,NULL,NULL,'long.huu.100@gmail.com',NULL,'0936295123',NULL,NULL,NULL,'1989-11-07 13:32:22','2022-11-19 13:32:22','2024-10-21 16:16:40',NULL);
+
+/*!40000 ALTER TABLE `customer_personal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table data
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `data`;
+
+CREATE TABLE `data` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `service_id` int DEFAULT '0',
   `level` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
@@ -305,11 +367,14 @@ CREATE TABLE IF NOT EXISTS `data` (
  PARTITION quihai2022 VALUES LESS THAN (1656608399) ENGINE = InnoDB,
  PARTITION pfuture VALUES LESS THAN MAXVALUE ENGINE = InnoDB) */;
 
--- Dumping data for table open_cdp.data: ~0 rows (approximately)
-DELETE FROM `data`;
 
--- Dumping structure for table open_cdp.data_media
-CREATE TABLE IF NOT EXISTS `data_media` (
+
+# Dump of table data_media
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `data_media`;
+
+CREATE TABLE `data_media` (
   `id` int NOT NULL AUTO_INCREMENT,
   `data_id` int DEFAULT '0',
   `session_id` int DEFAULT '0',
@@ -319,11 +384,14 @@ CREATE TABLE IF NOT EXISTS `data_media` (
   KEY `sessionIdIdx` (`session_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20568 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci COMMENT='store customer files';
 
--- Dumping data for table open_cdp.data_media: ~0 rows (approximately)
-DELETE FROM `data_media`;
 
--- Dumping structure for table open_cdp.data_owner
-CREATE TABLE IF NOT EXISTS `data_owner` (
+
+# Dump of table data_owner
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `data_owner`;
+
+CREATE TABLE `data_owner` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `customer_mobile` varchar(20) NOT NULL,
   `sale_id` int DEFAULT '0',
@@ -334,11 +402,14 @@ CREATE TABLE IF NOT EXISTS `data_owner` (
   KEY `data_owner_mobile` (`customer_mobile`)
 ) ENGINE=InnoDB AUTO_INCREMENT=40608 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.data_owner: ~0 rows (approximately)
-DELETE FROM `data_owner`;
 
--- Dumping structure for table open_cdp.media
-CREATE TABLE IF NOT EXISTS `media` (
+
+# Dump of table media
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `media`;
+
+CREATE TABLE `media` (
   `id` int NOT NULL AUTO_INCREMENT,
   `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `object` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -350,11 +421,14 @@ CREATE TABLE IF NOT EXISTS `media` (
   KEY `o_id_idx` (`object_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2517 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table open_cdp.media: ~0 rows (approximately)
-DELETE FROM `media`;
 
--- Dumping structure for table open_cdp.product
-CREATE TABLE IF NOT EXISTS `product` (
+
+# Dump of table product
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product`;
+
+CREATE TABLE `product` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `service_id` int DEFAULT '0',
@@ -377,13 +451,23 @@ CREATE TABLE IF NOT EXISTS `product` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=750 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.product: ~1 rows (approximately)
-DELETE FROM `product`;
-INSERT INTO `product` (`id`, `code`, `service_id`, `quality_in_stock`, `total_import_stock`, `name`, `slug`, `provider_id`, `unit`, `price`, `price_ref`, `seo_title`, `seo_description`, `seo_content`, `image`, `social`, `status`, `created_time`, `updated_time`) VALUES
-	(749, 'FLJAJAAC', 10008, NULL, NULL, 'Hữu Long', NULL, 10008, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-11-14 09:33:12', '2024-11-14 09:33:12');
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.product_attributed
-CREATE TABLE IF NOT EXISTS `product_attributed` (
+INSERT INTO `product` (`id`, `code`, `service_id`, `quality_in_stock`, `total_import_stock`, `name`, `slug`, `provider_id`, `unit`, `price`, `price_ref`, `seo_title`, `seo_description`, `seo_content`, `image`, `social`, `status`, `created_time`, `updated_time`)
+VALUES
+	(749,'FLJAJAAC',10008,NULL,NULL,'Hữu Long',NULL,10008,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2024-11-14 16:33:12','2024-11-14 16:33:12');
+
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table product_attributed
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_attributed`;
+
+CREATE TABLE `product_attributed` (
   `id` int NOT NULL AUTO_INCREMENT,
   `product_id` int NOT NULL,
   `attributed_id` int DEFAULT NULL,
@@ -393,15 +477,25 @@ CREATE TABLE IF NOT EXISTS `product_attributed` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10038 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.product_attributed: ~3 rows (approximately)
-DELETE FROM `product_attributed`;
-INSERT INTO `product_attributed` (`id`, `product_id`, `attributed_id`, `attributed_value_id`, `name`, `value`) VALUES
-	(10035, 749, 10008, 10009, 'PHong cách', 'Tối giản B+'),
-	(10036, 749, 10009, 10010, 'Kích thước', '30x55x30'),
-	(10037, 749, 10009, 10011, 'Kích thước', '10x40x55');
+LOCK TABLES `product_attributed` WRITE;
+/*!40000 ALTER TABLE `product_attributed` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.product_category
-CREATE TABLE IF NOT EXISTS `product_category` (
+INSERT INTO `product_attributed` (`id`, `product_id`, `attributed_id`, `attributed_value_id`, `name`, `value`)
+VALUES
+	(10035,749,10008,10009,'PHong cách','Tối giản B+'),
+	(10036,749,10009,10010,'Kích thước','30x55x30'),
+	(10037,749,10009,10011,'Kích thước','10x40x55');
+
+/*!40000 ALTER TABLE `product_attributed` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table product_category
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_category`;
+
+CREATE TABLE `product_category` (
   `id` int NOT NULL AUTO_INCREMENT,
   `category_id` int NOT NULL,
   `product_id` int NOT NULL,
@@ -410,11 +504,14 @@ CREATE TABLE IF NOT EXISTS `product_category` (
   KEY `idx-cmp-product_id` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=308 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.product_category: ~0 rows (approximately)
-DELETE FROM `product_category`;
 
--- Dumping structure for table open_cdp.product_image
-CREATE TABLE IF NOT EXISTS `product_image` (
+
+# Dump of table product_image
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_image`;
+
+CREATE TABLE `product_image` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `product_id` int unsigned DEFAULT '0',
   `file_name` varchar(255) DEFAULT '',
@@ -423,11 +520,14 @@ CREATE TABLE IF NOT EXISTS `product_image` (
   KEY `product_id_index` (`product_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=21589 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.product_image: ~0 rows (approximately)
-DELETE FROM `product_image`;
 
--- Dumping structure for table open_cdp.product_property
-CREATE TABLE IF NOT EXISTS `product_property` (
+
+# Dump of table product_property
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_property`;
+
+CREATE TABLE `product_property` (
   `id` int NOT NULL AUTO_INCREMENT,
   `product_id` int NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
@@ -435,35 +535,46 @@ CREATE TABLE IF NOT EXISTS `product_property` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10018 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.product_property: ~1 rows (approximately)
-DELETE FROM `product_property`;
-INSERT INTO `product_property` (`id`, `product_id`, `name`, `value`) VALUES
-	(10017, 749, 'Môi trường', 'Ánh sáng dưới 30C');
+LOCK TABLES `product_property` WRITE;
+/*!40000 ALTER TABLE `product_property` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.product_service
-CREATE TABLE IF NOT EXISTS `product_service` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
+INSERT INTO `product_property` (`id`, `product_id`, `name`, `value`)
+VALUES
+	(10017,749,'Môi trường','Ánh sáng dưới 30C');
 
--- Dumping data for table open_cdp.product_service: ~0 rows (approximately)
-DELETE FROM `product_service`;
+/*!40000 ALTER TABLE `product_property` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- Dumping structure for table open_cdp.product_skus
-CREATE TABLE IF NOT EXISTS `product_skus` (
+
+# Dump of table product_skus
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_skus`;
+
+CREATE TABLE `product_skus` (
   `id` int NOT NULL AUTO_INCREMENT,
   `product_id` int NOT NULL,
+  `del` int DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10017 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.product_skus: ~1 rows (approximately)
-DELETE FROM `product_skus`;
-INSERT INTO `product_skus` (`id`, `product_id`) VALUES
-	(10016, 749);
+LOCK TABLES `product_skus` WRITE;
+/*!40000 ALTER TABLE `product_skus` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.product_skus_details
-CREATE TABLE IF NOT EXISTS `product_skus_details` (
+INSERT INTO `product_skus` (`id`, `product_id`, `del`)
+VALUES
+	(10016,749,0);
+
+/*!40000 ALTER TABLE `product_skus` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table product_skus_details
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_skus_details`;
+
+CREATE TABLE `product_skus_details` (
   `id` int NOT NULL AUTO_INCREMENT,
   `product_id` int NOT NULL,
   `sku_id` int NOT NULL DEFAULT '0',
@@ -471,17 +582,28 @@ CREATE TABLE IF NOT EXISTS `product_skus_details` (
   `value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `attributed_id` int NOT NULL,
   `attributed_value_id` int NOT NULL,
+  `del` int DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10012 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.product_skus_details: ~2 rows (approximately)
-DELETE FROM `product_skus_details`;
-INSERT INTO `product_skus_details` (`id`, `product_id`, `sku_id`, `name`, `value`, `attributed_id`, `attributed_value_id`) VALUES
-	(10010, 749, 10016, 'PHong cách', 'Tối giản B+', 10008, 10009),
-	(10011, 749, 10016, 'Kích thước', '30x55x30', 10009, 10010);
+LOCK TABLES `product_skus_details` WRITE;
+/*!40000 ALTER TABLE `product_skus_details` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.product_skus_price
-CREATE TABLE IF NOT EXISTS `product_skus_price` (
+INSERT INTO `product_skus_details` (`id`, `product_id`, `sku_id`, `name`, `value`, `attributed_id`, `attributed_value_id`, `del`)
+VALUES
+	(10010,749,10016,'PHong cách','Tối giản B+',10008,10009,0),
+	(10011,749,10016,'Kích thước','30x55x30',10009,10010,1);
+
+/*!40000 ALTER TABLE `product_skus_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table product_skus_price
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_skus_price`;
+
+CREATE TABLE `product_skus_price` (
   `id` int NOT NULL AUTO_INCREMENT,
   `sku_id` int NOT NULL,
   `product_id` int NOT NULL,
@@ -493,27 +615,47 @@ CREATE TABLE IF NOT EXISTS `product_skus_price` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10014 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.product_skus_price: ~1 rows (approximately)
-DELETE FROM `product_skus_price`;
-INSERT INTO `product_skus_price` (`id`, `sku_id`, `product_id`, `quantity_from`, `quantity_to`, `price_ref`, `price`, `price_import`) VALUES
-	(10013, 10016, 749, 1, 10, 0, 1000000, 0);
+LOCK TABLES `product_skus_price` WRITE;
+/*!40000 ALTER TABLE `product_skus_price` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.product_type
-CREATE TABLE IF NOT EXISTS `product_type` (
+INSERT INTO `product_skus_price` (`id`, `sku_id`, `product_id`, `quantity_from`, `quantity_to`, `price_ref`, `price`, `price_import`)
+VALUES
+	(10013,10016,749,1,10,0,1000000,0);
+
+/*!40000 ALTER TABLE `product_skus_price` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table product_type
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product_type`;
+
+CREATE TABLE `product_type` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10011 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.product_type: ~3 rows (approximately)
-DELETE FROM `product_type`;
-INSERT INTO `product_type` (`id`, `name`) VALUES
-	(10008, 'Software'),
-	(10009, 'Hardware'),
-	(10010, 'Co.Center');
+LOCK TABLES `product_type` WRITE;
+/*!40000 ALTER TABLE `product_type` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.provider
-CREATE TABLE IF NOT EXISTS `provider` (
+INSERT INTO `product_type` (`id`, `name`)
+VALUES
+	(10008,'Software'),
+	(10009,'Hardware'),
+	(10010,'Co.Center');
+
+/*!40000 ALTER TABLE `product_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table provider
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `provider`;
+
+CREATE TABLE `provider` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
@@ -523,13 +665,23 @@ CREATE TABLE IF NOT EXISTS `provider` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10009 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.provider: ~0 rows (approximately)
-DELETE FROM `provider`;
-INSERT INTO `provider` (`id`, `name`, `address`, `presentation`, `mobile`, `status`) VALUES
-	(10008, 'Flast Solution', '35  Lê Văn Lương', 'H.T.M.D', '098793891', 1);
+LOCK TABLES `provider` WRITE;
+/*!40000 ALTER TABLE `provider` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.shipping
-CREATE TABLE IF NOT EXISTS `shipping` (
+INSERT INTO `provider` (`id`, `name`, `address`, `presentation`, `mobile`, `status`)
+VALUES
+	(10008,'Flast Solution','35  Lê Văn Lương','H.T.M.D','098793891',1);
+
+/*!40000 ALTER TABLE `provider` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table shipping
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `shipping`;
+
+CREATE TABLE `shipping` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `stock_id` int DEFAULT NULL,
   `customer_phone` varchar(30) DEFAULT NULL,
@@ -554,11 +706,14 @@ CREATE TABLE IF NOT EXISTS `shipping` (
   KEY `trans_code_idx` (`transporter_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.shipping: ~0 rows (approximately)
-DELETE FROM `shipping`;
 
--- Dumping structure for table open_cdp.shipping_history
-CREATE TABLE IF NOT EXISTS `shipping_history` (
+
+# Dump of table shipping_history
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `shipping_history`;
+
+CREATE TABLE `shipping_history` (
   `id` int NOT NULL AUTO_INCREMENT,
   `order_code` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `detail_code` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
@@ -582,11 +737,14 @@ CREATE TABLE IF NOT EXISTS `shipping_history` (
   KEY `order_code_index` (`order_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11459 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table open_cdp.shipping_history: ~0 rows (approximately)
-DELETE FROM `shipping_history`;
 
--- Dumping structure for table open_cdp.stock
-CREATE TABLE IF NOT EXISTS `stock` (
+
+# Dump of table stock
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `stock`;
+
+CREATE TABLE `stock` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT '',
   `mobile` varchar(20) DEFAULT NULL,
@@ -600,21 +758,27 @@ CREATE TABLE IF NOT EXISTS `stock` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.stock: ~0 rows (approximately)
-DELETE FROM `stock`;
 
--- Dumping structure for table open_cdp.transporter
-CREATE TABLE IF NOT EXISTS `transporter` (
+
+# Dump of table transporter
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `transporter`;
+
+CREATE TABLE `transporter` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10008 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.transporter: ~0 rows (approximately)
-DELETE FROM `transporter`;
 
--- Dumping structure for table open_cdp.user
-CREATE TABLE IF NOT EXISTS `user` (
+
+# Dump of table user
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user`;
+
+CREATE TABLE `user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `sso_id` varchar(30) NOT NULL,
   `password` varchar(100) NOT NULL,
@@ -628,14 +792,24 @@ CREATE TABLE IF NOT EXISTS `user` (
   UNIQUE KEY `sso_id` (`sso_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1637 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.user: ~2 rows (approximately)
-DELETE FROM `user`;
-INSERT INTO `user` (`id`, `sso_id`, `password`, `firebase_token`, `layout`, `full_name`, `phone`, `email`, `status`) VALUES
-	(2, 'admin', '$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.', 'fqSSpT_mou2h1B_ygwekc1:APA91bE3xxIiIMzFivcG6liPBlW-6CspSPwAo4yQ6bXY8h4Y_Y9XdoITmRF-URsXm8KUhS71f6km37Kx8JnDeIJ8e2E21-4Wt9X-e7p2aL6YnIPTAmgRnv4qF16aR6vBrxQNtuZ6WIRc', 'UserLayout', 'Administrator', '', 'flast.vn@gmail.com', 1),
-	(67, 'longhuu', '$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.', 'd-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv', 'SaleLayout', 'Hữu Long', '', 'long.huu.100@gmail.com', 1);
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.user_kpi
-CREATE TABLE IF NOT EXISTS `user_kpi` (
+INSERT INTO `user` (`id`, `sso_id`, `password`, `firebase_token`, `layout`, `full_name`, `phone`, `email`, `status`)
+VALUES
+	(2,'admin','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','fqSSpT_mou2h1B_ygwekc1:APA91bE3xxIiIMzFivcG6liPBlW-6CspSPwAo4yQ6bXY8h4Y_Y9XdoITmRF-URsXm8KUhS71f6km37Kx8JnDeIJ8e2E21-4Wt9X-e7p2aL6YnIPTAmgRnv4qF16aR6vBrxQNtuZ6WIRc','UserLayout','Administrator','','flast.vn@gmail.com',1),
+	(67,'longhuu','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','Hữu Long','','long.huu.100@gmail.com',1);
+
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table user_kpi
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_kpi`;
+
+CREATE TABLE `user_kpi` (
   `id` int NOT NULL AUTO_INCREMENT,
   `department` int DEFAULT '0',
   `type` int DEFAULT '0',
@@ -647,11 +821,14 @@ CREATE TABLE IF NOT EXISTS `user_kpi` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1021 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Dumping data for table open_cdp.user_kpi: ~0 rows (approximately)
-DELETE FROM `user_kpi`;
 
--- Dumping structure for table open_cdp.user_link_profile
-CREATE TABLE IF NOT EXISTS `user_link_profile` (
+
+# Dump of table user_link_profile
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_link_profile`;
+
+CREATE TABLE `user_link_profile` (
   `user_id` bigint NOT NULL,
   `user_profile_id` bigint NOT NULL,
   PRIMARY KEY (`user_id`,`user_profile_id`),
@@ -660,104 +837,139 @@ CREATE TABLE IF NOT EXISTS `user_link_profile` (
   CONSTRAINT `FK_USER_PROFILE` FOREIGN KEY (`user_profile_id`) REFERENCES `user_profile` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.user_link_profile: ~3 rows (approximately)
-DELETE FROM `user_link_profile`;
-INSERT INTO `user_link_profile` (`user_id`, `user_profile_id`) VALUES
-	(2, 2),
-	(67, 3),
-	(67, 5);
+LOCK TABLES `user_link_profile` WRITE;
+/*!40000 ALTER TABLE `user_link_profile` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.user_permision
-CREATE TABLE IF NOT EXISTS `user_permision` (
+INSERT INTO `user_link_profile` (`user_id`, `user_profile_id`)
+VALUES
+	(2,2),
+	(67,3),
+	(67,5);
+
+/*!40000 ALTER TABLE `user_link_profile` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table user_permision
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_permision`;
+
+CREATE TABLE `user_permision` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `action` varchar(100) NOT NULL,
   `roles` varchar(255) NOT NULL DEFAULT 'hasRole(''USER'')',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.user_permision: ~0 rows (approximately)
-DELETE FROM `user_permision`;
-INSERT INTO `user_permision` (`id`, `action`, `roles`) VALUES
-	(16, '/data/**', 'any'),
-	(20, '/user-group/**', 'any'),
-	(28, '/sale/list-file', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(38, '/sale/lists-data', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(39, '/sale/lists-order', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(40, '/sale/list-order-types', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(42, '/sale/create-order-detail', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(43, '/sale/update-order-detail', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(44, '/sale/update-order', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(46, '/sale/delete-order', 'hasRole(\'ADMIN\')'),
-	(47, '/sale/delete-order-detail', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(51, '/sale/report', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(52, '/sale/uploads', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(56, '/sale/month-sale-report', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(57, '/sale/weekly-sale-report', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
-	(63, '/customer/**', 'any'),
-	(64, '/admin/**', 'hasRole(\'ADMIN\') '),
-	(67, '/sale/lists-cohoi', 'hasRole(\'ADMIN\') or hasRole(\'SALE\')');
+LOCK TABLES `user_permision` WRITE;
+/*!40000 ALTER TABLE `user_permision` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.user_profile
-CREATE TABLE IF NOT EXISTS `user_profile` (
+INSERT INTO `user_permision` (`id`, `action`, `roles`)
+VALUES
+	(16,'/data/**','any'),
+	(20,'/user-group/**','any'),
+	(28,'/sale/list-file','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(38,'/sale/lists-data','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(39,'/sale/lists-order','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(40,'/sale/list-order-types','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(42,'/sale/create-order-detail','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(43,'/sale/update-order-detail','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(44,'/sale/update-order','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(46,'/sale/delete-order','hasRole(\'ADMIN\')'),
+	(47,'/sale/delete-order-detail','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(51,'/sale/report','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(52,'/sale/uploads','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(56,'/sale/month-sale-report','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(57,'/sale/weekly-sale-report','hasRole(\'ADMIN\') or hasRole(\'SALE\')'),
+	(63,'/customer/**','any'),
+	(64,'/admin/**','hasRole(\'ADMIN\') '),
+	(67,'/sale/lists-cohoi','hasRole(\'ADMIN\') or hasRole(\'SALE\')');
+
+/*!40000 ALTER TABLE `user_permision` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table user_profile
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_profile`;
+
+CREATE TABLE `user_profile` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `type` varchar(30) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type` (`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.user_profile: ~0 rows (approximately)
-DELETE FROM `user_profile`;
-INSERT INTO `user_profile` (`id`, `type`) VALUES
-	(2, 'ROLE_ADMIN'),
-	(3, 'ROLE_DBA'),
-	(5, 'ROLE_SALE'),
-	(13, 'ROLE_SALE_MANAGER'),
-	(1, 'ROLE_USER');
+LOCK TABLES `user_profile` WRITE;
+/*!40000 ALTER TABLE `user_profile` DISABLE KEYS */;
 
--- Dumping structure for table open_cdp.warehouse
-CREATE TABLE IF NOT EXISTS `warehouse` (
+INSERT INTO `user_profile` (`id`, `type`)
+VALUES
+	(2,'ROLE_ADMIN'),
+	(3,'ROLE_DBA'),
+	(5,'ROLE_SALE'),
+	(13,'ROLE_SALE_MANAGER'),
+	(1,'ROLE_USER');
+
+/*!40000 ALTER TABLE `user_profile` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table warehouse
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `warehouse`;
+
+CREATE TABLE `warehouse` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `stock_id` int DEFAULT NULL,
   `stock_name` varchar(255) DEFAULT NULL,
   `user_name` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `product_id` int NOT NULL,
-  `product_sku_id` int NOT NULL,
-  `sku_name` varchar(255) DEFAULT NULL,
+  `sku_id` int NOT NULL,
+  `sku_info` varchar(255) DEFAULT NULL,
   `fee` int DEFAULT '0',
   `quality` int DEFAULT '0',
   `total` int DEFAULT '0',
   `in_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `product_idx` (`product_id`),
-  KEY `sku_idx` (`product_sku_id`),
+  KEY `sku_idx` (`sku_id`),
   KEY `stock_idx` (`stock_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=269 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.warehouse: ~0 rows (approximately)
-DELETE FROM `warehouse`;
 
--- Dumping structure for table open_cdp.warehouse_history
-CREATE TABLE IF NOT EXISTS `warehouse_history` (
+
+# Dump of table warehouse_history
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `warehouse_history`;
+
+CREATE TABLE `warehouse_history` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `warehouse_retain_id` int NOT NULL,
   `stock_id` int DEFAULT NULL,
   `user_name` varchar(100) DEFAULT NULL,
   `product_id` int NOT NULL,
-  `product_sku_id` int NOT NULL,
+  `sku_id` int NOT NULL,
+  `sku_info` text,
   `fee` int DEFAULT '0',
   `quality` int DEFAULT '0',
   `in_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `product_retain_idx` (`product_id`,`warehouse_retain_id`),
-  KEY `sku_idx` (`product_sku_id`),
+  KEY `sku_idx` (`sku_id`),
   KEY `stock_idx` (`stock_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=329 DEFAULT CHARSET=utf8mb3;
 
--- Dumping data for table open_cdp.warehouse_history: ~0 rows (approximately)
-DELETE FROM `warehouse_history`;
 
-/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
-/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
