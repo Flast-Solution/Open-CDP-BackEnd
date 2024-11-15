@@ -1,6 +1,5 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,13 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Date;
 
 @Table(name = "warehouse")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class Warehouse {
 
     @Id
@@ -35,11 +32,11 @@ public class Warehouse {
     @Column(name = "product_id")
     private Long productId;
 
-    @Column(name = "product_sku_id")
-    private Long productSkuId;
+    @Column(name = "sku_id")
+    private Long skuId;
 
-    @Column(name = "sku_name")
-    private String skuName;
+    @Column(name = "sku_info")
+    private String skuInfo;
 
     @Column(name = "fee")
     private Long fee;

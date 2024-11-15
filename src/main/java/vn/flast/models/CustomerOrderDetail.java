@@ -38,9 +38,6 @@ public class CustomerOrderDetail {
     @Column(name = "sku_id")
     private Long skuId;
 
-    @Column(name = "sku_name")
-    private String skuName;
-
     @Column(name = "sku_info")
     private String skuInfo;
 

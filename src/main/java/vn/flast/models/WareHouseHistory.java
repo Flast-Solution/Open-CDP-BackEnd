@@ -32,8 +32,11 @@ public class WareHouseHistory {
     @Column(name = "product_id")
     private Long productId;
 
-    @Column(name = "product_sku_id")
-    private Long productSkuId;
+    @Column(name = "sku_id")
+    private Long skuId;
+
+    @Column(name = "sku_info")
+    private String skuInfo;
 
     @Column(name = "fee")
     private Long fee;
