@@ -36,4 +36,7 @@ public class ProductSkusDetails {
 
     @Column(name = "attributed_value_id")
     private Long attributedValueId =0l;
+
+    @Column(name = "del")
+    private Integer del = 0;
 }

@@ -5,7 +5,10 @@ import vn.flast.utils.NumberUtils;
 public record ProductFilter(
     String name,
     Integer page,
-    Integer limit
+    Integer limit,
+    Integer status,
+    String code,
+    Integer providerId
 ) {
     @Override
     public Integer page() {
