@@ -3,10 +3,8 @@ package vn.flast.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.entities.PriceRange;
 import vn.flast.entities.SaleProduct;
 import vn.flast.entities.SkuAttributed;
 import vn.flast.models.Attributed;
@@ -150,9 +148,11 @@ public class ProductService {
     }
 
     public Ipage<?> fetch(ProductFilter filter){
+
         int LIMIT = filter.limit();
         int PAGE = filter.page();
         int OFFSET = (filter.page()) * LIMIT;
+
         final String totalSQL = "FROM `product` p ";
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
         sqlBuilder.addIntegerEquals("p.status", filter.status());
@@ -160,12 +160,15 @@ public class ProductService {
         sqlBuilder.addStringEquals("p.name", filter.name());
         sqlBuilder.addIntegerEquals("p.provider_id", filter.providerId());
         sqlBuilder.addOrderBy("ORDER BY p.id DESC");
+
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
         Long count = sqlBuilder.countOrSumQuery(countQuery);
+
         var nativeQuery = entityManager.createNativeQuery("SELECT p.* " + finalQuery, Product.class);
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
+
         var lists = EntityQuery.getListOfNativeQuery(nativeQuery, Product.class);
         List<SaleProduct> listSaleProduct = lists.stream().map(product -> {
             SaleProduct saleProduct = new SaleProduct();
