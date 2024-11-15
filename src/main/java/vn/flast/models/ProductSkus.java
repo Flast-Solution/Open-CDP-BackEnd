@@ -27,6 +27,9 @@ public class ProductSkus {
     @Column(name = "product_id")
     private Long productId;
 
+    @Column(name = "del")
+    private Integer del = 0;
+
     @Transient
     private List<PriceRange> listPriceRange;
 
