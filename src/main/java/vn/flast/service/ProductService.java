@@ -82,10 +82,10 @@ public class ProductService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Product createdProduct(SaleProduct input){
+    public Product saveProduct(SaleProduct input){
         if(input.getCode() == null) {
             Provider provider = providerRepository.findById(input.getProviderId()).orElseThrow(
-                    () -> new RuntimeException("Nhà cung cấp chưa tồn tại")
+                () -> new RuntimeException("Nhà cung cấp chưa tồn tại")
             );
             String twoLetterService = provider.getName().substring(0, 2);
             String name = Common.deAccent(input.getName());
@@ -135,7 +135,9 @@ public class ProductService {
             return property;
         }).toList();
         productPropertyRepository.saveAll(productPropertyList);
-        saveSkuproduct(input.getSkus(), data.getId());
+
+        /* Save SKU */
+        saveSkuProduct(input.getSkus(), data.getId());
         return data;
     }
 
@@ -184,17 +186,16 @@ public class ProductService {
         productsRepository.delete(data);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void saveSkuproduct(List<ProductSkus> input, Long productId){
+    public void saveSkuProduct(List<ProductSkus> input, Long productId){
         var productSkuOld = productSkusRepository.findByProductId(productId);
         Set<Long> inputSkuIds = input.stream()
-                .map(ProductSkus::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+            .map(ProductSkus::getId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
         List<Long> skusToDelete = productSkuOld.stream()
-                .filter(sku -> !inputSkuIds.contains(sku.getId()))
-                .map(ProductSkus::getId)
-                .collect(Collectors.toList());
+            .map(ProductSkus::getId)
+            .filter(id -> !inputSkuIds.contains(id))
+            .collect(Collectors.toList());
         if (!skusToDelete.isEmpty()) {
             productSkusRepository.updateDelProductSkus(productId,skusToDelete);
         }
@@ -215,25 +216,25 @@ public class ProductService {
                 price.setPrice(priceRange.getPrice());
                 skusPriceRepository.save(price);
             });
-            var skudetailold = productSkusDetailsRepository.findBySkuId(savedSku.getId());
-            Set<Integer> inputSkudetailIds = productSkus.getSku().stream()
-                    .map(SkuAttributed::getId)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
-            List<Integer> skusDetailToDelete = skudetailold.stream()
-                    .filter(sku -> !inputSkudetailIds.contains(sku.getId()))
-                    .map(ProductSkusDetails::getId)
-                    .collect(Collectors.toList());
+            var skuDetailOld = productSkusDetailsRepository.findBySkuId(savedSku.getId());
+            Set<Integer> inputSkuDetailIds = productSkus.getSku().stream()
+                .map(SkuAttributed::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+            List<Integer> skusDetailToDelete = skuDetailOld.stream()
+                .map(ProductSkusDetails::getId)
+                .filter(id -> !inputSkuDetailIds.contains(id))
+                .collect(Collectors.toList());
             if (!skusToDelete.isEmpty()) {
                 productSkusDetailsRepository.updateDelProductSkus(productId,skusDetailToDelete);
             }
             productSkus.getSku().forEach(sku -> {
                 ProductSkusDetails skusDetails = new ProductSkusDetails();
                 Attributed attributed = attributedRepository.findById(sku.getAttributedId()).orElseThrow(
-                        () -> new RuntimeException("không tồn tại bản ghi")
+                    () -> new RuntimeException("không tồn tại bản ghi")
                 );
                 AttributedValue attributedValue = attributedValueRepository.findById(sku.getAttributedValueId()).orElseThrow(
-                        () -> new RuntimeException("không tồn tại bản ghi")
+                    () -> new RuntimeException("không tồn tại bản ghi")
                 );
                 CopyProperty.CopyIgnoreNull(sku, skusDetails);
                 skusDetails.setSkuId(savedSku.getId());
@@ -244,5 +245,4 @@ public class ProductService {
             });
         });
     }
-
 }

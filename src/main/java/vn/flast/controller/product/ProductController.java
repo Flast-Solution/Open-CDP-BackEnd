@@ -1,7 +1,5 @@
 package vn.flast.controller.product;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -14,11 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.SaleProduct;
 import vn.flast.models.Product;
-import vn.flast.pagination.Ipage;
 import vn.flast.repositories.ProductRepository;
 import vn.flast.searchs.ProductFilter;
 import vn.flast.service.ProductService;
-import vn.flast.utils.EntityQuery;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
@@ -31,9 +27,6 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @PostMapping("/update-content-seo")
     public MyResponse<?> seoCreate(@Valid @RequestBody Product input, Errors errors) {
         if(errors.hasErrors()) {
@@ -44,13 +37,13 @@ public class ProductController {
         return MyResponse.response(data, "Cập nhật thành công .!");
     }
 
-    @PostMapping("/create")
-    public MyResponse<?> create(@Valid @RequestBody SaleProduct input, Errors errors) {
+    @PostMapping("/save")
+    public MyResponse<?> saveProduct(@Valid @RequestBody SaleProduct input, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var data = productService.createdProduct(input);
+        var data = productService.saveProduct(input);
         return MyResponse.response(data, "Cập nhật thành công .!");
     }
 
