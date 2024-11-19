@@ -11,6 +11,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,13 +32,13 @@ public class CustomerOrder {
     private Long dataId;
 
     @Column(name = "service_id")
-    private Long serviceId;
+    private Integer serviceId;
 
     @Column(name = "channel_id")
-    private Long channelId;
+    private Integer channelId;
 
     @Column(name = "enterprise_id")
-    private Long enterpriseId;
+    private Integer enterpriseId;
 
     @Column(name = "enterprise_name")
     private String enterpriseName;
@@ -48,7 +50,7 @@ public class CustomerOrder {
     private String code;
 
     @Column(name = "total_not_vat")
-    private Long totalNotVat;
+    private Double totalNotVat;
 
     @Column(name = "customer_id")
     private Long customerId;
@@ -60,13 +62,13 @@ public class CustomerOrder {
     private String customerAddress;
 
     @Column(name = "customer_ward_id")
-    private Long customerWardId;
+    private Integer customerWardId;
 
     @Column(name = "customer_district_id")
-    private Long customerDistrictId;
+    private Integer customerDistrictId;
 
     @Column(name = "customer_province_id")
-    private Long customerProvinceId;
+    private Integer customerProvinceId;
 
     @Column(name = "customer_mobile_phone")
     private String customerMobilePhone;
@@ -81,37 +83,37 @@ public class CustomerOrder {
     private String discountInfo;
 
     @Column(name = "subtotal")
-    private Long subtotal;
+    private Double subtotal;
 
     @Column(name = "price_off")
-    private Long priceOff;
+    private Double priceOff;
 
     @Column(name = "voucher")
     private String voucher;
 
     @Column(name = "shipping_cost")
-    private Long shippingCost;
+    private Integer shippingCost;
 
     @Column(name = "shipping_real")
-    private Long shippingReal;
+    private Integer shippingReal;
 
     @Column(name = "cod_cost")
-    private Long codCost;
+    private Integer codCost;
 
     @Column(name = "transport_type_id")
-    private Long transportTypeId;
+    private Integer transportTypeId;
 
     @Column(name = "total")
-    private Long total;
+    private Double total;
 
     @Column(name = "vat")
-    private Long vat;
+    private Integer vat;
 
     @Column(name = "fee_import")
     private Long feeImport;
 
     @Column(name = "paid")
-    private Long paid;
+    private Double paid;
 
     @Column(name = "flag_free_ship")
     private String flagFreeShip;
@@ -128,14 +130,8 @@ public class CustomerOrder {
     @Column(name = "paid_time")
     private Date paidTime;
 
-    @Column(name = "created_at")
-    private Long createdAt;
-
-    @Column(name = "updated_at")
-    private Long updatedAt;
-
     @Column(name = "done_at")
-    private Long doneAt;
+    private Date doneAt;
 
     @Column(name = "user_create_id")
     private Long userCreateId;
@@ -144,19 +140,27 @@ public class CustomerOrder {
     private String userCreateUsername;
 
     @Column(name = "source")
-    private Long source;
+    private Integer source;
 
     @Column(name = "faulty")
-    private Long faulty;
+    private Integer faulty;
 
     @Column(name = "status")
-    private Long status;
+    private Integer status;
 
     @Column(name = "type")
-    private Long type;
+    private String type;
 
     @Column(name = "opportunity_at")
     private Date opportunityAt;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     @OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
     private Collection<CustomerOrderDetail> orderDetails;

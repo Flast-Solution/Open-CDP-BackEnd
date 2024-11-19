@@ -1,4 +1,4 @@
-package vn.flast.controller.order;
+package vn.flast.domains.order;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

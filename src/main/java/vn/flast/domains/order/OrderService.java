@@ -1,4 +1,4 @@
-package vn.flast.service;
+package vn.flast.domains.order;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -8,6 +8,11 @@ import org.springframework.stereotype.Service;
 import vn.flast.entities.OrderResponse;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
+import vn.flast.orchestration.EventDelegate;
+import vn.flast.orchestration.EventTopic;
+import vn.flast.orchestration.Message;
+import vn.flast.orchestration.MessageInterface;
+import vn.flast.orchestration.Publisher;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderRepository;
@@ -16,12 +21,17 @@ import vn.flast.searchs.OrderFilter;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
+import vn.flast.utils.NumberUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
-public class OrderService {
+public class OrderService  implements Publisher, Serializable {
+
+    private EventDelegate eventDelegate;
 
     @Autowired
     private EntityManager entityManager;
@@ -69,9 +79,33 @@ public class OrderService {
     }
 
     @Transactional(rollbackOn = { Exception.class })
-    public CustomerOrder create(CustomerOrder order) {
-        orderRepository.save(order);
+    public CustomerOrder create(OrderInput input) {
+        var order = new CustomerOrder();
+        order.setCode(OrderUtils.createOrderCode());
+        order.setUserCreateUsername(Common.getSsoId());
+        input.transformOrder(order);
+
+        if(NumberUtils.isNotNull(order.getId())) {
+            var entity = orderRepository.findById(order.getId()).orElseThrow(
+                () -> new ResourceNotFoundException("Not Found Order .!")
+            );
+            CopyProperty.CopyIgnoreNull(order, entity);
+        } else {
+            orderRepository.save(order);
+        }
+
+        var listDetails = input.transformOnCreateDetail(order);
+        order.setOrderDetails(listDetails);
+        detailRepository.saveAll(listDetails);
+
+        OrderUtils.calculatorPrice(order);
+        this.sendMessageOnOrderChange(order);
         return order;
+    }
+
+    public void sendMessageOnOrderChange(CustomerOrder order) {
+        var message = Message.create(EventTopic.ORDER_CHANGE, order.clone());
+        this.publish(message);
     }
 
     @Transactional
@@ -96,5 +130,17 @@ public class OrderService {
             () -> new ResourceNotFoundException("Order not found .!")
         );
         return withOrderDetail(order);
+    }
+
+    @Override
+    public void setDelegate(EventDelegate eventDelegate) {
+        this.eventDelegate = eventDelegate;
+    }
+
+    @Override
+    public void publish(MessageInterface message) {
+        if(Objects.nonNull(eventDelegate)) {
+            eventDelegate.sendEvent(message);
+        }
     }
 }

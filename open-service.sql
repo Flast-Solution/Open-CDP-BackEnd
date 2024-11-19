@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_cdp
-# Generation Time: 2024-11-15 08:16:11 +0000
+# Generation Time: 2024-11-19 15:47:44 +0000
 # ************************************************************
 
 
@@ -236,6 +236,9 @@ CREATE TABLE `customer_order_detail` (
   `total` int DEFAULT '0',
   `ship_status` int DEFAULT '0',
   `ship_done_at` timestamp NULL DEFAULT NULL,
+  `status` int DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `customer_order_id` (`customer_order_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33820 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;

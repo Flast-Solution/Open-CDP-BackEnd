@@ -1,4 +1,4 @@
-package vn.flast.controller.order;
+package vn.flast.domains.order;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.CustomerOrder;
 import vn.flast.searchs.OrderFilter;
-import vn.flast.service.OrderService;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
