@@ -21,7 +21,6 @@ public record OrderInput(
     OrderDiscount discount,
     OrderPaymentInfo paymentInfo,
     Integer vat,
-    Boolean isConfirmed,
     Double subTotal,
     Double total,
     List<CustomerOrderDetail> orderDetails,

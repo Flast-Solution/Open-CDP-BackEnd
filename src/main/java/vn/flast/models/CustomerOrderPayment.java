@@ -35,10 +35,16 @@ public class CustomerOrderPayment {
     @Column(name = "sso_id")
     private String ssoId;
 
+    @Column(name = "is_confirm")
+    private Integer isConfirm;
+
     @Column(name = "content")
     private String content;
 
     @CreationTimestamp
     @Column(name = "in_time", nullable = false)
     private Date inTime;
+
+    @Column(name = "confirm_time")
+    private Date confirmTime;
 }

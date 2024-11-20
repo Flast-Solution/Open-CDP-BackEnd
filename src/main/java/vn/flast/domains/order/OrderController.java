@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
-import vn.flast.models.CustomerOrder;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.validator.ValidationErrorBuilder;
 
@@ -21,13 +20,13 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("/create")
-    public MyResponse<?> create(@Valid @RequestBody CustomerOrder entity, Errors errors) {
+    @PostMapping("/save")
+    public MyResponse<?> create(@Valid @RequestBody OrderInput entity, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Input invalid .!");
         }
-        var order = orderService.create(entity);
+        var order = orderService.save(entity);
         return MyResponse.response(order);
     }
 

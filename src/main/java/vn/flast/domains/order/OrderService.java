@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Service("orderService")
 public class OrderService  implements Publisher, Serializable {
 
     private EventDelegate eventDelegate;
@@ -79,7 +79,7 @@ public class OrderService  implements Publisher, Serializable {
     }
 
     @Transactional(rollbackOn = { Exception.class })
-    public CustomerOrder create(OrderInput input) {
+    public CustomerOrder save(OrderInput input) {
         var order = new CustomerOrder();
         order.setCode(OrderUtils.createOrderCode());
         order.setUserCreateUsername(Common.getSsoId());

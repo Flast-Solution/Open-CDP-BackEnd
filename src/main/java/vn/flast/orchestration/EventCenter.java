@@ -16,25 +16,23 @@ public class EventCenter extends ActionThread implements EventDelegate {
 
     private PubSubService pubSubService;
 
+    /* ============== Publisher ============= */
     @Autowired
-    @Qualifier("dataChanelService")
-    private Subscriber dataSubscriber;
-
-    @Autowired
-    @Qualifier("customerService")
-    private Subscriber customerSubscriber;
-
-    @Autowired
-    @Qualifier("packageService")
-    private Subscriber packageService;
-
-    @Autowired
-    @Qualifier("dataChanelService")
+    @Qualifier("dataService")
     private Publisher dataPublisher;
 
     @Autowired
     @Qualifier("orderService")
     private Publisher orderPublisher;
+
+    /* ============== Subscriber ============= */
+    @Autowired
+    @Qualifier("dataService")
+    private Subscriber dataSubscriber;
+
+    @Autowired
+    @Qualifier("customerService")
+    private Subscriber customerSubscriber;
 
     private final List<Subscriber> subscriberList  = new ArrayList<>();
 
@@ -45,8 +43,8 @@ public class EventCenter extends ActionThread implements EventDelegate {
         /* set Delegate cho các Publisher */
         orderPublisher.setDelegate(this);
         dataPublisher.setDelegate(this);
-        /* otherSubscriber */
-        addSubscriber();
+        /* Subscriber */
+        this.addSubscriber();
         /* Thread Execute */
         this.execute();
     }
@@ -54,16 +52,14 @@ public class EventCenter extends ActionThread implements EventDelegate {
     private void addSubscriber() {
         customerSubscriber.addSubscriber(EventTopic.ORDER_CHANGE, pubSubService);
         customerSubscriber.addSubscriber(EventTopic.DATA_CHANGE, pubSubService);
-        packageService.addSubscriber(EventTopic.ORDER_CHANGE, pubSubService);
 
         subscriberList.add(dataSubscriber);
         subscriberList.add(customerSubscriber);
-        subscriberList.add(packageService);
     }
 
     @Override
     protected void onKilling() {
-        EventTopic.allTopic().forEach( topic -> subscriberList.forEach(s -> s.unSubscribe(topic, pubSubService)));
+        EventTopic.allTopic().forEach(topic -> subscriberList.forEach(s -> s.unSubscribe(topic, pubSubService)));
         subscriberList.clear();
     }
 

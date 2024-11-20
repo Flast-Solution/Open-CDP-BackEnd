@@ -2,9 +2,16 @@ package vn.flast.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.flast.orchestration.EventDelegate;
+import vn.flast.orchestration.EventTopic;
+import vn.flast.orchestration.MessageInterface;
+import vn.flast.orchestration.PubSubService;
+import vn.flast.orchestration.Publisher;
+import vn.flast.orchestration.Subscriber;
 import vn.flast.searchs.DataFilter;
 import vn.flast.models.Data;
 import vn.flast.models.DataMedia;
@@ -21,10 +28,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Optional;
 
-@Service
-public class DataService {
+@Slf4j
+@Service("dataService")
+public class DataService extends Subscriber implements Publisher {
 
     @Autowired
     private DataMediaRepository dataMediaRepository;
@@ -37,6 +47,41 @@ public class DataService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    private EventDelegate eventDelegate;
+
+    @Override
+    public void setDelegate(EventDelegate eventDelegate) {
+        this.eventDelegate = eventDelegate;
+        this.eventDelegate.addEvent(this, EventTopic.ORDER_CHANGE);
+    }
+
+    @Override
+    public void publish(MessageInterface message) {
+        if(Objects.nonNull(eventDelegate)) {
+            eventDelegate.sendEvent(message);
+        }
+    }
+
+    @Override
+    public void addSubscriber(String topic, PubSubService pubSubService) {
+        pubSubService.addSubscriber(topic, this);
+    }
+
+    @Override
+    public void unSubscribe(String topic, PubSubService pubSubService) {
+        pubSubService.removeSubscriber(topic, this);
+    }
+
+    @Override
+    public void executeMessage() {
+        ListIterator<MessageInterface> iterator = subscriberMessages.listIterator();
+        while(iterator.hasNext()){
+            var message = iterator.next();
+            log.info("Message Topic -> "+ message.getTopic() + " : " + message.getPayload());
+            iterator.remove();
+        }
+    }
 
     public enum DATA_STATUS {
 
@@ -84,7 +129,6 @@ public class DataService {
         }
     }
 
-
     public void createAndUpdateDataMedias(List<String> urls, int sessionId, int dataId) {
         if(!urls.isEmpty()) {
             urls.forEach(url -> dataMediaRepository.save(new DataMedia(dataId, sessionId, url)));
@@ -94,7 +138,6 @@ public class DataService {
     public void saveData(Data data) {
         dataRepository.save(data);
     }
-
 
     public Boolean delete(Long id) {
         Data dd = this.findById(id);
@@ -117,7 +160,7 @@ public class DataService {
     @Transactional
     public void Update(Data input) {
         var data = dataRepository.findById(input.getId()).orElseThrow(
-                () -> new RuntimeException("Không tồn tại bản ghi này")
+            () -> new RuntimeException("Không tồn tại bản ghi này")
         );
         CopyProperty.CopyIgnoreNull(input, data);
         dataRepository.save(data);
@@ -128,15 +171,15 @@ public class DataService {
         var offset = filter.page() * LIMIT;
         EntityQuery<Data> et = EntityQuery.create(entityManager, Data.class);
         List<Data> lists = et.setFirstResult(offset)
-                .stringEqualsTo("customerMobile", filter.getCustomerMobile())
-                .integerEqualsTo("status", filter.getStatus())
-                .integerEqualsTo("fromDepartment", filter.getFromDepartment())
-                .integerEqualsTo("saleId", filter.getSaleMember())
-                .integerEqualsTo("partnerId", filter.getPartnerId())
-                .between("inTime", filter.getFrom(), filter.getTo())
-                .addDescendingOrderBy("inTime")
-                .setMaxResults(LIMIT)
-                .list();
+            .stringEqualsTo("customerMobile", filter.getCustomerMobile())
+            .integerEqualsTo("status", filter.getStatus())
+            .integerEqualsTo("fromDepartment", filter.getFromDepartment())
+            .integerEqualsTo("saleId", filter.getSaleMember())
+            .integerEqualsTo("partnerId", filter.getPartnerId())
+            .between("inTime", filter.getFrom(), filter.getTo())
+            .addDescendingOrderBy("inTime")
+            .setMaxResults(LIMIT)
+            .list();
 
         return new Ipage<>(LIMIT, et.count(), filter.page(), lists);
     }
@@ -148,14 +191,14 @@ public class DataService {
         et.between("inTime", filter.getFrom(), filter.getTo());
         et.integerEqualsTo("source", filter.getSource());
         List<Data> lists = et.integerEqualsTo("fromDepartment", filter.getFromDepartment())
-                .stringEqualsTo("customerMobile", filter.getCustomerMobile())
-                .stringEqualsTo("customerEmail", filter.getCustomerEmail())
-                .integerEqualsTo("status", filter.getStatus())
-                .integerEqualsTo("saleId", filter.getSaleId())
-                .setFirstResult(offset)
-                .setMaxResults(LIMIT)
-                .addDescendingOrderBy("inTime")
-                .list();
+            .stringEqualsTo("customerMobile", filter.getCustomerMobile())
+            .stringEqualsTo("customerEmail", filter.getCustomerEmail())
+            .integerEqualsTo("status", filter.getStatus())
+            .integerEqualsTo("saleId", filter.getSaleId())
+            .setFirstResult(offset)
+            .setMaxResults(LIMIT)
+            .addDescendingOrderBy("inTime")
+            .list();
         return new Ipage<>(LIMIT,et.count(), filter.page(), lists);
     }
 
@@ -240,23 +283,11 @@ public class DataService {
             return;
         }
         et.between("inTime", filter.getFrom(), filter.getTo());
-//        if (isLeader) {
-//            UserGroup userGroup = userGroupDao.findByLeaderId(saleId);
-//            var memberList = AopCommon.Json2ListObject(userGroup.getMemberList(), Integer.class);
-//            if (memberList.isEmpty()) {
-//                et.integerEqualsTo("saleId", saleId);
-//            } else {
-//                et.in("saleId", memberList);
-//            }
-//            et.integerEqualsTo("saleId", filter.getSaleMember());
-//        } else {
-//            et.integerEqualsTo("saleId", saleId);
-//        }
     }
 
     public Data findById(Long id) {
         var data = dataRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Không tồn tại bản ghi này")
+            () -> new RuntimeException("Không tồn tại bản ghi này")
         );
         if(data != null) {
             data.createListFileUploads();
@@ -271,5 +302,4 @@ public class DataService {
         }
         return data;
     }
-
 }
