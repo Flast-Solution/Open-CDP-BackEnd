@@ -176,6 +176,9 @@ public class ProductService {
             saleProduct.setListProperties(productAttributedRepository.findByProduct(product.getId()));
             saleProduct.setSkus(skuService.listProductSkuAndDetail(product.getId()));
             saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(product.getId()));
+            saleProduct.getSkus().forEach(
+                sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(product.getId()))
+            );
             return saleProduct;
         }).toList();
         return  Ipage.generator(LIMIT, count, PAGE, listSaleProduct);
@@ -214,8 +217,6 @@ public class ProductService {
                 CopyProperty.CopyIgnoreNull(priceRange, price);
                 price.setProductId(productId);
                 price.setSkuId(savedSku.getId());
-                price.setQuantityFrom(priceRange.getStart());
-                price.setQuantityTo(priceRange.getEnd());
                 price.setPrice(priceRange.getPrice());
                 skusPriceRepository.save(price);
             });

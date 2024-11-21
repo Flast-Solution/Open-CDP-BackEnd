@@ -9,9 +9,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
-import vn.flast.entities.PriceRange;
 import vn.flast.entities.SkuAttributed;
-
 import java.util.List;
 
 @Table(name = "product_skus")
@@ -24,6 +22,9 @@ public class ProductSkus {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "product_id")
     private Long productId;
 
@@ -31,7 +32,7 @@ public class ProductSkus {
     private Integer del = 0;
 
     @Transient
-    private List<PriceRange> listPriceRange;
+    private List<ProductSkusPrice> listPriceRange;
 
     @Transient
     private List<SkuAttributed> sku;
