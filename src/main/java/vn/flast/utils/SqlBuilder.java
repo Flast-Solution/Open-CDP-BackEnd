@@ -152,7 +152,7 @@ public class SqlBuilder {
 
     public SqlBuilder like(String column, String value) {
         if(StringUtils.isNotEmpty(column) && value != null) {
-            maps.put(" AND ".concat(column), " LIKE '% " + value + " %'");
+            maps.put(" AND ".concat(column), " LIKE '%" + value + "%'");
         }
         return this;
     }

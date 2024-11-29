@@ -254,13 +254,8 @@ public class DataService extends Subscriber implements Publisher {
         var LIMIT = filter.getLimit();
         EntityQuery<Data> et = EntityQuery.create(entityManager, Data.class);
 
-        /* Lọc theo báo cáo hàng ngày thì không cần lọc theo sale
-         * và thời gian chỉ lấy trong ngày, bao gồm lead và cơ hội, đơn hàng */
+        /* Lọc theo báo cáo hàng ngày thì không cần lọc theo sale và thời gian chỉ lấy trong ngày, bao gồm lead và cơ hội, đơn hàng */
         this.filterForSaleId(et, isLeader, filter, saleId);
-        if (Optional.ofNullable(filter.getFromDepartment()).isPresent()
-                && filter.getFromDepartment() != Data.FROM_DEPARTMENT.FROM_RQL.value()) {
-            et.notIn("status", Collections.singleton(DATA_STATUS.THANH_CO_HOI.getStatusCode()));
-        }
         et.stringEqualsTo("customerMobile", filter.getCustomerMobile());
         et.integerEqualsTo("status", filter.getStatus());
         et.integerEqualsTo("source", filter.getSource());

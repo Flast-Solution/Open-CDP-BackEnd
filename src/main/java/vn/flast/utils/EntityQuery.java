@@ -6,11 +6,20 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.hibernate.Session;
+import org.hibernate.query.spi.QueryParameterImplementor;
+import org.hibernate.query.sqm.internal.QuerySqmImpl;
+import org.hibernate.query.sqm.sql.internal.StandardSqmTranslator;
+import org.hibernate.query.sqm.tree.expression.SqmParameter;
+import org.hibernate.query.sqm.tree.expression.ValueBindJpaCriteriaParameter;
+import org.hibernate.query.sqm.tree.select.SqmSelectStatement;
+import org.hibernate.sql.ast.tree.select.SelectStatement;
 import vn.flast.pagination.Ipage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +29,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -88,18 +98,59 @@ public class EntityQuery<E> {
         return result;
     }
 
-    public long count() {
-        CriteriaQuery<Long> countCriteriaQuery = criteriaBuilder.createQuery(Long.class);
-        countCriteriaQuery.select(
-            criteriaBuilder.count(countCriteriaQuery.from(entityClass))
-        );
-        if(!predicates.isEmpty()) {
-            countCriteriaQuery.where(predicates.toArray(new Predicate[0]));
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void copyCriteriaWithoutSelectionAndOrder(CriteriaQuery<?> from, CriteriaQuery<?> to) {
+        /* Copy Roots */
+        for (Root r : from.getRoots()) {
+            Root root = to.from(r.getModel());
+            root.alias(r.getAlias());
         }
+        to.groupBy(from.getGroupList());
+        to.distinct(from.isDistinct());
+        if (from.getGroupRestriction() != null) {
+            to.having(from.getGroupRestriction());
+        }
+        Predicate predicate = from.getRestriction();
+        if (predicate != null) {
+            to.where(predicate);
+        }
+    }
+
+    public long count() {
+        QuerySqmImpl<?> q = entityManager.createQuery(criteriaQuery).unwrap(QuerySqmImpl.class);
+        StandardSqmTranslator<?> converter = new StandardSqmTranslator<>(
+            q.getSqmStatement(),
+            q.getQueryOptions(),
+            q.getDomainParameterXref(),
+            q.getParameterBindings(),
+            q.getLoadQueryInfluencers(),
+            q.getSessionFactory(),
+            true
+        );
         try {
-            TypedQuery<Long> typedQuery = entityManager.createQuery(countCriteriaQuery);
-            return typedQuery.getSingleResult();
-        } catch (Exception e){ log.error("===== Lỗi count entityQuery: {} ======", e.getMessage(), e); return 0L; }
+            SelectStatement sqlAst = converter.visitSelectStatement((SqmSelectStatement<?>) q.getSqmStatement());
+            String generatedSql = q.getSessionFactory()
+                .getJdbcServices()
+                .getDialect()
+                .getSqlAstTranslatorFactory()
+                .buildSelectTranslator(q.getSessionFactory(), sqlAst)
+                .translate(null, q.getQueryOptions())
+                .getSqlString();
+
+            String finalCount = generatedSql.replaceAll("(select)[^&]*(from)", "$1 COUNT(*) $2");
+            log.debug("SQL COUNT: {}", finalCount);
+            Query countQuery = entityManager.createNativeQuery(finalCount);
+            int i = 1;
+            for (Map.Entry<QueryParameterImplementor<?>, List<SqmParameter<?>>> param : q.getDomainParameterXref().getQueryParameters().entrySet()) {
+                ValueBindJpaCriteriaParameter<?> value = (ValueBindJpaCriteriaParameter<?>)param.getKey();
+                countQuery.setParameter(i, value.getValue() instanceof Enum ? ((Enum<?>) value.getValue()).name() : value.getValue());
+                i++;
+            }
+            return (long) countQuery.getSingleResult();
+        } catch (Exception e) {
+            log.error("===== Lỗi count entityQuery: {} ======", e.getMessage());
+            return 0L;
+        }
     }
 
     private TypedQuery<E> prepareSelectTypedQuery() {
@@ -282,7 +333,8 @@ public class EntityQuery<E> {
 
     public Ipage<?> toPage() {
         int page = this.firstResult / this.maxResults;
-        return Ipage.generator(this.maxResults, this.count(), page, this.list());
+        List<E> lists = this.list();
+        return Ipage.generator(this.maxResults, this.count(), page, lists);
     }
 
     private <T> Path<T> toJpaPath(String stringPath) {

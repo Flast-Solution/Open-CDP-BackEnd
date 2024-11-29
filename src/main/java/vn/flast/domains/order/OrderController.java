@@ -42,7 +42,7 @@ public class OrderController {
         return MyResponse.response(order);
     }
 
-    @GetMapping("/list")
+    @GetMapping("/fetch")
     public MyResponse<?> list(OrderFilter filter) {
         var order = orderService.fetchList(filter);
         return MyResponse.response(order);

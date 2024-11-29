@@ -157,7 +157,7 @@ public class ProductService {
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
         sqlBuilder.addIntegerEquals("p.status", filter.status());
         sqlBuilder.addStringEquals("p.code", filter.code());
-        sqlBuilder.addStringEquals("p.name", filter.name());
+        sqlBuilder.like("p.name", filter.name());
         sqlBuilder.addIntegerEquals("p.provider_id", filter.providerId());
         sqlBuilder.addOrderBy("ORDER BY p.id DESC");
 

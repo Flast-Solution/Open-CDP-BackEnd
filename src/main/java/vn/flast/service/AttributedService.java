@@ -48,8 +48,7 @@ public class AttributedService {
         et.integerEqualsTo("attributedId", filter.attributedId());
         et.like("value", filter.value());
         et.setMaxResults(LIMIT).setFirstResult(LIMIT * currentPage);
-        var lists = et.list();
-        return  Ipage.generator(LIMIT, et.count(), currentPage, lists);
+        return  et.toPage();
     }
 
     @Transactional(rollbackFor = Exception.class)
