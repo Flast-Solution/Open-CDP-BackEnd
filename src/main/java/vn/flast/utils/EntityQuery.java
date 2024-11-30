@@ -6,13 +6,11 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.hibernate.Session;
 import org.hibernate.query.spi.QueryParameterImplementor;
 import org.hibernate.query.sqm.internal.QuerySqmImpl;
 import org.hibernate.query.sqm.sql.internal.StandardSqmTranslator;
@@ -29,7 +27,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +47,7 @@ import java.util.Optional;
     .list();
 */
 
+@SuppressWarnings({"unchecked", "UnusedReturnValue"})
 @Slf4j
 public class EntityQuery<E> {
 
@@ -96,24 +94,6 @@ public class EntityQuery<E> {
 
         }
         return result;
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void copyCriteriaWithoutSelectionAndOrder(CriteriaQuery<?> from, CriteriaQuery<?> to) {
-        /* Copy Roots */
-        for (Root r : from.getRoots()) {
-            Root root = to.from(r.getModel());
-            root.alias(r.getAlias());
-        }
-        to.groupBy(from.getGroupList());
-        to.distinct(from.isDistinct());
-        if (from.getGroupRestriction() != null) {
-            to.having(from.getGroupRestriction());
-        }
-        Predicate predicate = from.getRestriction();
-        if (predicate != null) {
-            to.where(predicate);
-        }
     }
 
     public long count() {

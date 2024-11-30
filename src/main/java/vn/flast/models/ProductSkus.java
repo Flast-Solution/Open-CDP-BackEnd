@@ -1,5 +1,6 @@
 package vn.flast.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +36,8 @@ public class ProductSkus {
     private List<ProductSkusPrice> listPriceRange;
 
     @Transient
-    private List<SkuAttributed> sku;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<SkuAttributed> sku; /* Sử dụng khi tạo Sản phẩm, Fetch thì không cần */
 
     @Transient
     private List<ProductSkusDetails> skuDetail;

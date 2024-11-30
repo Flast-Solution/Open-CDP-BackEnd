@@ -15,6 +15,7 @@ import vn.flast.models.Product;
 import vn.flast.repositories.ProductRepository;
 import vn.flast.searchs.ProductFilter;
 import vn.flast.service.ProductService;
+import vn.flast.utils.CopyProperty;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
@@ -51,6 +52,12 @@ public class ProductController {
     public MyResponse<?> fetch(ProductFilter filter) {
         var data = productService.fetch(filter);
         return MyResponse.response(data);
+    }
+
+    @GetMapping("/find-by-name")
+    public MyResponse<?> findName(@RequestParam("name") String name) {
+        var product = productService.findName(name);
+        return MyResponse.response(product);
     }
 
     @PostMapping("/delete")

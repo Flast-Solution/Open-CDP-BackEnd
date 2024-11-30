@@ -29,14 +29,17 @@ public class CustomerOrderDetail {
     @Column(name = "code")
     private String code;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "customer_order_id", nullable = false)
     private Long customerOrderId;
 
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
-    @Column(name = "product_info")
-    private String productInfo;
+    @Column(name = "productName")
+    private String productName;
 
     @Column(name = "sku_id")
     private Long skuId;
@@ -46,6 +49,9 @@ public class CustomerOrderDetail {
 
     @Column(name = "price")
     private Long price;
+
+    @Column(name = "quantity")
+    private Integer quantity;
 
     @Column(name = "price_off")
     private Long priceOff;

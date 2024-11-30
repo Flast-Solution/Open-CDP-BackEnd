@@ -147,6 +147,21 @@ public class ProductService {
         return productsRepository.save(entity);
     }
 
+    public SaleProduct findName(String name) {
+        var entity = productsRepository.findByName(name).orElseThrow(
+            () -> new RuntimeException("Bản ghi không tồn tại !")
+        );
+        SaleProduct saleProduct = new SaleProduct();
+        CopyProperty.CopyIgnoreNull(entity, saleProduct);
+        saleProduct.setListProperties(productAttributedRepository.findByProduct(entity.getId()));
+        saleProduct.setSkus(skuService.listProductSkuAndDetail(entity.getId()));
+        saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(entity.getId()));
+        saleProduct.getSkus().forEach(
+            sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(entity.getId()))
+        );
+        return saleProduct;
+    }
+
     public Ipage<?> fetch(ProductFilter filter){
 
         int LIMIT = filter.limit();

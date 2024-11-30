@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_cdp
-# Generation Time: 2024-11-19 15:47:44 +0000
+# Generation Time: 2024-11-30 15:09:57 +0000
 # ************************************************************
 
 
@@ -227,11 +227,13 @@ CREATE TABLE `customer_order_detail` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `customer_order_id` bigint DEFAULT '0',
+  `name` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `product_id` int NOT NULL,
-  `product_info` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
+  `product_name` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
   `sku_id` int DEFAULT '0',
   `sku_info` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `price` int DEFAULT '0',
+  `quantity` int NOT NULL DEFAULT '0',
   `price_off` int DEFAULT '0',
   `total` int DEFAULT '0',
   `ship_status` int DEFAULT '0',
@@ -261,6 +263,28 @@ CREATE TABLE `customer_order_note` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=583 DEFAULT CHARSET=utf8mb3;
+
+
+
+# Dump of table customer_order_payment
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `customer_order_payment`;
+
+CREATE TABLE `customer_order_payment` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `method` int DEFAULT NULL,
+  `amount` bigint unsigned DEFAULT '0',
+  `sso_id` varchar(100) NOT NULL,
+  `is_confirm` tinyint unsigned DEFAULT '0',
+  `content` text,
+  `in_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `confirm_time` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pay_order_code_index` (`code`),
+  KEY `pay_sale_index` (`sso_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 
 
 
@@ -557,6 +581,7 @@ DROP TABLE IF EXISTS `product_skus`;
 CREATE TABLE `product_skus` (
   `id` int NOT NULL AUTO_INCREMENT,
   `product_id` int NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
   `del` int DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10017 DEFAULT CHARSET=utf8mb3;
@@ -564,9 +589,9 @@ CREATE TABLE `product_skus` (
 LOCK TABLES `product_skus` WRITE;
 /*!40000 ALTER TABLE `product_skus` DISABLE KEYS */;
 
-INSERT INTO `product_skus` (`id`, `product_id`, `del`)
+INSERT INTO `product_skus` (`id`, `product_id`, `name`, `del`)
 VALUES
-	(10016,749,0);
+	(10016,749,'Thuộc tính gia công và đóng gói',0);
 
 /*!40000 ALTER TABLE `product_skus` ENABLE KEYS */;
 UNLOCK TABLES;
