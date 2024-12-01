@@ -15,7 +15,6 @@ import vn.flast.models.Product;
 import vn.flast.repositories.ProductRepository;
 import vn.flast.searchs.ProductFilter;
 import vn.flast.service.ProductService;
-import vn.flast.utils.CopyProperty;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController

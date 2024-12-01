@@ -53,7 +53,7 @@ public class OrderUtils {
     }
 
     public static void calDetailPrice(CustomerOrderDetail detail) {
-        double subTotal = detail.getPrice();
+        double subTotal = detail.getPrice() * detail.getQuantity();
         double priceOff = 0;
         if(StringUtils.isNotEmpty(detail.getDiscount())) {
             OrderDiscount orderDiscount = JsonUtils.Json2Object(detail.getDiscount(), OrderDiscount.class);

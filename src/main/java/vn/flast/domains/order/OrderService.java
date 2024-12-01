@@ -1,10 +1,10 @@
 package vn.flast.domains.order;
 
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.flast.entities.OrderResponse;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
@@ -82,7 +82,7 @@ public class OrderService  implements Publisher, Serializable {
         return newOrders;
     }
 
-    @Transactional(rollbackOn = { Exception.class })
+    @Transactional(rollbackFor = Exception.class)
     public CustomerOrder save(OrderInput input) {
         var order = new CustomerOrder();
         order.setCode(OrderUtils.createOrderCode());
@@ -94,7 +94,7 @@ public class OrderService  implements Publisher, Serializable {
             var entity = orderRepository.findById(order.getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Not Found Order .!")
             );
-            CopyProperty.CopyIgnoreNull(order, entity);
+            CopyProperty.CopyIgnoreNull(entity, order);
         } else {
             var data = dataRepository.findFirstByPhone(order.getCustomerMobilePhone()).orElseThrow(
                 () -> new ResourceNotFoundException("Not Found Source Data .!")

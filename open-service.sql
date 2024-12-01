@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_cdp
-# Generation Time: 2024-12-01 02:57:12 +0000
+# Generation Time: 2024-12-01 10:55:12 +0000
 # ************************************************************
 
 
@@ -219,7 +219,7 @@ LOCK TABLES `customer_order` WRITE;
 
 INSERT INTO `customer_order` (`id`, `data_id`, `source`, `enterprise_id`, `enterprise_name`, `order_name`, `code`, `total_not_vat`, `customer_id`, `customer_receiver_name`, `customer_address`, `customer_ward_id`, `customer_district_id`, `customer_province_id`, `customer_mobile_phone`, `customer_email`, `customer_note`, `subtotal`, `price_off`, `discount_info`, `voucher`, `shipping_cost`, `shipping_real`, `cod_cost`, `transport_type_id`, `total`, `vat`, `fee_import`, `paid`, `flag_free_ship`, `shipping_status`, `payment_status`, `cancel_at`, `paid_time`, `created_at`, `updated_at`, `done_at`, `user_create_id`, `user_create_username`, `faulty`, `status`, `type`, `opportunity_at`)
 VALUES
-	(33824,NULL,NULL,NULL,NULL,NULL,'OGAH1324ZPB',NULL,7,'Hà NAm',NULL,NULL,NULL,NULL,'0936295123','long.huu.100@gmail.com',NULL,4700000,0,NULL,NULL,NULL,NULL,NULL,NULL,4700000,0,NULL,0,NULL,NULL,NULL,NULL,NULL,'2024-12-01 08:48:01','2024-12-01 09:18:57',NULL,NULL,'longhuu',NULL,0,'cohoi','2024-12-01 08:48:01');
+	(33824,8,0,NULL,NULL,NULL,'ORBI1324GML',NULL,7,'Hà NAm',NULL,NULL,NULL,NULL,'0936295123','long.huu.100@gmail.com',NULL,4900000,0,NULL,NULL,NULL,NULL,NULL,NULL,5390000,10,NULL,0,NULL,NULL,NULL,NULL,NULL,'2024-12-01 08:48:01','2024-12-01 17:19:07',NULL,67,'longhuu',NULL,0,'cohoi','2024-12-01 16:39:20');
 
 /*!40000 ALTER TABLE `customer_order` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -251,14 +251,15 @@ CREATE TABLE `customer_order_detail` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `customer_order_id` (`customer_order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33824 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33825 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 LOCK TABLES `customer_order_detail` WRITE;
 /*!40000 ALTER TABLE `customer_order_detail` DISABLE KEYS */;
 
 INSERT INTO `customer_order_detail` (`id`, `code`, `customer_order_id`, `name`, `product_id`, `product_name`, `sku_id`, `sku_info`, `price`, `quantity`, `price_off`, `total`, `discount`, `ship_status`, `ship_done_at`, `status`, `created_at`, `updated_at`)
 VALUES
-	(33823,'OGAH1324ZPB-1',33824,'Hộp sẵn 2 tầng - Flast Solution',749,'Hữu Long',10016,'[{\"id\":10010,\"productId\":749,\"skuId\":10016,\"name\":\"PHong cách\",\"value\":\"Tối giản B+\",\"attributedId\":10008,\"attributedValueId\":10009,\"del\":0},{\"id\":10011,\"productId\":749,\"skuId\":10016,\"name\":\"Kích thước\",\"value\":\"30x55x30\",\"attributedId\":10009,\"attributedValueId\":10010,\"del\":1}]',5000,1000,300000,4700000,'{\"discountUnit\":\"money\",\"discountValue\":300000}',NULL,NULL,0,'2024-12-01 08:48:01','2024-12-01 09:18:24');
+	(33823,'ORBI1324GML-1',33824,'QTS - Flast Solution',749,'Hữu Long',10016,'[{\"id\":10010,\"productId\":749,\"skuId\":10016,\"name\":\"PHong cách\",\"value\":\"Tối giản B+\",\"attributedId\":10008,\"attributedValueId\":10009,\"del\":0},{\"id\":10011,\"productId\":749,\"skuId\":10016,\"name\":\"Kích thước\",\"value\":\"30x55x30\",\"attributedId\":10009,\"attributedValueId\":10010,\"del\":1}]',5000,100,300000,200000,'{\"discountUnit\":\"money\",\"discountValue\":300000}',NULL,NULL,101,'2024-12-01 17:52:46','2024-12-01 17:52:46'),
+	(33824,'ORBI1324GML-2',33824,'Hộp sẵn 2 tầng - Flast Solution',749,'Hữu Long',10016,'[{\"id\":10010,\"productId\":749,\"skuId\":10016,\"name\":\"PHong cách\",\"value\":\"Tối giản B+\",\"attributedId\":10008,\"attributedValueId\":10009,\"del\":0},{\"id\":10011,\"productId\":749,\"skuId\":10016,\"name\":\"Kích thước\",\"value\":\"30x55x30\",\"attributedId\":10009,\"attributedValueId\":10010,\"del\":1}]',5000,1000,300000,4700000,'{\"discountUnit\":\"money\",\"discountValue\":300000}',NULL,NULL,100,'2024-12-01 17:52:46','2024-12-01 17:52:46');
 
 /*!40000 ALTER TABLE `customer_order_detail` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -313,10 +314,23 @@ DROP TABLE IF EXISTS `customer_order_status`;
 CREATE TABLE `customer_order_status` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
+  `color` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT 'black',
+  `order` int DEFAULT '0',
   `del_flag` tinyint DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8mb3;
 
+LOCK TABLES `customer_order_status` WRITE;
+/*!40000 ALTER TABLE `customer_order_status` DISABLE KEYS */;
+
+INSERT INTO `customer_order_status` (`id`, `name`, `color`, `order`, `del_flag`)
+VALUES
+	(100,'Đơn mới','red',0,0),
+	(101,'Sản xuất','black',1,0),
+	(102,'Hoàn thành','black',2,0);
+
+/*!40000 ALTER TABLE `customer_order_status` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table customer_personal

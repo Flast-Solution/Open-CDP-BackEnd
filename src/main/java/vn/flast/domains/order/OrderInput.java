@@ -51,7 +51,7 @@ public record OrderInput(
             detail.setCustomerOrderId(order.getId());
             detail.setCode(order.getCode().concat("-" + i));
             detail.setCreatedAt(new Date());
-            detail.setStatus(order.getStatus());
+            detail.setStatus(detailOrder.getStatus());
             OrderUtils.calDetailPrice(detail);
             detailList.add(detail);
             i++;
