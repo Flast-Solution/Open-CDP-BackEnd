@@ -17,6 +17,7 @@ import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.CustomerRepository;
+import vn.flast.repositories.DataRepository;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
@@ -41,6 +42,9 @@ public class OrderService  implements Publisher, Serializable {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private DataRepository dataRepository;
 
     @Autowired
     private CustomerOrderDetailRepository detailRepository;
@@ -92,6 +96,11 @@ public class OrderService  implements Publisher, Serializable {
             );
             CopyProperty.CopyIgnoreNull(order, entity);
         } else {
+            var data = dataRepository.findFirstByPhone(order.getCustomerMobilePhone()).orElseThrow(
+                () -> new ResourceNotFoundException("Not Found Source Data .!")
+            );
+            order.setDataId(data.getId());
+            order.setSource(data.getSource());
             orderRepository.save(order);
         }
 

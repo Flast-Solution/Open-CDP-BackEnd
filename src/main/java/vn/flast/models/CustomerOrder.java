@@ -36,11 +36,8 @@ public class CustomerOrder implements Cloneable {
     @Column(name = "data_id")
     private Long dataId;
 
-    @Column(name = "service_id")
-    private Integer serviceId;
-
-    @Column(name = "channel_id")
-    private Integer channelId;
+    @Column(name = "source")
+    private Integer source;
 
     @Column(name = "enterprise_id")
     private Integer enterpriseId;
@@ -143,9 +140,6 @@ public class CustomerOrder implements Cloneable {
 
     @Column(name = "user_create_username")
     private String userCreateUsername;
-
-    @Column(name = "source")
-    private Integer source;
 
     @Column(name = "faulty")
     private Integer faulty;

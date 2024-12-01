@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.30)
 # Database: open_cdp
-# Generation Time: 2024-11-30 15:09:57 +0000
+# Generation Time: 2024-12-01 02:57:12 +0000
 # ************************************************************
 
 
@@ -163,8 +163,7 @@ DROP TABLE IF EXISTS `customer_order`;
 CREATE TABLE `customer_order` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `data_id` bigint DEFAULT '0',
-  `service_id` int DEFAULT '0',
-  `channel_id` int DEFAULT NULL,
+  `source` int DEFAULT NULL,
   `enterprise_id` bigint DEFAULT '0',
   `enterprise_name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `order_name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
@@ -201,7 +200,6 @@ CREATE TABLE `customer_order` (
   `done_at` timestamp NULL DEFAULT NULL,
   `user_create_id` int unsigned DEFAULT '0',
   `user_create_username` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT '',
-  `source` int DEFAULT NULL,
   `faulty` bit(1) DEFAULT b'0',
   `status` int unsigned DEFAULT '0',
   `type` enum('order','cohoi') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT 'cohoi',
@@ -214,8 +212,17 @@ CREATE TABLE `customer_order` (
   KEY `phone_idx` (`customer_mobile_phone`),
   KEY `data_id_idx` (`data_id`),
   KEY `customer_id_idx` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33820 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33825 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
+LOCK TABLES `customer_order` WRITE;
+/*!40000 ALTER TABLE `customer_order` DISABLE KEYS */;
+
+INSERT INTO `customer_order` (`id`, `data_id`, `source`, `enterprise_id`, `enterprise_name`, `order_name`, `code`, `total_not_vat`, `customer_id`, `customer_receiver_name`, `customer_address`, `customer_ward_id`, `customer_district_id`, `customer_province_id`, `customer_mobile_phone`, `customer_email`, `customer_note`, `subtotal`, `price_off`, `discount_info`, `voucher`, `shipping_cost`, `shipping_real`, `cod_cost`, `transport_type_id`, `total`, `vat`, `fee_import`, `paid`, `flag_free_ship`, `shipping_status`, `payment_status`, `cancel_at`, `paid_time`, `created_at`, `updated_at`, `done_at`, `user_create_id`, `user_create_username`, `faulty`, `status`, `type`, `opportunity_at`)
+VALUES
+	(33824,NULL,NULL,NULL,NULL,NULL,'OGAH1324ZPB',NULL,7,'Hà NAm',NULL,NULL,NULL,NULL,'0936295123','long.huu.100@gmail.com',NULL,4700000,0,NULL,NULL,NULL,NULL,NULL,NULL,4700000,0,NULL,0,NULL,NULL,NULL,NULL,NULL,'2024-12-01 08:48:01','2024-12-01 09:18:57',NULL,NULL,'longhuu',NULL,0,'cohoi','2024-12-01 08:48:01');
+
+/*!40000 ALTER TABLE `customer_order` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table customer_order_detail
@@ -236,6 +243,7 @@ CREATE TABLE `customer_order_detail` (
   `quantity` int NOT NULL DEFAULT '0',
   `price_off` int DEFAULT '0',
   `total` int DEFAULT '0',
+  `discount` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `ship_status` int DEFAULT '0',
   `ship_done_at` timestamp NULL DEFAULT NULL,
   `status` int DEFAULT '1',
@@ -243,8 +251,17 @@ CREATE TABLE `customer_order_detail` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `customer_order_id` (`customer_order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33820 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33824 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
+LOCK TABLES `customer_order_detail` WRITE;
+/*!40000 ALTER TABLE `customer_order_detail` DISABLE KEYS */;
+
+INSERT INTO `customer_order_detail` (`id`, `code`, `customer_order_id`, `name`, `product_id`, `product_name`, `sku_id`, `sku_info`, `price`, `quantity`, `price_off`, `total`, `discount`, `ship_status`, `ship_done_at`, `status`, `created_at`, `updated_at`)
+VALUES
+	(33823,'OGAH1324ZPB-1',33824,'Hộp sẵn 2 tầng - Flast Solution',749,'Hữu Long',10016,'[{\"id\":10010,\"productId\":749,\"skuId\":10016,\"name\":\"PHong cách\",\"value\":\"Tối giản B+\",\"attributedId\":10008,\"attributedValueId\":10009,\"del\":0},{\"id\":10011,\"productId\":749,\"skuId\":10016,\"name\":\"Kích thước\",\"value\":\"30x55x30\",\"attributedId\":10009,\"attributedValueId\":10010,\"del\":1}]',5000,1000,300000,4700000,'{\"discountUnit\":\"money\",\"discountValue\":300000}',NULL,NULL,0,'2024-12-01 08:48:01','2024-12-01 09:18:24');
+
+/*!40000 ALTER TABLE `customer_order_detail` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table customer_order_note

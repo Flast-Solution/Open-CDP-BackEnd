@@ -284,17 +284,7 @@ public class DataService extends Subscriber implements Publisher {
         var data = dataRepository.findById(id).orElseThrow(
             () -> new RuntimeException("Không tồn tại bản ghi này")
         );
-        if(data != null) {
-            data.createListFileUploads();
-        }
-        return data;
-    }
-
-    public Data findByPhone(String phone) {
-        var data = dataRepository.findFirstByPhone(phone);
-        if(data != null) {
-            data.createListFileUploads();
-        }
+        data.setFileUrls(new ArrayList<>());
         return data;
     }
 }

@@ -67,9 +67,9 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_link_profile",
-            joinColumns = @JoinColumn(name = "user_id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "user_profile_id", nullable = false)
+        name = "user_link_profile",
+        joinColumns = @JoinColumn(name = "user_id", nullable = false),
+        inverseJoinColumns = @JoinColumn(name = "user_profile_id", nullable = false)
     )
     private Set<UserProfile> userProfiles = new HashSet<>();
 }

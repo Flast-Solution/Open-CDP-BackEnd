@@ -1,5 +1,6 @@
 package vn.flast.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,8 +10,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
-import vn.flast.repositories.DataMediaRepository;
-import vn.flast.utils.BeanUtil;
 import vn.flast.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -18,10 +17,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-@Table(name = "customer_persional")
+@Table(name = "data")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class Data {
 
     public enum FROM_DEPARTMENT {
@@ -54,7 +52,7 @@ public class Data {
             this.value = value;
         }
 
-        public static HashMap<Integer, String> lables() {
+        public static HashMap<Integer, String> labels() {
             HashMap<Integer, String> labels = new HashMap<>();
             for (FROM_DEPARTMENT department : FROM_DEPARTMENT.values()) {
                 labels.put(department.value, department.label());
@@ -79,36 +77,6 @@ public class Data {
         }
     }
 
-    public enum DataType {
-        SANPHAM_DICHVU(0){
-            @Override
-            String label() {
-                return "Sản phẩm dịch vụ";
-            }
-        },
-        DOI_TAC(1){
-            @Override
-            String label() {
-                return "Đối tác";
-            }
-        },
-        KHIEU_NAI(2){
-            @Override
-            String label() {
-                return "Khiếu nại";
-            }
-        };
-
-        private final int value;
-        public int value() {
-            return value;
-        }
-        abstract String label();
-        DataType(int value){
-            this.value = value;
-        }
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -127,7 +95,7 @@ public class Data {
     private String provinceName;
 
     @Column(name = "source")
-    private Long source;
+    private Integer source;
 
     @Column(name = "customer_name")
     private String customerName;
@@ -157,7 +125,7 @@ public class Data {
     private String assignTo;
 
     @Column(name = "in_time")
-    private Date inIime;
+    private Date inTime;
 
     @Column(name = "update_time")
     private Date updateTime;
@@ -174,16 +142,11 @@ public class Data {
     public static String UPLOAD_PATH = "/uploads/data/";
 
     @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<String> fileUrls = new ArrayList<>();
-
-    public void createListFileUploads(){
-        DataMediaRepository dataMediaRepository = BeanUtil.getBean(DataMediaRepository.class);
-        var listFileUploads = dataMediaRepository.findByDataId(this.id).orElse(new ArrayList<>());
-    }
 
     public String createFolderUpload() {
         var pathProject = DateUtils.getMonthYearCode();
         return System.getProperty("user.dir") + UPLOAD_PATH + pathProject;
     }
-
 }
