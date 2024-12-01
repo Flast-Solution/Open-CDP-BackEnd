@@ -34,12 +34,12 @@ public class OrderUtils {
     }
 
     public static void calculatorPrice(CustomerOrder order) {
-        if(Objects.isNull(order) || Common.CollectionIsEmpty(order.getOrderDetails())) {
+        if(Objects.isNull(order) || Common.CollectionIsEmpty(order.getDetails())) {
             return;
         }
-        double subTotal = order.getOrderDetails()
+        double subTotal = order.getDetails()
             .stream()
-            .mapToDouble(CustomerOrderDetail::getPrice).sum();
+            .mapToDouble(CustomerOrderDetail::getTotal).sum();
         double priceOff = 0;
         if(StringUtils.isNotEmpty(order.getDiscountInfo())) {
             OrderDiscount orderDiscount = JsonUtils.Json2Object(order.getDiscountInfo(), OrderDiscount.class);
@@ -52,15 +52,15 @@ public class OrderUtils {
         order.setTotal(subTotal - priceOff + vat);
     }
 
-    public static String getOrderCodeFromDetail(String detailCode) {
-        if(!detailCode.contains("-")){
-            return detailCode;
+    public static void calDetailPrice(CustomerOrderDetail detail) {
+        double subTotal = detail.getPrice();
+        double priceOff = 0;
+        if(StringUtils.isNotEmpty(detail.getDiscount())) {
+            OrderDiscount orderDiscount = JsonUtils.Json2Object(detail.getDiscount(), OrderDiscount.class);
+            priceOff = orderDiscount != null ? orderDiscount.getPriceOff(subTotal) : 0;
         }
-        try {
-            var splits = detailCode.split("-");
-            return splits[0];
-        } catch (Exception ex) {
-            return detailCode;
-        }
+        double feeAfterPromotion = subTotal - priceOff;
+        detail.setPriceOff(priceOff);
+        detail.setTotal(feeAfterPromotion);
     }
 }

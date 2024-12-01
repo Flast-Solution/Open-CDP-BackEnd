@@ -8,11 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import vn.flast.utils.NumberUtils;
 
 import java.util.Date;
 
@@ -38,7 +40,7 @@ public class CustomerOrderDetail {
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
-    @Column(name = "productName")
+    @Column(name = "product_name")
     private String productName;
 
     @Column(name = "sku_id")
@@ -54,10 +56,13 @@ public class CustomerOrderDetail {
     private Integer quantity;
 
     @Column(name = "price_off")
-    private Long priceOff;
+    private Double priceOff;
 
     @Column(name = "total")
-    private Long total;
+    private Double total;
+
+    @Column(name = "discount")
+    private String discount;
 
     @Column(name = "ship_status")
     private Integer shipStatus;
@@ -76,8 +81,15 @@ public class CustomerOrderDetail {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @JsonBackReference(value = "customerOrder")
+    @JsonBackReference(value = "details")
     @ManyToOne
     @JoinColumn(name = "customer_order_id",referencedColumnName = "id", insertable=false, updatable=false)
     private CustomerOrder customerOrder;
+
+    @PrePersist
+    public void beforeSave() {
+        if(NumberUtils.isNull(status)) {
+            status = 0;
+        }
+    }
 }

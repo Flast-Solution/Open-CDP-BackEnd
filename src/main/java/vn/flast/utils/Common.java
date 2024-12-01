@@ -42,6 +42,10 @@ public class Common {
         return Optional.ofNullable(getInfo()).map(UserPrinciple::getSsoId).orElse("");
     }
 
+    public static Integer getUserId () {
+        return Optional.ofNullable(getInfo()).map(UserPrinciple::getId).orElse(0);
+    }
+
     public static boolean CollectionIsEmpty(Collection<?> collection) {
         return collection == null || collection.isEmpty();
     }
@@ -58,5 +62,4 @@ public class Common {
         }
         return sb.toString();
     }
-
 }

@@ -8,11 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import vn.flast.utils.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +23,10 @@ import java.util.Date;
 @Table(name = "customer_order")
 @Entity
 @Getter @Setter
-public class CustomerOrder {
+public class CustomerOrder implements Cloneable {
+
+    public static String TYPE_CO_HOI = "cohoi";
+    public static String TYPE_ORDER = "order";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -134,7 +139,7 @@ public class CustomerOrder {
     private Date doneAt;
 
     @Column(name = "user_create_id")
-    private Long userCreateId;
+    private Integer userCreateId;
 
     @Column(name = "user_create_username")
     private String userCreateUsername;
@@ -163,10 +168,10 @@ public class CustomerOrder {
     private Date updatedAt;
 
     @OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
-    private Collection<CustomerOrderDetail> orderDetails;
+    private Collection<CustomerOrderDetail> details;
 
     public CustomerOrderDetail takeDetailByCode(String dtCode) {
-        return this.getOrderDetails().stream().filter(detail -> detail.getCode().equals(dtCode))
+        return this.getDetails().stream().filter(detail -> detail.getCode().equals(dtCode))
             .findFirst().orElse(null);
     }
 
@@ -182,10 +187,17 @@ public class CustomerOrder {
     public CustomerOrder cloneNoDetail() {
         try {
             CustomerOrder newOrder = (CustomerOrder) super.clone();
-            newOrder.setOrderDetails(new ArrayList<>());
+            newOrder.setDetails(new ArrayList<>());
             return newOrder;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
+        }
+    }
+
+    @PrePersist
+    public void beforeSave() {
+        if(NumberUtils.isNull(status)) {
+            status = 0;
         }
     }
 }

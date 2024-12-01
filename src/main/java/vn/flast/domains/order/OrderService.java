@@ -73,7 +73,7 @@ public class OrderService  implements Publisher, Serializable {
             var detailOfOrder = details.stream().filter(
                 d -> d.getCustomerOrderId().equals(order.getId())
             );
-            order.setOrderDetails(detailOfOrder.toList());
+            order.setDetails(detailOfOrder.toList());
         }
         return newOrders;
     }
@@ -83,6 +83,7 @@ public class OrderService  implements Publisher, Serializable {
         var order = new CustomerOrder();
         order.setCode(OrderUtils.createOrderCode());
         order.setUserCreateUsername(Common.getSsoId());
+        order.setUserCreateId(Common.getUserId());
         input.transformOrder(order);
 
         if(NumberUtils.isNotNull(order.getId())) {
@@ -95,7 +96,7 @@ public class OrderService  implements Publisher, Serializable {
         }
 
         var listDetails = input.transformOnCreateDetail(order);
-        order.setOrderDetails(listDetails);
+        order.setDetails(listDetails);
         detailRepository.saveAll(listDetails);
 
         OrderUtils.calculatorPrice(order);
@@ -117,7 +118,7 @@ public class OrderService  implements Publisher, Serializable {
     }
 
     private OrderResponse withOrderDetail(CustomerOrder order) {
-        Hibernate.initialize(order.getOrderDetails());
+        Hibernate.initialize(order.getDetails());
         var orderRep = new OrderResponse();
         CopyProperty.CopyNormal(order.clone(), orderRep);
         orderRep.setCustomer(customerRepository.findById(orderRep.getCustomerId()).orElse(null));

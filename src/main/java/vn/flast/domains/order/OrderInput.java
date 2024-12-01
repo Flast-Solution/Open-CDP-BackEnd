@@ -1,5 +1,6 @@
 package vn.flast.domains.order;
 
+import vn.flast.models.Customer;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.utils.Common;
@@ -14,49 +15,45 @@ import java.util.Optional;
 
 public record OrderInput(
     Long id,
-    Long customerId,
-    String customerName,
-    String customerEmail,
-    String customerPhone,
+    Customer customer,
     OrderDiscount discount,
     OrderPaymentInfo paymentInfo,
     Integer vat,
-    Double subTotal,
-    Double total,
-    List<CustomerOrderDetail> orderDetails,
+    List<CustomerOrderDetail> details,
     String note
 ) {
     public void transformOrder(CustomerOrder order) {
-        if(Common.CollectionIsEmpty(orderDetails)) {
+        if(Common.CollectionIsEmpty(details)) {
             throw new RuntimeException("Order detail is required .!");
         }
         order.setId(id);
-        order.setCustomerId(customerId);
-        order.setCustomerReceiverName(customerName);
-        order.setCustomerEmail(customerEmail);
-        order.setCustomerMobilePhone(customerPhone);
+        order.setCustomerId(customer.getId());
+        order.setCustomerReceiverName(customer.getName());
+        order.setCustomerEmail(customer.getEmail());
+        order.setCustomerMobilePhone(customer.getMobile());
         order.setDiscountInfo(JsonUtils.toJson(discount));
-        order.setSubtotal(subTotal);
-        order.setTotal(total);
         order.setCustomerNote(note);
+        order.setOpportunityAt(new Date());
         if(NumberUtils.isNotNull(vat)) {
             order.setVat(vat);
         }
         order.setPaid(Optional.ofNullable(paymentInfo).map(OrderPaymentInfo::amount).orElse(0.));
-        order.setPriceOff(discount.getPriceOff(subTotal));
+        boolean isPaid = NumberUtils.gteZero(order.getPaid());
+        order.setType(isPaid ? CustomerOrder.TYPE_ORDER: CustomerOrder.TYPE_CO_HOI);
     }
 
     public List<CustomerOrderDetail> transformOnCreateDetail(CustomerOrder order) {
         List<CustomerOrderDetail> detailList = new ArrayList<>();
         int i = 1;
-        for(CustomerOrderDetail detailOrder : orderDetails) {
+        for(CustomerOrderDetail detailOrder : details) {
             CustomerOrderDetail detail = new CustomerOrderDetail();
             CopyProperty.CopyIgnoreNull(detailOrder, detail);
             detail.setCustomerOrderId(order.getId());
             detail.setCode(order.getCode().concat("-" + i));
             detail.setCreatedAt(new Date());
-            detailList.add(detail);
             detail.setStatus(order.getStatus());
+            OrderUtils.calDetailPrice(detail);
+            detailList.add(detail);
             i++;
         }
         return detailList;
