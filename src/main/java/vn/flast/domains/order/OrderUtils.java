@@ -12,6 +12,10 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 public class OrderUtils {
+
+    public static Integer PAYMENT_IS_CONFIRM = 1;
+    public static Integer PAYMENT_STATUS_DONE = 1;
+
     public static String getAlphaNumericString(int n) {
         String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder sb = new StringBuilder(n);

@@ -11,8 +11,7 @@ import lombok.Setter;
 
 @Table(name = "media")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class Media {
 
     @Id
@@ -28,9 +27,6 @@ public class Media {
 
     @Column(name = "object_id")
     private Integer objectId;
-
-    @Column(name = "user_id")
-    private Integer userId;
 
     @Column(name = "section_id")
     private Integer sectionId;

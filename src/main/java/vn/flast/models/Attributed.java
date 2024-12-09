@@ -26,6 +26,9 @@ public class Attributed {
     @NotNull(message = "Name attributed not empty .!")
     private String name;
 
+    @Column(name = "icon")
+    private String icon;
+
     @Column(name = "status")
     private Integer status;
 

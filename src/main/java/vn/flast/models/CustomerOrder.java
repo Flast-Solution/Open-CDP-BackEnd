@@ -16,7 +16,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import vn.flast.utils.NumberUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -125,7 +124,7 @@ public class CustomerOrder implements Cloneable {
     private Long shippingStatus;
 
     @Column(name = "payment_status")
-    private Long paymentStatus;
+    private Integer paymentStatus;
 
     @Column(name = "cancel_at")
     private Date cancelAt;
@@ -194,5 +193,6 @@ public class CustomerOrder implements Cloneable {
         if(NumberUtils.isNull(status)) {
             status = 0;
         }
+        paymentStatus = 0;
     }
 }
