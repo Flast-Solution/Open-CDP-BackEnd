@@ -8,6 +8,8 @@ import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service("MyUserService")
 public class MyUserService {
 
@@ -23,5 +25,15 @@ public class MyUserService {
             .setMaxResults(LIMIT)
             .setFirstResult(LIMIT * filter.page());
         return et.toPage();
+    }
+
+    public List<User> getUsersByRole(String rule) {
+        String query = "select user.* from user join user_link_profile as ulp on user.id = ulp.user_id "  +
+                "join user_profile as up on ulp.user_profile_id = up.id " +
+                "where up.type=:rule and user.status = 1";
+        var users = (List<User>) entityManager.createNativeQuery(query, User.class)
+                .setParameter("rule", rule)
+                .getResultList();
+        return users.stream().map(User::clone).toList();
     }
 }

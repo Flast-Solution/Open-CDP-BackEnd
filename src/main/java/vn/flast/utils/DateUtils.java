@@ -75,4 +75,8 @@ public class DateUtils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy");
         return dateFormat.format(currentDate);
     }
+
+    public static int dateToInt() {
+        return (int) (new Date().getTime()/1000);
+    }
 }

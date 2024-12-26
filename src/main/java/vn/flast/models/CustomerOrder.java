@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import vn.flast.domains.order.OrderService;
 import vn.flast.utils.NumberUtils;
 
 import java.util.ArrayList;
@@ -194,5 +195,22 @@ public class CustomerOrder implements Cloneable {
             status = 0;
         }
         paymentStatus = 0;
+    }
+
+
+    private String orderSourceCode() {
+        return isOffline() ? "F" : "O";
+    }
+
+    private boolean isOffline() {
+        return source != null && source.equals(Data.FROM_DEPARTMENT.FROM_SALE.value());
+    }
+
+    public void createOrderCode() {
+        if (customerMobilePhone == null || this.code != null) {
+            return;
+        }
+        customerMobilePhone = customerMobilePhone.trim();
+        this.code = OrderService.createOrderCode(customerMobilePhone, orderSourceCode()) ;
     }
 }

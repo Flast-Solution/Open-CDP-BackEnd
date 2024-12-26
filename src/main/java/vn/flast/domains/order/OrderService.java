@@ -26,8 +26,10 @@ import vn.flast.utils.NumberUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 
 @Service("orderService")
 public class OrderService  implements Publisher, Serializable {
@@ -152,5 +154,23 @@ public class OrderService  implements Publisher, Serializable {
         if(Objects.nonNull(eventDelegate)) {
             eventDelegate.sendEvent(message);
         }
+    }
+
+    public static String createOrderCode(String customerMobilePhone, String source) {
+        if (customerMobilePhone == null) {
+            return null;
+        }
+        String lastThereDigits = customerMobilePhone.substring(customerMobilePhone.length() - 3);
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        int day = calendar.get(Calendar.DATE);
+        /* month +1 the month for current month */
+        int month = calendar.get(Calendar.MONTH) + 1;
+        String year = String.valueOf(calendar.get(Calendar.YEAR));
+        String subYear = year.substring(year.length() - 2);
+        String endCode = day + month + subYear + lastThereDigits;
+        return source
+                + Common.getAlphaNumericString(1, false)
+                + Common.getAlphaNumericString(2, true)
+                + endCode;
     }
 }
