@@ -119,7 +119,8 @@ public class DataService extends Subscriber implements Publisher {
         CSKH(8),
         WHATSAPP(11),
         PARTNER(9),
-        SHOPEE(10);
+        SHOPEE(10),
+        TIKTOK(11);
         private final int source;
         DATA_SOURCE(int source) {
             this.source = source;
@@ -285,6 +286,13 @@ public class DataService extends Subscriber implements Publisher {
             () -> new RuntimeException("Không tồn tại bản ghi này")
         );
         data.setFileUrls(new ArrayList<>());
+        return data;
+    }
+
+    public Data findByPhone(String phone){
+        var data = dataRepository.findFirstByPhone(phone).orElseThrow(
+                () -> new RuntimeException("This phone number does not exist in the system.")
+        );
         return data;
     }
 }

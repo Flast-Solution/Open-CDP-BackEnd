@@ -1,5 +1,7 @@
 package vn.flast.service.user;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -8,9 +10,11 @@ import vn.flast.dao.UserProfileDao;
 import vn.flast.entities.user.ChangPass;
 import vn.flast.entities.user.ChangeInfo;
 import vn.flast.models.User;
+import vn.flast.models.UserGroup;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.UserRepository;
 import vn.flast.utils.CopyProperty;
+import vn.flast.utils.EntityQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,9 @@ public class UserService {
 
     @Autowired
     private UserProfileDao userProfileDao;
+
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     public User findById(int id) {
         return userRepository.findById(id).orElseThrow(
@@ -91,8 +98,7 @@ public class UserService {
         }
         return user.checkRule(User.RULE_ADMIN);
     }
-//
-//
+
     public boolean isSaleManager(int id) {
         var user = this.findById(id);
         return user.ruleSaleManager();
@@ -124,6 +130,11 @@ public class UserService {
         );
         CopyProperty.CopyIgnoreNull(changeInfo, userFetch);
         updateUser(userFetch);
+    }
+
+    public UserGroup findByLeaderId(int leaderId) {
+        EntityQuery<UserGroup> et = EntityQuery.create(entityManager, UserGroup.class);
+        return et.integerEqualsTo("leaderId", leaderId).uniqueResult();
     }
 
 }

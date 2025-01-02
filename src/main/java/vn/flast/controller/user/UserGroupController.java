@@ -16,7 +16,7 @@ import vn.flast.service.user.UserGroupService;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
-@RequestMapping("/warehouse-history")
+@RequestMapping("/user-group")
 public class UserGroupController {
 
     @Autowired

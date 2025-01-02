@@ -2,6 +2,7 @@ package vn.flast.service.marketting;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.flast.components.GetUserRole;
 import vn.flast.dao.DaoImpl;
 import vn.flast.models.UserKpi;
 import vn.flast.pagination.Ipage;
@@ -16,6 +17,9 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GetUserRole userRole;
+
 
     public Ipage<UserKpi> listKpi(int userId, int page, Integer idFilter, Integer month, Integer year, Integer department, Integer limit) {
 
@@ -27,8 +31,8 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
                 et.integerEqualsTo("userId", idFilter);
             }
         } else {
-            List<Integer> userId =
-            et.in("userId", );
+            List<Integer> userIds = userRole.listUserIds();
+            et.in("userId", userIds);
         }
         et.integerEqualsTo("department", department);
         et.integerEqualsTo("month", month);
