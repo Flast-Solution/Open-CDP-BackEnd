@@ -1,5 +1,6 @@
 package vn.flast.jwt;
 
+import org.springframework.security.core.GrantedAuthority;
 import vn.flast.security.UserPrinciple;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
@@ -27,7 +30,10 @@ public class JwtProvider {
         Map<String, Object> claims = new HashMap<>();
         claims.put("ssoId", userPrincipal.getSsoId());
         claims.put("userId", String.valueOf( userPrincipal.getId()) );
-        
+        List<String> roles = userPrincipal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        claims.put("roles", roles);
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 

@@ -12,4 +12,7 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Integer> {
 
     @Query("FROM UserGroup u WHERE u.status NOT IN (0)")
     List<UserGroup> findAllByStatus();
+
+    @Query("FROM UserGroup u WHERE u.type = :type AND u.id NOT IN (:id)")
+    List<UserGroup> findAllByType(Integer type, Integer id);
 }

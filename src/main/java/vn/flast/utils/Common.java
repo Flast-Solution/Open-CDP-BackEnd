@@ -3,6 +3,7 @@ package vn.flast.utils;
 import vn.flast.security.UserPrinciple;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.File;
 import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Optional;
@@ -61,5 +62,20 @@ public class Common {
             sb.append(AlphaNumericString.charAt(index));
         }
         return sb.toString();
+    }
+
+    public static String makeFolder(String fd) {
+        String path = fd;
+        if(fd.startsWith("/uploads/")) {
+            path = System.getProperty("user.dir") + fd;
+        }
+        File f = new File(path);
+        if(f.exists()) {
+            return fd;
+        }
+        if(!f.mkdirs()){
+            System.out.println("[AopCommon.makeFolder] Create folder fail .!");
+        }
+        return fd;
     }
 }

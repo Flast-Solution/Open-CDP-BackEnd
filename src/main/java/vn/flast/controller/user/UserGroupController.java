@@ -45,6 +45,6 @@ public class UserGroupController {
     @GetMapping("/fetch")
     public MyResponse<?> fetchGroup() {
         var data = userGroupService.fetchGroup();
-        return MyResponse.response(data, "update thông tin team thành công .!");
+        return MyResponse.response(data);
     }
 }

@@ -4,16 +4,23 @@ import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import vn.flast.controller.common.BaseController;
+import vn.flast.entities.ErrorData;
+import vn.flast.entities.lead.NoOrderFilter;
+import vn.flast.models.Media;
 import vn.flast.searchs.DataFilter;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Data;
@@ -102,5 +109,31 @@ public class DataController extends BaseController {
         log.info("IoDataRequest delete id: {}", id);
         Boolean isUpdate = dataService.delete(id);
         return MyResponse.response(isUpdate ? "OK" : "FALSE");
+    }
+
+    @PostMapping("/uploads-file")
+    public MyResponse<?> multiFileUpload(
+            @RequestParam Integer sessionId,
+            @RequestParam(defaultValue = "0") Integer dataId,
+            @RequestParam(value = "file") MultipartFile multipartFile
+    ) throws Exception {
+        if (multipartFile.isEmpty()) {
+            MyResponse.response(400, "Upload file failed");
+        }
+        var response = dataService.uploadFile(multipartFile, sessionId, dataId);
+        return MyResponse.response(response);
+    }
+
+
+    @GetMapping("/no-order")
+    public MyResponse<?> findNoOrder(NoOrderFilter filter){
+        var data = dataService.fetchLeadNoOrder(filter);
+        return MyResponse.response(data);
+    }
+
+    @GetMapping("/taken-care")
+    public MyResponse<?> findTakenCare(NoOrderFilter filter){
+        var data = dataService.fetchTakenCare(filter);
+        return MyResponse.response(data);
     }
 }

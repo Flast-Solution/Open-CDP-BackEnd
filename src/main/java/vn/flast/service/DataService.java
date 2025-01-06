@@ -3,9 +3,15 @@ package vn.flast.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import vn.flast.entities.lead.NoOrderFilter;
+import vn.flast.models.DataCare;
+import vn.flast.models.Media;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
 import vn.flast.orchestration.MessageInterface;
@@ -19,11 +25,17 @@ import vn.flast.models.DataWork;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.DataMediaRepository;
 import vn.flast.repositories.DataRepository;
+import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.DateUtils;
 import vn.flast.utils.EntityQuery;
+import vn.flast.utils.GlobalUtil;
 import vn.flast.utils.SqlBuilder;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,6 +47,13 @@ import java.util.Optional;
 @Slf4j
 @Service("dataService")
 public class DataService extends Subscriber implements Publisher {
+
+    public static String UPLOAD_PATH =  "/uploads/data-media/";
+
+    public static String folderUpload() {
+        String fd = System.getProperty("user.dir") + UPLOAD_PATH + GlobalUtil.getFolderUpload(GlobalUtil.dateToInt())  + "/";
+        return Common.makeFolder(fd);
+    }
 
     @Autowired
     private DataMediaRepository dataMediaRepository;
@@ -133,6 +152,9 @@ public class DataService extends Subscriber implements Publisher {
     public void createAndUpdateDataMedias(List<String> urls, int sessionId, int dataId) {
         if(!urls.isEmpty()) {
             urls.forEach(url -> dataMediaRepository.save(new DataMedia(dataId, sessionId, url)));
+        }
+        if(sessionId != 0) {
+            updateDataMedias(dataId, sessionId);
         }
     }
 
@@ -294,5 +316,77 @@ public class DataService extends Subscriber implements Publisher {
                 () -> new RuntimeException("This phone number does not exist in the system.")
         );
         return data;
+    }
+
+    public DataMedia uploadFile(MultipartFile multipartFile, Integer sessionId, Integer dataId) throws NoSuchAlgorithmException, IOException {
+        var folderUpload = folderUpload();
+        String fileName = multipartFile.getOriginalFilename();
+        assert fileName != null : "File name not extract .!";
+        String fileMd5 = GlobalUtil.setFileName(fileName + GlobalUtil.dateToInt())  + "." +  GlobalUtil.pathNameFile(fileName);
+
+        String filePath = folderUpload + fileMd5;
+        InputStream fileStream = multipartFile.getInputStream();
+
+        File targetFile = new File(filePath);
+        FileUtils.copyInputStreamToFile(fileStream, targetFile);
+
+        DataMedia model = new DataMedia();
+        model.setSessionId(sessionId);
+        model.setDataId(dataId);
+        model.setFile(fileMd5);
+        dataMediaRepository.save(model);
+        return model;
+    }
+
+    public void updateDataMedias(Integer dataId, Integer sessionId) {
+        final String sql = "UPDATE data_media SET data_id = :dataId WHERE data_id = 0 AND session_id = :sessionId";
+        entityManager.createNativeQuery(sql)
+                .setParameter("dataId", dataId)
+                .setParameter("sessionId", sessionId)
+                .executeUpdate();
+    }
+
+    public Ipage<?> fetchLeadNoOrder(NoOrderFilter filter){
+        int LIMIT = 20;
+        int OFFSET = ( filter.page() - 1 ) * LIMIT;
+        final String totalSQL = "FROM `data` d left join `data_care` r on d.id = r.data_id";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);;
+        sqlBuilder.addIntegerEquals("d.sale_id", filter.getUserId());
+        sqlBuilder.addStringEquals("d.customer_mobile", filter.getPhone());
+        sqlBuilder.addIntegerEquals("d.source", filter.getSource());
+        sqlBuilder.addIntegerEquals("d.from_department", Data.FROM_DEPARTMENT.FROM_DATA.value());
+        sqlBuilder.addDateBetween("d.in_time", filter.getFrom(), filter.getTo());
+        sqlBuilder.addIsEmpty("r.data_id");
+        String finalQuery = sqlBuilder.builder();
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+        var nativeQuery = entityManager.createNativeQuery("SELECT d.* " + finalQuery , Data.class);
+        nativeQuery.setMaxResults(LIMIT);
+        nativeQuery.setFirstResult(OFFSET);
+
+        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, Data.class);
+        return Ipage.generator(LIMIT, count, filter.page(), listData);
+    }
+
+    public Ipage<?> fetchTakenCare(NoOrderFilter filter){
+        int LIMIT = 20;
+        int OFFSET = ( filter.page() - 1 ) * LIMIT;
+        final String totalSQL = "FROM `data` d  left join `data_care` r on d.id = r.data_id";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);;
+        sqlBuilder.addIntegerEquals("d.sale_id", filter.getUserId());
+        sqlBuilder.addStringEquals("d.customer_mobile", filter.getPhone());
+        sqlBuilder.addIntegerEquals("d.source", filter.getSource());
+        sqlBuilder.addIntegerEquals("d.from_department", Data.FROM_DEPARTMENT.FROM_DATA.value());
+        sqlBuilder.addDateBetween("d.in_time", filter.getFrom(), filter.getTo());
+        sqlBuilder.addNotNUL("r.data_id");
+        String finalQuery = sqlBuilder.builder();
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+        var nativeQuery = entityManager.createNativeQuery("SELECT r.* " + finalQuery , DataCare.class);
+        nativeQuery.setMaxResults(LIMIT);
+        nativeQuery.setFirstResult(OFFSET);
+
+        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, DataCare.class);
+        return Ipage.generator(LIMIT, count, filter.page(), listData);
     }
 }

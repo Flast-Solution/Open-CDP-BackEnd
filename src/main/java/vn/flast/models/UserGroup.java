@@ -6,17 +6,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import vn.flast.utils.JsonUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "user_group")
 @Getter
 @Setter
 public class UserGroup {
+
+    public static final Integer TYPE_SALE = 1;
+    public static final Integer TYPE_CSKH = 2;
+    public static final Integer TYPE_MKT = 3;
+    public static final Integer TYPE_KHO = 4;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,5 +55,7 @@ public class UserGroup {
     @Column(name = "status")
     private Integer status;
 
+    @Transient
+    private List<Integer> listMember;
 
 }
