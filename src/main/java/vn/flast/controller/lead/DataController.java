@@ -4,13 +4,10 @@ import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,14 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import vn.flast.controller.common.BaseController;
-import vn.flast.entities.ErrorData;
+import vn.flast.entities.lead.LeadCareFilter;
 import vn.flast.entities.lead.NoOrderFilter;
-import vn.flast.models.Media;
+import vn.flast.models.DataCare;
 import vn.flast.searchs.DataFilter;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Data;
 import vn.flast.pagination.Ipage;
 import vn.flast.service.DataService;
+import vn.flast.service.cskh.DataCareService;
 import vn.flast.validator.ValidationErrorBuilder;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +38,9 @@ public class DataController extends BaseController {
 
     @Autowired
     private DataService dataService;
+
+    @Autowired
+    private DataCareService dataCareService;
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @PostMapping(value = "/create")
@@ -127,13 +128,19 @@ public class DataController extends BaseController {
 
     @GetMapping("/no-order")
     public MyResponse<?> findNoOrder(NoOrderFilter filter){
-        var data = dataService.fetchLeadNoOrder(filter);
+        var data = dataCareService.fetchLeadNoOrder(filter);
         return MyResponse.response(data);
     }
 
     @GetMapping("/taken-care")
-    public MyResponse<?> findTakenCare(NoOrderFilter filter){
-        var data = dataService.fetchTakenCare(filter);
+    public MyResponse<?> findTakenCare(LeadCareFilter filter){
+        var data = dataCareService.fetchLeadTookCare(filter);
+        return MyResponse.response(data);
+    }
+
+    @PostMapping("/create-lead-care")
+    public MyResponse<?> createLeadCare(@RequestBody DataCare input){
+        var data = dataCareService.createLeadCare(input);
         return MyResponse.response(data);
     }
 }

@@ -346,47 +346,5 @@ public class DataService extends Subscriber implements Publisher {
                 .executeUpdate();
     }
 
-    public Ipage<?> fetchLeadNoOrder(NoOrderFilter filter){
-        int LIMIT = 20;
-        int OFFSET = ( filter.page() - 1 ) * LIMIT;
-        final String totalSQL = "FROM `data` d left join `data_care` r on d.id = r.data_id";
-        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);;
-        sqlBuilder.addIntegerEquals("d.sale_id", filter.getUserId());
-        sqlBuilder.addStringEquals("d.customer_mobile", filter.getPhone());
-        sqlBuilder.addIntegerEquals("d.source", filter.getSource());
-        sqlBuilder.addIntegerEquals("d.from_department", Data.FROM_DEPARTMENT.FROM_DATA.value());
-        sqlBuilder.addDateBetween("d.in_time", filter.getFrom(), filter.getTo());
-        sqlBuilder.addIsEmpty("r.data_id");
-        String finalQuery = sqlBuilder.builder();
-        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
-        Long count = sqlBuilder.countOrSumQuery(countQuery);
-        var nativeQuery = entityManager.createNativeQuery("SELECT d.* " + finalQuery , Data.class);
-        nativeQuery.setMaxResults(LIMIT);
-        nativeQuery.setFirstResult(OFFSET);
 
-        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, Data.class);
-        return Ipage.generator(LIMIT, count, filter.page(), listData);
-    }
-
-    public Ipage<?> fetchTakenCare(NoOrderFilter filter){
-        int LIMIT = 20;
-        int OFFSET = ( filter.page() - 1 ) * LIMIT;
-        final String totalSQL = "FROM `data` d  left join `data_care` r on d.id = r.data_id";
-        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);;
-        sqlBuilder.addIntegerEquals("d.sale_id", filter.getUserId());
-        sqlBuilder.addStringEquals("d.customer_mobile", filter.getPhone());
-        sqlBuilder.addIntegerEquals("d.source", filter.getSource());
-        sqlBuilder.addIntegerEquals("d.from_department", Data.FROM_DEPARTMENT.FROM_DATA.value());
-        sqlBuilder.addDateBetween("d.in_time", filter.getFrom(), filter.getTo());
-        sqlBuilder.addNotNUL("r.data_id");
-        String finalQuery = sqlBuilder.builder();
-        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
-        Long count = sqlBuilder.countOrSumQuery(countQuery);
-        var nativeQuery = entityManager.createNativeQuery("SELECT r.* " + finalQuery , DataCare.class);
-        nativeQuery.setMaxResults(LIMIT);
-        nativeQuery.setFirstResult(OFFSET);
-
-        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, DataCare.class);
-        return Ipage.generator(LIMIT, count, filter.page(), listData);
-    }
 }

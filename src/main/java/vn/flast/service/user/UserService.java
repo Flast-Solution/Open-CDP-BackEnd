@@ -2,25 +2,43 @@ package vn.flast.service.user;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import vn.flast.dao.UserProfileDao;
 import vn.flast.entities.user.ChangPass;
 import vn.flast.entities.user.ChangeInfo;
+import vn.flast.models.DataMedia;
+import vn.flast.models.Media;
 import vn.flast.models.User;
 import vn.flast.models.UserGroup;
 import vn.flast.pagination.Ipage;
+import vn.flast.repositories.MediaRepository;
 import vn.flast.repositories.UserRepository;
+import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
+import vn.flast.utils.GlobalUtil;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserService {
+
+    public static String UPLOAD_PATH =  "/uploads/user/";
+
+    public static String folderUpload() {
+        String fd = System.getProperty("user.dir") + UPLOAD_PATH + GlobalUtil.getFolderUpload(GlobalUtil.dateToInt())  + "/";
+        return Common.makeFolder(fd);
+    }
     @Autowired
     private UserRepository userRepository;
 
@@ -29,6 +47,9 @@ public class UserService {
 
     @Autowired
     private UserProfileDao userProfileDao;
+
+    @Autowired
+    private MediaRepository mediaRepository;
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -136,5 +157,23 @@ public class UserService {
         EntityQuery<UserGroup> et = EntityQuery.create(entityManager, UserGroup.class);
         return et.integerEqualsTo("leaderId", leaderId).uniqueResult();
     }
+
+    public Media uploadFile(MultipartFile multipartFile, Integer sessionId, Integer userId) throws NoSuchAlgorithmException, IOException {
+        var folderUpload = folderUpload();
+        String fileName = multipartFile.getOriginalFilename();
+        assert fileName != null : "File name not extract .!";
+        String fileMd5 = GlobalUtil.setFileName(fileName + GlobalUtil.dateToInt())  + "." +  GlobalUtil.pathNameFile(fileName);
+        String filePath = folderUpload + fileMd5;
+        InputStream fileStream = multipartFile.getInputStream();
+        File targetFile = new File(filePath);
+        FileUtils.copyInputStreamToFile(fileStream, targetFile);
+        Media model = new Media();
+        model.setSectionId(sessionId);
+        model.setObject("User");
+        model.setFileName(fileMd5);
+        mediaRepository.save(model);
+        return model;
+    }
+
 
 }

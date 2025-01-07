@@ -30,4 +30,5 @@ public class Media {
 
     @Column(name = "section_id")
     private Integer sectionId;
+
 }

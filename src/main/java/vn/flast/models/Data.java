@@ -61,22 +61,6 @@ public class Data {
         }
     }
 
-    public enum AfterSaleCall {
-
-        CHUA_LIEN_HE("Chưa liên hệ"),
-        KHONG_HAI_LONG("Không hài lòng"),
-        HAI_LONG("Hài lòng"),
-        RAT_HAI_LONG("Rất hài lòng");
-
-        private final String value;
-        public String value() {
-            return value;
-        }
-        AfterSaleCall(String value) {
-            this.value = value;
-        }
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -96,6 +80,9 @@ public class Data {
 
     @Column(name = "source")
     private Integer source;
+
+    @Column(name = "product_id")
+    private Long productId;
 
     @Column(name = "customer_name")
     private String customerName;
@@ -139,6 +126,19 @@ public class Data {
     @Column(name = "is_order")
     private Long isOrder;
 
+    @Column(name = "pre_sale_call")
+    private Integer preSaleCall;
+
+    @Column(name = "after_sale_call")
+    private String afterSaleCall;
+
+    @Transient
+    private String csCause;
+
+    @Transient
+    private Date csTime;
+
+
     public static String UPLOAD_PATH = "/uploads/data/";
 
     @Transient
@@ -148,5 +148,33 @@ public class Data {
     public String createFolderUpload() {
         var pathProject = DateUtils.getMonthYearCode();
         return System.getProperty("user.dir") + UPLOAD_PATH + pathProject;
+    }
+
+    public enum PreSaleCall {
+        CHUA_LIEN_HE(0),
+        DA_LIEN_HE(1);
+        private final int value;
+        public int value() {
+            return value;
+        }
+        PreSaleCall(int value) {
+            this.value = value;
+        }
+    }
+
+    public enum AfterSaleCall {
+
+        CHUA_LIEN_HE("Chưa liên hệ"),
+        KHONG_HAI_LONG("Không hài lòng"),
+        HAI_LONG("Hài lòng"),
+        RAT_HAI_LONG("Rất hài lòng");
+
+        private final String value;
+        public String value() {
+            return value;
+        }
+        AfterSaleCall(String value) {
+            this.value = value;
+        }
     }
 }

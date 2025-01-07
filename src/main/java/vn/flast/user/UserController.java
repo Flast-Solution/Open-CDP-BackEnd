@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import vn.flast.entities.UserInput;
 import vn.flast.models.User;
 import vn.flast.searchs.UserFilter;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vn.flast.service.user.UserService;
 import vn.flast.utils.CopyProperty;
 
 @RestController
@@ -27,6 +29,9 @@ public class UserController {
 
     @Autowired
     private MyUserService myUserService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/list")
     public MyResponse<?> list(UserFilter filter) {
@@ -71,5 +76,18 @@ public class UserController {
             () -> new RuntimeException("This ID does not exist in the system ")
         );
         return MyResponse.response(user);
+    }
+
+    @PostMapping("/uploads-file")
+    public MyResponse<?> multiFileUpload(
+            @RequestParam Integer sessionId,
+            @RequestParam(defaultValue = "0") Integer userId,
+            @RequestParam(value = "file") MultipartFile multipartFile
+    ) throws Exception {
+        if (multipartFile.isEmpty()) {
+            MyResponse.response(400, "Upload file failed");
+        }
+        var response = userService.uploadFile(multipartFile, sessionId, userId);
+        return MyResponse.response(response);
     }
 }

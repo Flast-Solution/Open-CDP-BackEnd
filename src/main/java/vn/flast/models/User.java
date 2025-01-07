@@ -72,6 +72,12 @@ public class User {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "avartar")
+    private String avartar;
+
+    @Column(name = "address")
+    private String address;
+
     @Transient
     public List<Integer> permissions = new ArrayList<>();
 

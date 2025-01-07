@@ -28,7 +28,7 @@ public class DataCare implements Cloneable {
     private Integer id;
 
     @Column(name = "customer_id")
-    private Integer customerId;
+    private Long customerId;
 
     @Column(name = "sale")
     private String sale;
@@ -36,14 +36,14 @@ public class DataCare implements Cloneable {
     @Column(name = "`type`")
     private String type;
 
-    @Column(name = "user_fullname")
-    private String userFullname;
+    @Column(name = "user_note")
+    private String userNote;
 
     @Column(name = "product_name")
     private String productName;
 
     @Column(name = "data_id")
-    private Integer dataId;
+    private Long dataId;
 
     @Column(name = "cause")
     private String cause;
