@@ -131,4 +131,9 @@ public class DataCareService extends BaseController {
         return model;
     }
 
+    public List<DataCare> findByCustomerId(Integer cid){
+        var data = dataCareRepository.findByCustomerId(cid);
+        return data;
+    }
+
 }
