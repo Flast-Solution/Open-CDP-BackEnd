@@ -37,7 +37,7 @@ public class Customer {
     private String gender;
 
     @Column(name = "sale_id")
-    private String saleId;
+    private Integer saleId;
 
     @Column(name = "source_id")
     private Integer sourceId;

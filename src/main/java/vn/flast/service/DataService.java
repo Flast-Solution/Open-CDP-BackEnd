@@ -4,20 +4,28 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import vn.flast.dao.DataOwnerDao;
+import vn.flast.dao.impl.DataOwnerDaoImpl;
 import vn.flast.entities.lead.NoOrderFilter;
 import vn.flast.models.DataCare;
+import vn.flast.models.DataOwner;
 import vn.flast.models.Media;
+import vn.flast.models.User;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.PubSubService;
 import vn.flast.orchestration.Publisher;
 import vn.flast.orchestration.Subscriber;
+import vn.flast.repositories.DataOwnerRepository;
+import vn.flast.repositories.UserRepository;
 import vn.flast.searchs.DataFilter;
 import vn.flast.models.Data;
 import vn.flast.models.DataMedia;
@@ -25,11 +33,13 @@ import vn.flast.models.DataWork;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.DataMediaRepository;
 import vn.flast.repositories.DataRepository;
+import vn.flast.service.customer.CustomerService;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.DateUtils;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.GlobalUtil;
+import vn.flast.utils.NumberUtils;
 import vn.flast.utils.SqlBuilder;
 
 import java.io.File;
@@ -63,6 +73,18 @@ public class DataService extends Subscriber implements Publisher {
 
     @Autowired
     private DataWorkService dataWorkService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private DataOwnerDao dataOwnerDao;
+
+    @Autowired
+    private DataOwnerRepository dataOwnerRepository;
+
+    @Autowired
+    private CustomerService customerService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -345,6 +367,76 @@ public class DataService extends Subscriber implements Publisher {
                 .setParameter("sessionId", sessionId)
                 .executeUpdate();
     }
+
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    public void reAssignLeadManual(int leadId, int saleId) {
+        var iodata = dataRepository.findById((long) leadId).orElseThrow(
+                () -> new RuntimeException("Lead does not exist")
+        );
+        var sale = userRepository.findById(saleId).orElseThrow(
+                () -> new RuntimeException("user does not exist")
+        );
+        iodata.setSaleId(sale.getId());
+//        Integer leaderId = userGroupDao.findLeaderIdBySaleId(sale.getId());
+//        iodata.setGroupSaleId(leaderId);
+        iodata.setAssignTo(sale.getSsoId());
+        DataOwner owner = dataOwnerDao.findByPhone(iodata.getCustomerMobile());
+        DataOwner dataOwner = owner != null ? owner : new DataOwner();
+        dataOwner.setCustomerMobile(iodata.getCustomerMobile());
+        dataOwner.assignDepartmentMql();
+        dataOwner.setSaleId(Long.valueOf(sale.getId().longValue()));
+        dataOwner.setSaleName(sale.getSsoId());
+        dataOwner.setInTime(new Date());
+        if(owner == null) {
+            dataOwnerRepository.save(dataOwner);
+        }
+        onCreatedUpdateData(iodata, "update");
+    }
+
+    public void onCreatedUpdateData(Data data, String mode) {
+        if("update".equals(mode) && data.getSource().equals(DATA_SOURCE.WEB.getSource())) {
+            createOwnerFromWeb(data);
+            return;
+        }
+        var customer = customerService.findByPhone(data.getCustomerMobile());
+        if(Objects.nonNull(customer)) {
+            if(StringUtils.isNotEmpty((data.getCustomerEmail()))) {
+                customer.setEmail(data.getCustomerEmail());
+            }
+            customer.setSaleId(Optional.ofNullable(data.getSaleId()).orElse(0));
+        } else {
+            customerService.createCustomer(data);
+        }
+    }
+
+    public void createOwnerFromWeb (Data data) {
+        var customer = customerService.findByPhone(data.getCustomerMobile());
+        if(customer == null) {
+            customer = customerService.createCustomer(data);
+        }
+        DataOwner dataOwner = dataOwnerDao.findByPhone(data.getCustomerMobile());
+        if(dataOwner == null) {
+            User sale = userRepository.findById(data.getSaleId()).orElseThrow(
+                    () -> new RuntimeException("user does not exist")
+            );
+            dataOwner = new DataOwner();
+            dataOwner.setCustomerMobile(data.getCustomerMobile());
+            dataOwner.assignDepartmentMql();
+            dataOwner.setSaleId(Long.valueOf(sale.getId().longValue()));
+            dataOwner.setSaleName(sale.getSsoId());
+            dataOwner.setInTime(new Date());
+            dataOwnerRepository.save(dataOwner);
+        }
+        if(StringUtils.isNotEmpty((data.getCustomerEmail()))) {
+            customer.setEmail(data.getCustomerEmail());
+        }
+        if(NumberUtils.gteZero(customer.getSaleId())) {
+            customer.setSaleId(Math.toIntExact(dataOwner.getSaleId()));
+            customerService.save(customer);
+        }
+    }
+
+
 
 
 }

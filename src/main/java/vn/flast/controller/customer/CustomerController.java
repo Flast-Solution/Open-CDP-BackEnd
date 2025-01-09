@@ -24,7 +24,6 @@ public class CustomerController {
             @RequestParam(name = "phone") String phone,
             @RequestParam(defaultValue = "withOrder") String withOrder
     ) {
-
         var data = ("withOrder".endsWith(withOrder) ? customerService.getInfo(phone) : customerService.findByPhone(phone));
         return MyResponse.response(data);
     }

@@ -30,11 +30,18 @@ public class DataOwner {
     private Long saleId;
 
     @Column(name = "department_id")
-    private String departmentId;
+    private Integer departmentId;
 
     @Column(name = "sale_name")
-    private Long saleName;
+    private String saleName;
 
     @Column(name = "in_time")
     private Date inTime;
+
+    private static final Integer ASSIGN_SQL = 1;
+    private static final Integer ASSIGN_MQL = 2;
+
+    public void assignDepartmentMql() {
+        this.departmentId = ASSIGN_MQL;
+    }
 }

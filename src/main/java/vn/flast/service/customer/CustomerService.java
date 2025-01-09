@@ -7,12 +7,15 @@ import vn.flast.dao.DataDao;
 import vn.flast.entities.OrderStatus;
 import vn.flast.entities.customer.CustomerInfo;
 import vn.flast.models.Customer;
+import vn.flast.models.Data;
 import vn.flast.models.DataOwner;
 import vn.flast.models.User;
 import vn.flast.repositories.CustomerRepository;
 import vn.flast.repositories.DataOwnerRepository;
 import vn.flast.repositories.UserRepository;
 import vn.flast.service.cskh.DataCareService;
+
+import java.util.Random;
 
 @Service
 public class CustomerService {
@@ -34,6 +37,11 @@ public class CustomerService {
 
     @Autowired
     private UserRepository userRepository;
+
+
+    public Customer save(Customer customer){
+        return customerRepository.save(customer);
+    }
 
     public CustomerInfo getInfo(String phone) {
         var customer = customerRepository.findByPhone(phone);
@@ -66,5 +74,16 @@ public class CustomerService {
     public Customer findByPhone(String phone){
         var customer = customerRepository.findByPhone(phone);
         return customer;
+    }
+
+    public Customer createCustomer(Data data) {
+        Customer model = new Customer();
+        model.setSourceId(data.getSource());
+        model.setEmail(data.getCustomerEmail());
+        model.setName(data.getCustomerName());
+        model.setSaleId(data.getSaleId());
+        model.setMobile(data.getCustomerMobile());
+        customerRepository.save(model);
+        return model;
     }
 }

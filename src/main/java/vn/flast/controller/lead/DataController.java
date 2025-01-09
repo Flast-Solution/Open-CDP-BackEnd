@@ -143,4 +143,12 @@ public class DataController extends BaseController {
         var data = dataCareService.createLeadCare(input);
         return MyResponse.response(data);
     }
+
+    @PostMapping("/re-assign")
+    public MyResponse<?> reassign(@RequestParam Integer leadId, @RequestParam Integer saleId) {
+        dataService.reAssignLeadManual(leadId, saleId);
+        return MyResponse.response("Okie");
+    }
+
+
 }
