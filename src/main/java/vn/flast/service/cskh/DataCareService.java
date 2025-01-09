@@ -5,8 +5,6 @@ import jakarta.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.common.BaseController;
 import vn.flast.entities.lead.CskhLeadData;
 import vn.flast.entities.lead.LeadCareFilter;
@@ -15,7 +13,7 @@ import vn.flast.models.Data;
 import vn.flast.models.DataCare;
 import vn.flast.models.Product;
 import vn.flast.pagination.Ipage;
-import vn.flast.repositories.CustomerRepository;
+import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataCareRepository;
 import vn.flast.repositories.DataRepository;
 import vn.flast.repositories.ProductRepository;
@@ -38,7 +36,7 @@ public class DataCareService extends BaseController {
     private DataRepository dataRepository;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerPersonalRepository customerRepository;
 
     @Autowired
     private ProductRepository productRepository;

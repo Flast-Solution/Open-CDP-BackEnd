@@ -6,22 +6,20 @@ import vn.flast.dao.CustomerOrderDao;
 import vn.flast.dao.DataDao;
 import vn.flast.entities.OrderStatus;
 import vn.flast.entities.customer.CustomerInfo;
-import vn.flast.models.Customer;
+import vn.flast.models.CustomerPersonal;
 import vn.flast.models.Data;
 import vn.flast.models.DataOwner;
 import vn.flast.models.User;
-import vn.flast.repositories.CustomerRepository;
+import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataOwnerRepository;
 import vn.flast.repositories.UserRepository;
 import vn.flast.service.cskh.DataCareService;
-
-import java.util.Random;
 
 @Service
 public class CustomerService {
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerPersonalRepository customerRepository;
 
     @Autowired
     private DataDao dataDao;
@@ -39,7 +37,7 @@ public class CustomerService {
     private UserRepository userRepository;
 
 
-    public Customer save(Customer customer){
+    public CustomerPersonal save(CustomerPersonal customer){
         return customerRepository.save(customer);
     }
 
@@ -71,14 +69,14 @@ public class CustomerService {
         );
     }
 
-    public Customer findByPhone(String phone){
+    public CustomerPersonal findByPhone(String phone){
         var customer = customerRepository.findByPhone(phone);
         return customer;
     }
 
-    public Customer createCustomer(Data data) {
-        Customer model = new Customer();
-        model.setSourceId(data.getSource());
+    public CustomerPersonal createCustomer(Data data) {
+        CustomerPersonal model = new CustomerPersonal();
+        model.setSourceId(Long.valueOf(data.getSource().longValue()));
         model.setEmail(data.getCustomerEmail());
         model.setName(data.getCustomerName());
         model.setSaleId(data.getSaleId());

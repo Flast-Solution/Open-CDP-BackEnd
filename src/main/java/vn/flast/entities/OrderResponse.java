@@ -1,6 +1,5 @@
 package vn.flast.entities;
 
-import vn.flast.models.Customer;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import lombok.Getter;

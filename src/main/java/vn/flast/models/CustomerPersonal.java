@@ -5,9 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Date;
 
 @Table(name = "customer_personal")
@@ -15,6 +18,11 @@ import java.util.Date;
 @Getter
 @Setter
 public class CustomerPersonal {
+
+    public static final Integer KH_MOI = 1;
+    public static final Integer KH_THAN_THIET = 2;
+    public static final Integer KH_TIEM_NANG = 3;
+    public static final Integer KH_VIP = 4;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,16 +33,16 @@ public class CustomerPersonal {
     private String type;
 
     @Column(name = "id_card")
-    private String id_card;
+    private String idCard;
 
     @Column(name = "sale_id")
-    private String sale_id;
+    private Integer saleId;
 
     @Column(name = "gender")
     private String gender;
 
     @Column(name = "source_id")
-    private Long source_id;
+    private Long sourceId;
 
     @Column(name = "level")
     private Long level;
@@ -95,4 +103,12 @@ public class CustomerPersonal {
 
     @Column(name = "diem_danh_gia")
     private Date diemDanhGia;
+
+    @PrePersist
+    private void beforeSave() {
+        if(StringUtils.isEmpty(gender)) {
+            gender = "other";
+        }
+        type = "newCustomer";
+    }
 }

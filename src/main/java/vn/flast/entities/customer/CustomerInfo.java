@@ -1,7 +1,7 @@
 package vn.flast.entities.customer;
 
-import vn.flast.models.Customer;
 import vn.flast.models.CustomerOrder;
+import vn.flast.models.CustomerPersonal;
 import vn.flast.models.Data;
 import vn.flast.models.DataCare;
 import vn.flast.models.User;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CustomerInfo {
 
-    public Customer iCustomer;
+    public CustomerPersonal iCustomer;
     public User saleTakeCare;
     public List<Data> lichSuTuongTac;
     public List<CustomerOrder> donChuaHoanThanh;
