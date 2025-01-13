@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import vn.flast.models.CustomerPersonal;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.PubSubService;
 import vn.flast.orchestration.Subscriber;
@@ -20,8 +21,8 @@ public class CustomerService extends Subscriber {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Customer> find(CustomerFilter filter) {
-        var et = EntityQuery.create(entityManager, Customer.class);
+    public List<CustomerPersonal> find(CustomerFilter filter) {
+        var et = EntityQuery.create(entityManager, CustomerPersonal.class);
         et.setMaxResults(20);
         et.addDescendingOrderBy("id");
         et.like("mobile", filter.mobile());

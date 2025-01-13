@@ -23,7 +23,7 @@ public class HibernateConfiguration {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan("vn.flast.models");
+        sessionFactory.setPackagesToScan("vn.flast.models", "vn.flast.resultset");
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }

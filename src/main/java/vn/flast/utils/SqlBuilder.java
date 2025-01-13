@@ -186,6 +186,22 @@ public class SqlBuilder {
         return this;
     }
 
+    public SqlBuilder addDesc(String column) {
+        if (StringUtils.isNotEmpty(column)) {
+            // Append "ORDER BY column DESC" to the SQL query
+            maps.put(" ORDER BY ".concat(column).concat(" DESC"), null);
+        }
+        return this;
+    }
+
+    public SqlBuilder addASC(String column) {
+        if (StringUtils.isNotEmpty(column)) {
+            // Append "ORDER BY column ASC" to the SQL query
+            maps.put(" ORDER BY ".concat(column).concat(" ASC"), null);
+        }
+        return this;
+    }
+
     public SqlBuilder addIntegerEquals(String column, Integer value) {
         if(StringUtils.isNotEmpty(column) && value != null) {
             maps.put(" AND ".concat(column).concat(" = "), value);

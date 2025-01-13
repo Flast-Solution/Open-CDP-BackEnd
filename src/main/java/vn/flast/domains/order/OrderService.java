@@ -16,6 +16,7 @@ import vn.flast.orchestration.Publisher;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderRepository;
+import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataRepository;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.utils.Common;
@@ -42,7 +43,7 @@ public class OrderService  implements Publisher, Serializable {
     private CustomerOrderRepository orderRepository;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerPersonalRepository customerRepository;
 
     @Autowired
     private DataRepository dataRepository;

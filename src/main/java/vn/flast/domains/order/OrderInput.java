@@ -3,6 +3,7 @@ package vn.flast.domains.order;
 import vn.flast.domains.payments.OrderPaymentInfo;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
+import vn.flast.models.CustomerPersonal;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.JsonUtils;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 public record OrderInput(
     Long id,
-    Customer customer,
+    CustomerPersonal customer,
     OrderDiscount discount,
     OrderPaymentInfo paymentInfo,
     Integer vat,
