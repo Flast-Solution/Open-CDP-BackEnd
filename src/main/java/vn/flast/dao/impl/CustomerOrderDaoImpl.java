@@ -3,6 +3,7 @@ package vn.flast.dao.impl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import vn.flast.dao.CustomerOrderDao;
 import vn.flast.domains.order.OrderService;
 import vn.flast.models.CustomerOrder;
@@ -10,6 +11,7 @@ import vn.flast.utils.EntityQuery;
 
 import java.util.List;
 
+@Repository("customerOrderDao")
 public class CustomerOrderDaoImpl implements CustomerOrderDao {
 
     @PersistenceContext

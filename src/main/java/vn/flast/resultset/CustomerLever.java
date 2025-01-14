@@ -3,6 +3,7 @@ package vn.flast.resultset;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityResult;
 import jakarta.persistence.FieldResult;
+import jakarta.persistence.Id;
 import jakarta.persistence.SqlResultSetMapping;
 import jakarta.persistence.Transient;
 import lombok.Getter;
@@ -28,7 +29,9 @@ public class CustomerLever {
     @Transient
     public static final String REPORT_CUSTOMER_LEVEL = "CustomerLever";
 
+    @Id
     private Integer total;
+
     private Integer level;
 
 }

@@ -25,7 +25,7 @@ import vn.flast.utils.SqlBuilder;
 import java.util.List;
 
 @Service
-public class CustomerService extends DaoImpl<Integer, CustomerEnterprise> {
+public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> {
 
     @Autowired
     private CustomerPersonalRepository customerRepository;

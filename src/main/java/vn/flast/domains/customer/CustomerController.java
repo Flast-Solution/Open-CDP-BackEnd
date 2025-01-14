@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.searchs.CustomerFilter;
+import vn.flast.service.customer.CustomerServiceGlobal;
 
 @RestController
 @RequestMapping("/customer")
@@ -20,7 +21,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @Autowired
-    private vn.flast.service.customer.CustomerService cusService;
+    private CustomerServiceGlobal cusService;
 
     @GetMapping("/find")
     public MyResponse<?> find(CustomerFilter filter) {

@@ -2,12 +2,14 @@ package vn.flast.dao.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.stereotype.Repository;
 import vn.flast.dao.DataDao;
 import vn.flast.models.Data;
 import vn.flast.utils.EntityQuery;
 
 import java.util.List;
 
+@Repository("dataDao")
 public class DataDaoImpl implements DataDao {
 
     @PersistenceContext

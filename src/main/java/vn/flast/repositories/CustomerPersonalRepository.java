@@ -6,6 +6,6 @@ import vn.flast.models.CustomerPersonal;
 
 public interface CustomerPersonalRepository extends JpaRepository<CustomerPersonal, Long> {
 
-    @Query("FROM Customer c WHERE c.mobile = :phone")
+    @Query("FROM CustomerPersonal c WHERE c.mobile = :phone")
     CustomerPersonal findByPhone(String phone);
 }

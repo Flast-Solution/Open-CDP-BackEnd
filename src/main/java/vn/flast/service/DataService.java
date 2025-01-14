@@ -6,17 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.flast.dao.DataOwnerDao;
-import vn.flast.dao.impl.DataOwnerDaoImpl;
-import vn.flast.entities.lead.NoOrderFilter;
-import vn.flast.models.DataCare;
 import vn.flast.models.DataOwner;
-import vn.flast.models.Media;
 import vn.flast.models.User;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
@@ -33,7 +28,7 @@ import vn.flast.models.DataWork;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.DataMediaRepository;
 import vn.flast.repositories.DataRepository;
-import vn.flast.service.customer.CustomerService;
+import vn.flast.service.customer.CustomerServiceGlobal;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.DateUtils;
@@ -47,7 +42,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -84,7 +78,7 @@ public class DataService extends Subscriber implements Publisher {
     private DataOwnerRepository dataOwnerRepository;
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerServiceGlobal customerService;
 
     @PersistenceContext
     private EntityManager entityManager;

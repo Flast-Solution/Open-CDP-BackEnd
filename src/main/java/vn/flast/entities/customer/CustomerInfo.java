@@ -5,7 +5,7 @@ import vn.flast.models.CustomerPersonal;
 import vn.flast.models.Data;
 import vn.flast.models.DataCare;
 import vn.flast.models.User;
-import vn.flast.service.customer.CustomerService;
+import vn.flast.service.customer.CustomerServiceGlobal;
 
 import java.util.List;
 
@@ -16,6 +16,6 @@ public class CustomerInfo {
     public List<Data> lichSuTuongTac;
     public List<CustomerOrder> donChuaHoanThanh;
     public List<CustomerOrder> baDonGanNhat;
-    public List<CustomerService> customerService;
+    public List<CustomerServiceGlobal> customerService;
     public List<DataCare> dataCares;
 }
