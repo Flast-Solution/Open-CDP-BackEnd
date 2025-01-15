@@ -50,6 +50,7 @@ public class DataController extends BaseController {
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
         iodata.setFromDepartment(Data.FROM_DEPARTMENT.FROM_DATA.value());
+        var userName =getUsername();
         iodata.setStaff(getUsername());
         iodata.setStatus(DataService.DATA_STATUS.CREATE_DATA.getStatusCode());
         dataService.saveData(iodata);
@@ -62,7 +63,7 @@ public class DataController extends BaseController {
     }
 
     @GetMapping(value = "/lists")
-    public MyResponse<?> fetch(@RequestBody DataFilter data) {
+    public MyResponse<?> fetch(DataFilter data) {
         data.setFromDepartment(Data.FROM_DEPARTMENT.FROM_DATA.value());
         Ipage<?> dataRet = dataService.getListDataFromCustomerService(data);
         return MyResponse.response(dataRet);
@@ -126,9 +127,9 @@ public class DataController extends BaseController {
     }
 
 
-    @GetMapping("/no-order")
-    public MyResponse<?> findNoOrder(NoOrderFilter filter){
-        var data = dataCareService.fetchLeadNoOrder(filter);
+    @GetMapping("/not-taken-care")
+    public MyResponse<?> findNotTakenCare(NoOrderFilter filter){
+        var data = dataCareService.fetchLeadNoCare(filter);
         return MyResponse.response(data);
     }
 

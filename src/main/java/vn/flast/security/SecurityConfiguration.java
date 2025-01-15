@@ -3,12 +3,16 @@ package vn.flast.security;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import vn.flast.entities.MyResponse;
 import vn.flast.jwt.JwtAuthTokenFilter;
@@ -36,20 +40,32 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    private final Logger logger = LoggerFactory.getLogger(SecurityConfiguration.class);
-    private final UserPermissionRepository permissionRepository;
     @Autowired
-    @Qualifier("jwtAuthTokenFilter")
     private JwtAuthTokenFilter jwtTokenFilter;
 
     @Autowired
     @Qualifier("customAuthenticationEntryPoint")
-    private final AuthenticationEntryPoint authEntryPoint;
+    private AuthenticationEntryPoint authEntryPoint;
 
-    public SecurityConfiguration(UserPermissionRepository permissionRepository, JwtAuthTokenFilter jwtTokenFilter, @Qualifier("customAuthenticationEntryPoint") AuthenticationEntryPoint authEntryPoint) {
-        this.permissionRepository = permissionRepository;
-        this.jwtTokenFilter = jwtTokenFilter;
-        this.authEntryPoint = authEntryPoint;
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Access-Control-Allow-Headers",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers",
+                "Origin",
+                "Cache-Control",
+                "Content-Type",
+                "Authorization"
+        ));
+        configuration.setAllowedMethods(Arrays.asList("DELETE", "GET", "POST", "PATCH", "PUT"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
@@ -70,26 +86,8 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin", "Cache-Control", "Content-Type", "Authorization"));
-        configuration.setAllowedMethods(Arrays.asList("DELETE", "GET", "POST", "PATCH", "PUT"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-    @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return (request, response, ex) -> {
-            logger.info(ex.getMessage());
-            response.setContentType("application/json;charset=UTF-8");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            var ret = MyResponse.response(403, "Request Denied Handler");
-            response.getWriter().write(JsonUtils.toJson(ret));
-        };
+    AuthorizationManager<RequestAuthorizationContext> customAuthManager() {
+        return (authentication, object) -> new AuthorizationDecision(new Random().nextBoolean());
     }
 
     @Bean

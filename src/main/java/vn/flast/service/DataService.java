@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vn.flast.dao.DataOwnerDao;
+import vn.flast.models.DataComplaint;
 import vn.flast.models.DataOwner;
 import vn.flast.models.User;
 import vn.flast.orchestration.EventDelegate;
@@ -429,8 +430,6 @@ public class DataService extends Subscriber implements Publisher {
             customerService.save(customer);
         }
     }
-
-
 
 
 }

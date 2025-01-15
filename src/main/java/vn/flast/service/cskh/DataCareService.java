@@ -22,6 +22,7 @@ import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -81,7 +82,7 @@ public class DataCareService extends BaseController {
         return new Ipage<>(filter.getLimit(), Math.toIntExact(count), currentPage, listRet);
     }
 
-    public Ipage<?> fetchLeadNoOrder(NoOrderFilter filter){
+    public Ipage<?> fetchLeadNoCare(NoOrderFilter filter){
         int LIMIT = 20;
         int OFFSET = ( filter.page() - 1 ) * LIMIT;
         final String totalSQL = "FROM `data` d left join `data_care` r on d.id = r.data_id";
@@ -92,6 +93,10 @@ public class DataCareService extends BaseController {
         sqlBuilder.addIntegerEquals("d.from_department", Data.FROM_DEPARTMENT.FROM_DATA.value());
         sqlBuilder.addDateBetween("d.in_time", filter.getFrom(), filter.getTo());
         sqlBuilder.addIsEmpty("r.data_id");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -3);
+        Date dayBeforeYesterday = calendar.getTime();
+        sqlBuilder.addDateLessThan("d.in_time", dayBeforeYesterday);
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
         Long count = sqlBuilder.countOrSumQuery(countQuery);

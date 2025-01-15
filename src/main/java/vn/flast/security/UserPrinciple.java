@@ -36,6 +36,7 @@ public class UserPrinciple implements UserDetails {
         String ssoId,
         String email,
         String password,
+        String name,
         List<SimpleGrantedAuthority> authorities
     ) {
         this.id = id;
@@ -43,6 +44,7 @@ public class UserPrinciple implements UserDetails {
         this.username = ssoId;
         this.email = email;
         this.password = password;
+        this.name = name;
         this.authorities = authorities;
     }
 
@@ -56,6 +58,7 @@ public class UserPrinciple implements UserDetails {
             user.getSsoId(),
             user.getEmail(),
             user.getPassword(),
+            user.getFullName(),
             authorities
         );
     }

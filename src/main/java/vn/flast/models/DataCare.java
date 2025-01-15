@@ -33,8 +33,8 @@ public class DataCare implements Cloneable {
     @Column(name = "sale")
     private String sale;
 
-    @Column(name = "`type`")
-    private String type;
+    @Column(name = "type")
+    private String type;  //
 
     @Column(name = "user_note")
     private String userNote;
