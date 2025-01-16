@@ -92,17 +92,20 @@ public class CustomerPersonal {
     @Column(name = "status")
     private Long status;
 
+    @Column(name = "num_of_order")
+    private Integer numOfOrder = 0;
+
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
     @Column(name = "created_at")
-    private String createdAt;
+    private Date createdAt;
 
     @Column(name = "updated_at")
-    private Long updatedAt;
+    private Date updatedAt;
 
     @Column(name = "diem_danh_gia")
-    private Date diemDanhGia;
+    private Integer diemDanhGia;
 
     @PrePersist
     private void beforeSave() {

@@ -126,7 +126,6 @@ public class DataController extends BaseController {
         return MyResponse.response(response);
     }
 
-
     @GetMapping("/not-taken-care")
     public MyResponse<?> findNotTakenCare(NoOrderFilter filter){
         var data = dataCareService.fetchLeadNoCare(filter);
@@ -150,6 +149,4 @@ public class DataController extends BaseController {
         dataService.reAssignLeadManual(leadId, saleId);
         return MyResponse.response("Okie");
     }
-
-
 }

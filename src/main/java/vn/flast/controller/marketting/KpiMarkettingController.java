@@ -3,11 +3,14 @@ package vn.flast.controller.marketting;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.controller.common.BaseController;
 import vn.flast.entities.MyResponse;
+import vn.flast.entities.SaleKpiProperty;
 import vn.flast.models.UserKpi;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.UserRepository;
@@ -46,5 +49,18 @@ public class KpiMarkettingController extends BaseController {
         Ipage<UserKpi> iPage = kpiService.listKpi(getUserId(), page, idFilter, month, year, department, limit);
         return MyResponse.response(iPage);
     }
+
+    @PostMapping(value = "/create")
+    public MyResponse<?> setData(@RequestBody SaleKpiProperty input){
+        var data = kpiService.create(input);
+        return MyResponse.response(data);
+    }
+
+    @PostMapping(value = "/update")
+    public MyResponse<?> update(@RequestBody SaleKpiProperty input){
+        var data = kpiService.update(input);
+        return MyResponse.response(data);
+    }
+
 
 }

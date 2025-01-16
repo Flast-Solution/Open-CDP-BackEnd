@@ -3,11 +3,14 @@ package vn.flast.domains.customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.flast.models.CustomerPersonal;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.PubSubService;
 import vn.flast.orchestration.Subscriber;
+import vn.flast.repositories.CustomerOrderRepository;
+import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.searchs.CustomerFilter;
 import vn.flast.utils.EntityQuery;
 
@@ -20,6 +23,12 @@ public class CustomerService extends Subscriber {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private CustomerOrderRepository customerOrderRepository;
+
+    @Autowired
+    private CustomerPersonalRepository customerPersonalRepository;
 
     public List<CustomerPersonal> find(CustomerFilter filter) {
         var et = EntityQuery.create(entityManager, CustomerPersonal.class);
@@ -47,6 +56,22 @@ public class CustomerService extends Subscriber {
             var message = iterator.next();
             log.info("Message Topic -> "+ message.getTopic() + " : " + message.getPayload());
             iterator.remove();
+        }
+    }
+
+    public void increaseNumOfOrder(Long id) {
+        CustomerPersonal customer = customerPersonalRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("no record found")
+        );
+        increaseNumOfOrder(customer);
+        customerPersonalRepository.save(customer);
+    }
+
+    public void increaseNumOfOrder(CustomerPersonal customer) {
+        if(customer != null) {
+            int numOrderOfCustomer = customerOrderRepository.countOrder(customer.getId(), "order");
+            customer.setNumOfOrder(numOrderOfCustomer + 1);
+
         }
     }
 }

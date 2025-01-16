@@ -16,6 +16,9 @@ import lombok.Setter;
 @Setter
 public class UserKpi {
 
+    public static final int DEPARTMENT_SALE = 0;
+    public static final int DEPARTMENT_MARKETTING = 1;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -41,4 +44,34 @@ public class UserKpi {
 
     @Column(name = "year")
     private Long year;
+
+    @Column(name = "fee")
+    private long fee = 0L;
+
+    @Column(name = "list_fee")
+    private String listFee;
+
+    public enum KPI_TYPE_SALE {
+        FROM_DATA(0),
+        FROM_SALE(1);
+        private final int value;
+        public int value() {
+            return value;
+        }
+        KPI_TYPE_SALE(int value) {
+            this.value = value;
+        }
+    }
+
+    public enum KPI_TYPE_MARKETING {
+        OF_LEAD(0),
+        OF_TRAFIX(1);
+        private final int value;
+        public int value() {
+            return value;
+        }
+        KPI_TYPE_MARKETING(int value) {
+            this.value = value;
+        }
+    }
 }

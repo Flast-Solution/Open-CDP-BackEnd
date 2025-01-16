@@ -2,6 +2,7 @@ package vn.flast.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import vn.flast.models.CustomerOrder;
 
 import java.util.Collection;
@@ -14,4 +15,7 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
 
     @Query("FROM CustomerOrder c WHERE c.code IN (:codes)")
     List<CustomerOrder> findByCodes(Collection<String> codes);
+
+    @Query("SELECT COUNT(c.id) FROM CustomerOrder c WHERE c.customerId = :id AND c.type = :type")
+    Integer countOrder(@Param("id") Long id, @Param("type") String type);
 }

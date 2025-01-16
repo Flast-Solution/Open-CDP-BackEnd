@@ -140,6 +140,4 @@ public class DataCareService extends BaseController {
         var data = dataCareRepository.findByCustomerId(cid);
         return data;
     }
-
-
 }

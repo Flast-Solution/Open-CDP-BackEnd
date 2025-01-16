@@ -41,8 +41,12 @@ public class DateUtils {
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    private static LocalDateTime dateToLocalDateTime(Date date) {
+    public static LocalDateTime dateToLocalDateTime(Date date) {
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+
+    public static LocalDate Date2LocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private static Date localDateTimeToDate(LocalDateTime localDateTime) {
