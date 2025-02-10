@@ -29,7 +29,7 @@ public class DataMedia {
     private Integer dataId;
 
     @Column(name = "session_id")
-    private Integer sessionId;
+    private Long sessionId;
 
     @Column(name = "file")
     private String file;
@@ -37,7 +37,7 @@ public class DataMedia {
 
     public DataMedia(
             @NotNull(message = "dataId is can't be null") Integer dataId,
-            @NotNull(message = "sessionId is can't be null") Integer sessionId,
+            @NotNull(message = "sessionId is can't be null") Long sessionId,
             @NotNull(message = "file is can't be null") String file
     ) {
         this.dataId = dataId;

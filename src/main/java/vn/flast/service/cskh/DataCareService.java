@@ -46,8 +46,7 @@ public class DataCareService extends BaseController {
     private EntityManager entityManager;
 
     public Ipage<?> fetchLeadTookCare(LeadCareFilter filter){
-        int currentPage = filter.getPage() > 1 ? (filter.getPage() - 1) : 0;
-
+        int currentPage =  filter.page();
         String initQuery = "FROM `data_care` a LEFT JOIN `data` b on a.`data_id` = b.`id`";
         SqlBuilder sqlCondiBuilder = SqlBuilder.init(initQuery);
         if(StringUtils.isNotEmpty(filter.getPhone())) {
@@ -59,9 +58,8 @@ public class DataCareService extends BaseController {
         sqlCondiBuilder.addDateBetween("b.in_time", filter.getFrom(), filter.getTo());
         sqlCondiBuilder.addOrderBy("ORDER BY a.id DESC");
         String finalQuery = sqlCondiBuilder.builder();
-
-        var entityQuery = EntityQuery.create(entityManager, DataCare.class);
-        Long count = entityQuery.countOrSumWithNoParams("SELECT COUNT(a.id) " + finalQuery);
+        var countQuery = entityManager.createNativeQuery(sqlCondiBuilder.countQueryString());
+        Long count = sqlCondiBuilder.countOrSumQuery(countQuery);
         var ccvs = entityManager.createNativeQuery("SELECT a.* " + finalQuery, DataCare.class);
         ccvs.setMaxResults(filter.getLimit());
         ccvs.setFirstResult(filter.getLimit() * currentPage);
@@ -83,8 +81,8 @@ public class DataCareService extends BaseController {
     }
 
     public Ipage<?> fetchLeadNoCare(NoOrderFilter filter){
-        int LIMIT = 20;
-        int OFFSET = ( filter.page() - 1 ) * LIMIT;
+        int LIMIT = filter.getLimit();
+        int OFFSET = filter.page() * LIMIT;
         final String totalSQL = "FROM `data` d left join `data_care` r on d.id = r.data_id";
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);;
         sqlBuilder.addIntegerEquals("d.sale_id", filter.getUserId());

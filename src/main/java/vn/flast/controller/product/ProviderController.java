@@ -43,4 +43,7 @@ public class ProviderController {
         providerService.delete(id);
         return  MyResponse.response("Ok");
     }
+
+
+
 }

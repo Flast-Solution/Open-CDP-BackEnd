@@ -12,7 +12,7 @@ import lombok.Setter;
 
 import java.util.Date;
 
-@Table(name = "data_media")
+@Table(name = "data_owner")
 @Entity
 @Getter
 @Setter

@@ -1,6 +1,7 @@
 package vn.flast.models;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +28,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 public class DataComplaint {
+
+    public static String TYPE_ = "cohoi";
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -65,22 +68,25 @@ public class DataComplaint {
     private Integer chuyenMucId;
 
     @Column(name = "sale_id")
-    private String saleId;
+    private Integer saleId;
 
     @Column(name = "note", length = 65535)
     private String note;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "in_time", length = 19)
     private Date inTime;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "update_time", length = 19)
     private Date updateTime;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "process_time", length = 19)
     private Date processTime;
 

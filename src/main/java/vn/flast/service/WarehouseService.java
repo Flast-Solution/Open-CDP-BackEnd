@@ -6,11 +6,15 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.flast.models.Stock;
 import vn.flast.models.Warehouse;
 import vn.flast.pagination.Ipage;
+import vn.flast.repositories.StockRepository;
 import vn.flast.repositories.WarehouseRepository;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
+
+import java.util.List;
 
 @Service
 public class WarehouseService {
@@ -20,6 +24,9 @@ public class WarehouseService {
 
     @Autowired
     private WarehouseRepository wareHouseRepository;
+
+    @Autowired
+    private StockRepository stockRepository;
 
 
     public Warehouse created(Warehouse input){
@@ -51,4 +58,8 @@ public class WarehouseService {
         );
         wareHouseRepository.delete(data);
     }
+
+//    public List<Stock> fetchWarehouseInfo(){
+//
+//    }
 }

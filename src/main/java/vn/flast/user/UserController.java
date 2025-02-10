@@ -90,4 +90,10 @@ public class UserController {
         var response = userService.uploadFile(multipartFile, sessionId, userId);
         return MyResponse.response(response);
     }
+
+    @GetMapping("/list-sale")
+    public MyResponse<?> listSale(){
+        var data = userService.findBySale();
+        return MyResponse.response(data);
+    }
 }

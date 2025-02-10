@@ -26,6 +26,7 @@ public class UserGroupService extends BaseController {
                 throw new IllegalArgumentException("Group với leader này đã tồn tại.");
             }
             input.setMemberNumber(input.getListMember().size());
+            input.setMemberList(JsonUtils.toJson(input.getListMember()));
             return userGroupRepository.save(input);
         }
         throw new SecurityException("Người dùng không có quyền tạo group."); // Nếu không phải Admin

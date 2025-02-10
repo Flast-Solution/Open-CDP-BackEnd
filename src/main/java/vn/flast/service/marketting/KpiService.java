@@ -1,5 +1,6 @@
 package vn.flast.service.marketting;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.flast.components.GetUserRole;
@@ -19,16 +20,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class KpiService extends DaoImpl<Integer, UserKpi> {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private GetUserRole userRole;
+    private final GetUserRole userRole;
 
-    @Autowired
-    private UserKpiRepository userKpiRepository;
+    private final UserKpiRepository userKpiRepository;
 
 
     public Ipage<UserKpi> listKpi(int userId, int page, Integer idFilter, Integer month, Integer year, Integer department, Integer limit) {

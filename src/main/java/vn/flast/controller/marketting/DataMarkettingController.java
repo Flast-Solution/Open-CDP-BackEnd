@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import vn.flast.entities.ComplaintFilter;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Data;
 import vn.flast.models.DataComplaint;
@@ -53,7 +55,7 @@ public class DataMarkettingController {
             if (StringUtils.isEmpty(item)) {
                 continue;
             }
-            var model = new DataMedia(Math.toIntExact(data.getId()), DateUtils.dateToInt(), item);
+            var model = new DataMedia(Math.toIntExact(data.getId()), (long) DateUtils.dateToInt(), item);
             dataMediaRepository.save(model);
         }
         return MyResponse.response(data);
@@ -61,7 +63,13 @@ public class DataMarkettingController {
 
     @PostMapping(value = "/create-complaint")
     public MyResponse<?> createConplaint(@RequestBody DataComplaint input) {
-        var data = input.getId() != null ? dataComplaintService.createComplaint(input) : dataComplaintService.updateComplaint(input);
+        var data = input.getId() != null ? dataComplaintService.updateComplaint(input) : dataComplaintService.createComplaint(input);
+        return MyResponse.response(data);
+    }
+
+    @GetMapping(value = "/list-complaint")
+    public MyResponse<?> listComplaint(ComplaintFilter filter){
+        var data = dataComplaintService.fetchComplaint(filter);
         return MyResponse.response(data);
     }
 }

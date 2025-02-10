@@ -1,10 +1,12 @@
 package vn.flast.controller.common;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import vn.flast.security.UserPrinciple;
 
 import java.util.Optional;
 
+@Component
 public class BaseController {
 
     protected String getUsername() {

@@ -2,6 +2,7 @@ package vn.flast.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import vn.flast.controller.common.BaseController;
 import vn.flast.dao.DataOwnerDao;
 import vn.flast.models.DataComplaint;
 import vn.flast.models.DataOwner;
@@ -51,6 +53,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service("dataService")
+@RequiredArgsConstructor
 public class DataService extends Subscriber implements Publisher {
 
     public static String UPLOAD_PATH =  "/uploads/data-media/";
@@ -60,26 +63,14 @@ public class DataService extends Subscriber implements Publisher {
         return Common.makeFolder(fd);
     }
 
-    @Autowired
-    private DataMediaRepository dataMediaRepository;
-
-    @Autowired
-    private DataRepository dataRepository;
-
-    @Autowired
-    private DataWorkService dataWorkService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private DataOwnerDao dataOwnerDao;
-
-    @Autowired
-    private DataOwnerRepository dataOwnerRepository;
-
-    @Autowired
-    private CustomerServiceGlobal customerService;
+    private final DataMediaRepository dataMediaRepository;
+    private final DataRepository dataRepository;
+    private final DataWorkService dataWorkService;
+    private final UserRepository userRepository;
+    private final DataOwnerDao dataOwnerDao;
+    private final DataOwnerRepository dataOwnerRepository;
+    private final CustomerServiceGlobal customerService;
+    private final BaseController baseController; // This is now final
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -168,7 +159,7 @@ public class DataService extends Subscriber implements Publisher {
 
     public void createAndUpdateDataMedias(List<String> urls, int sessionId, int dataId) {
         if(!urls.isEmpty()) {
-            urls.forEach(url -> dataMediaRepository.save(new DataMedia(dataId, sessionId, url)));
+            urls.forEach(url -> dataMediaRepository.save(new DataMedia(dataId, (long) sessionId, url)));
         }
         if(sessionId != 0) {
             updateDataMedias(dataId, sessionId);
@@ -225,16 +216,26 @@ public class DataService extends Subscriber implements Publisher {
     }
 
     public Ipage<Data> getListDataFromCustomerService(DataFilter filter) {
+        var user = baseController.getInfo();
         var LIMIT = filter.getLimit();
         var offset = filter.page() * LIMIT;
         EntityQuery<Data> et = EntityQuery.create(entityManager, Data.class);
         et.between("inTime", filter.getFrom(), filter.getTo());
         et.integerEqualsTo("source", filter.getSource());
-        List<Data> lists = et.integerEqualsTo("fromDepartment", filter.getFromDepartment())
-            .stringEqualsTo("customerMobile", filter.getCustomerMobile())
+        if (user.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
+            et.integerEqualsTo("saleId", filter.getSaleId());
+        }
+        else if(user.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals(""))){
+
+        }
+        if (filter.getFromDepartment() == null) {
+            et.integerEqualsTo("fromDepartment", filter.getFromDepartment());
+        }
+        List<Data> lists = et.stringEqualsTo("customerMobile", filter.getCustomerMobile())
             .stringEqualsTo("customerEmail", filter.getCustomerEmail())
             .integerEqualsTo("status", filter.getStatus())
-            .integerEqualsTo("saleId", filter.getSaleId())
             .setFirstResult(offset)
             .setMaxResults(LIMIT)
             .addDescendingOrderBy("inTime")
@@ -269,7 +270,7 @@ public class DataService extends Subscriber implements Publisher {
         sqlBuilder.addIntegerEquals("d.source", filter.getSource());
         sqlBuilder.addIntegerEquals("d.from_department", Data.FROM_DEPARTMENT.FROM_DATA.value());
         sqlBuilder.addDateBetween("d.in_time", filter.getFrom(), filter.getTo());
-        sqlBuilder.addOrderBy("ORDER BY d.id DESC");
+
         String ft = Optional.ofNullable(filter.getFilterOrderType()).orElse("");
         switch (ft) {
             case "notCohoi" -> sqlBuilder.addIsEmpty("c.id");
@@ -282,7 +283,7 @@ public class DataService extends Subscriber implements Publisher {
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
         Long count = sqlBuilder.countOrSumQuery(countQuery);
 
-        var nativeQuery = entityManager.createNativeQuery("SELECT d.* " + finalQuery, Data.class);
+        var nativeQuery = entityManager.createNativeQuery("SELECT d.* " + finalQuery + " ORDER BY d.in_time DESC", Data.class);
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
 
@@ -348,7 +349,7 @@ public class DataService extends Subscriber implements Publisher {
         FileUtils.copyInputStreamToFile(fileStream, targetFile);
 
         DataMedia model = new DataMedia();
-        model.setSessionId(sessionId);
+        model.setSessionId(sessionId.longValue());
         model.setDataId(dataId);
         model.setFile(fileMd5);
         dataMediaRepository.save(model);

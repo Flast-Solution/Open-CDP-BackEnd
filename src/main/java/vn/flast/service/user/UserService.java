@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.flast.dao.UserProfileDao;
 import vn.flast.entities.user.ChangPass;
 import vn.flast.entities.user.ChangeInfo;
+import vn.flast.models.DataCare;
 import vn.flast.models.DataMedia;
 import vn.flast.models.Media;
 import vn.flast.models.User;
@@ -22,6 +23,7 @@ import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.GlobalUtil;
+import vn.flast.utils.SqlBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -156,6 +158,17 @@ public class UserService {
     public UserGroup findByLeaderId(int leaderId) {
         EntityQuery<UserGroup> et = EntityQuery.create(entityManager, UserGroup.class);
         return et.integerEqualsTo("leaderId", leaderId).uniqueResult();
+    }
+
+    public List<User> findBySale(){
+        String initQuery = "FROM user u LEFT JOIN user_link_profile p ON u.id = p.user_id";
+        SqlBuilder sqlCondiBuilder = SqlBuilder.init(initQuery);
+        sqlCondiBuilder.addIntegerEquals("u.status", 1);
+        sqlCondiBuilder.addIn("p.user_profile_id", List.of("5","13"));
+        String finalQuery = sqlCondiBuilder.builder();
+        var ccvs = entityManager.createNativeQuery("SELECT u.* " + finalQuery, User.class);
+        var dataCcvs = EntityQuery.getListOfNativeQuery(ccvs, User.class);
+        return dataCcvs;
     }
 
     public Media uploadFile(MultipartFile multipartFile, Integer sessionId, Integer userId) throws NoSuchAlgorithmException, IOException {
