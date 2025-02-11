@@ -69,6 +69,11 @@ public class DataController extends BaseController {
         return MyResponse.response(dataRet);
     }
 
+    @GetMapping(value = "/view")
+    public MyResponse<?> viewData(@RequestParam Long dataId){
+        var data = dataService.findById(dataId);
+        return MyResponse.response(data);
+    }
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @PostMapping(value = "/update")
     public MyResponse<?> update(
@@ -145,8 +150,8 @@ public class DataController extends BaseController {
     }
 
     @PostMapping("/re-assign")
-    public MyResponse<?> reassign(@RequestParam Integer leadId, @RequestParam Integer saleId) {
-        dataService.reAssignLeadManual(leadId, saleId);
+    public MyResponse<?> reassign(@RequestParam Integer dataId, @RequestParam Integer saleId) {
+        dataService.reAssignLeadManual(dataId, saleId);
         return MyResponse.response("Okie");
     }
 }

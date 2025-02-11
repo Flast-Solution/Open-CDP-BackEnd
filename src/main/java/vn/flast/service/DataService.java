@@ -223,12 +223,12 @@ public class DataService extends Subscriber implements Publisher {
         et.between("inTime", filter.getFrom(), filter.getTo());
         et.integerEqualsTo("source", filter.getSource());
         if (user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")) || user.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_SALE_MANAGER"))) {
             et.integerEqualsTo("saleId", filter.getSaleId());
         }
-        else if(user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals(""))){
-
+        else {
+            et.integerEqualsTo("saleId", user.getId());
         }
         if (filter.getFromDepartment() == null) {
             et.integerEqualsTo("fromDepartment", filter.getFromDepartment());
@@ -242,6 +242,8 @@ public class DataService extends Subscriber implements Publisher {
             .list();
         return new Ipage<>(LIMIT,et.count(), filter.page(), lists);
     }
+
+
 
     public Ipage<Data> leadOfWork(DataFilter filter) {
         int LimitInWork = 20;
@@ -326,6 +328,7 @@ public class DataService extends Subscriber implements Publisher {
             () -> new RuntimeException("Không tồn tại bản ghi này")
         );
         data.setFileUrls(new ArrayList<>());
+        data.setListFileUploads(dataMediaRepository.findByDataId(id).orElse(new ArrayList<>()));
         return data;
     }
 
@@ -351,7 +354,7 @@ public class DataService extends Subscriber implements Publisher {
         DataMedia model = new DataMedia();
         model.setSessionId(sessionId.longValue());
         model.setDataId(dataId);
-        model.setFile(fileMd5);
+        model.setFile(filePath.replace(System.getProperty("user.dir"), ""));
         dataMediaRepository.save(model);
         return model;
     }

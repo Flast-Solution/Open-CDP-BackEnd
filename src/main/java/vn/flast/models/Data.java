@@ -149,11 +149,15 @@ public class Data {
     @Transient
     private Date csTime;
 
+    @Transient
+    List<DataMedia> listFileUploads = new ArrayList<>();
+
+
+
 
     public static String UPLOAD_PATH = "/uploads/data/";
 
     @Transient
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<String> fileUrls = new ArrayList<>();
 
     public String createFolderUpload() {

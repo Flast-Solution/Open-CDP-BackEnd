@@ -45,6 +45,7 @@ public class DataMedia {
         this.file = file;
     }
 
+    public static String UPLOAD_PATH =  "/uploads/data-media/";
 
 
 }
