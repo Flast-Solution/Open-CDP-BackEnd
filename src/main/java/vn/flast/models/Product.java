@@ -90,5 +90,5 @@ public class Product {
     private Date updatedTime;
 
     @Transient
-    private List<ImagesProduct> imageLists;
+    private List<String> imageLists;
 }

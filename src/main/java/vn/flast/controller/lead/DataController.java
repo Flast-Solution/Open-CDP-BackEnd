@@ -100,10 +100,10 @@ public class DataController extends BaseController {
                 .append("</p>")
                 .append("<div class='content-note'>").append(currentNote).append("</div>")
                 .append("</div>");
-            data.setNote(sb.toString());
+            ioData.setNote(sb.toString());
         }
 
-        dataService.Update(data);
+        dataService.Update(ioData);
         List<String> urls = ioData.getFileUrls();
         if(leadId != 0 && urls != null) {
             dataService.createAndUpdateDataMedias(data.getFileUrls(), sessionId, leadId);

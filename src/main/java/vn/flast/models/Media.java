@@ -14,6 +14,10 @@ import lombok.Setter;
 @Getter @Setter
 public class Media {
 
+    public static final Integer NOT_ACTIVE = 0;
+
+    public static final Integer ACTIVE = 1;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -30,5 +34,8 @@ public class Media {
 
     @Column(name = "section_id")
     private Integer sectionId;
+
+    @Column(name = "status")
+    private Integer status ;
 
 }

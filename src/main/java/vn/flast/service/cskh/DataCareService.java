@@ -17,6 +17,7 @@ import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataCareRepository;
 import vn.flast.repositories.DataRepository;
 import vn.flast.repositories.ProductRepository;
+import vn.flast.service.DataService;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
@@ -91,6 +92,7 @@ public class DataCareService extends BaseController {
         sqlBuilder.addIntegerEquals("d.from_department", Data.FROM_DEPARTMENT.FROM_DATA.value());
         sqlBuilder.addDateBetween("d.in_time", filter.getFrom(), filter.getTo());
         sqlBuilder.addIsEmpty("r.data_id");
+        sqlBuilder.addNotIn("d.status", DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -3);
         Date dayBeforeYesterday = calendar.getTime();

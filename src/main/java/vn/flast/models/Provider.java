@@ -31,7 +31,7 @@ public class Provider {
     private Long id;
 
     @Column(name = "user_id")
-    private int userId;
+    private Integer userId;
 
     @Column(name = "geolocation")
     private String geolocation;

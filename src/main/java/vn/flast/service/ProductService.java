@@ -74,8 +74,11 @@ public class ProductService {
     @Autowired
     private SkuService skuService;
 
+    @Autowired
+    private MediaService mediaService;
+
     public Product createdSeo(Product input){
-        input.setImage(JsonUtils.toJson(input.getImageLists()));
+//        input.setImage(JsonUtils.toJson(input.getImageLists()));
         return productsRepository.save(input);
     }
 
@@ -194,6 +197,8 @@ public class ProductService {
             saleProduct.getSkus().forEach(
                 sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(product.getId()))
             );
+            saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product").stream()
+                    .map(prt -> prt.getFileName()).collect(Collectors.toList()));
             return saleProduct;
         }).toList();
         return  Ipage.generator(LIMIT, count, PAGE, listSaleProduct);
