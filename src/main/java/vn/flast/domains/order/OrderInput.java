@@ -21,7 +21,8 @@ public record OrderInput(
     OrderPaymentInfo paymentInfo,
     Integer vat,
     List<CustomerOrderDetail> details,
-    String note
+    String note,
+    Long dataId
 ) {
     public void transformOrder(CustomerOrder order) {
         if(Common.CollectionIsEmpty(details)) {

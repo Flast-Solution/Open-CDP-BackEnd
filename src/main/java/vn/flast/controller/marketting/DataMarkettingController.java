@@ -45,7 +45,6 @@ public class DataMarkettingController {
     @RequestMapping(value = "/create-lead", method = RequestMethod.POST)
     public MyResponse<?> create(@RequestParam(defaultValue = "0") Integer sessionId, @RequestBody Data data) {
         data.setStatus(DataService.DATA_STATUS.CREATE_DATA.getStatusCode());
-        data.setSource(DataService.DATA_SOURCE.WEB.getSource());
         var owner = dataService.findByPhone(data.getCustomerMobile());
         if (Objects.nonNull(owner)) {
             data.setSaleId(owner.getSaleId());

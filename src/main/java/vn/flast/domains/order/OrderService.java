@@ -91,15 +91,14 @@ public class OrderService  implements Publisher, Serializable {
         order.setUserCreateUsername(Common.getSsoId());
         order.setUserCreateId(Common.getUserId());
         input.transformOrder(order);
-
         if(NumberUtils.isNotNull(order.getId())) {
             var entity = orderRepository.findById(order.getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Not Found Order .!")
             );
             CopyProperty.CopyIgnoreNull(entity, order);
         } else {
-            var data = dataRepository.findFirstByPhone(order.getCustomerMobilePhone()).orElseThrow(
-                () -> new ResourceNotFoundException("Not Found Source Data .!")
+            var data = dataRepository.findFirstByPhone(input.customer().getMobile()).orElseThrow(
+                    () -> new RuntimeException("This phone number does not exist in the system.")
             );
             order.setDataId(data.getId());
             order.setSource(data.getSource());

@@ -11,6 +11,7 @@ import java.util.List;
 public interface ProductSkusRepository extends JpaRepository<ProductSkus, Long> {
 
 
+    @Query("FROM ProductSkus p WHERE p.productId = :id AND p.del = 0")
     List<ProductSkus> findByProductId(Long id);
 
     @Modifying

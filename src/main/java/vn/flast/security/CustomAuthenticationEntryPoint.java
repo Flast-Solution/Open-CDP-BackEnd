@@ -20,7 +20,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException {
-        MyResponse<?> ret = MyResponse.response(401, "Authentication failed");
+        MyResponse<?> ret = MyResponse.response(401, authException.getMessage());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write(JsonUtils.toJson(ret));

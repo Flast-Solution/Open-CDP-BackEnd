@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DataRepository extends JpaRepository<Data, Long> {
-    @Query("FROM Data d WHERE d.customerMobile = :phone")
-    Optional<Data> findFirstByPhone(String phone);
+    @Query(value = "SELECT * FROM data WHERE customer_mobile = :phone ORDER BY in_time DESC LIMIT 1", nativeQuery = true)
+    Optional<Data> findFirstByPhone(@Param("phone") String phone);
 
-    @Query("FROM Data d WHERE (:ids IS NULL OR d.saleId IN (:ids))")
+    @Query("FROM Data d WHERE (:ids IS NULL OR d.id IN (:ids))")
     List<Data> fetchDataIds(@Param("ids") List<Long> ids);
+
+
 }
