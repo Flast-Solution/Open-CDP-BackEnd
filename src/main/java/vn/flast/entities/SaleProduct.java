@@ -16,4 +16,5 @@ public class SaleProduct extends Product {
     private List<ProductAttributed> listProperties;
     private List<ProductSkus> skus;
     private List<ProductProperty> listOpenInfo;
+    private Long sessionId;
 }

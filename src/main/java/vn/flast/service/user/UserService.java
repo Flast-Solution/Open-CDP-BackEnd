@@ -171,7 +171,7 @@ public class UserService {
         return dataCcvs;
     }
 
-    public Media uploadFile(MultipartFile multipartFile, Integer sessionId, Integer userId) throws NoSuchAlgorithmException, IOException {
+    public Media uploadFile(MultipartFile multipartFile, Long sessionId, Integer userId) throws NoSuchAlgorithmException, IOException {
         var folderUpload = folderUpload();
         String fileName = multipartFile.getOriginalFilename();
         assert fileName != null : "File name not extract .!";

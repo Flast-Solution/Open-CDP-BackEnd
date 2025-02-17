@@ -80,13 +80,14 @@ public class ProductController {
     @PostMapping(path = "/upload-file", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public MyResponse<?> uploadFileMedia(
             @RequestParam(value = "files") List<MultipartFile> files,
-            @RequestParam Integer productId){
+            @RequestParam(defaultValue = "0") Long sessionId,
+            @RequestParam(defaultValue = "0") Long productId){
         if (files.isEmpty()) {
             return MyResponse.response(403);
         }
         try {
-            mediaService.uploadFileMediaProduct(files, productId);
-            return MyResponse.response("oke");
+            var data = mediaService.uploadFileMediaProduct(files, sessionId, productId);
+            return MyResponse.response(data);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (NoSuchAlgorithmException e) {

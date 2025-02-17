@@ -9,6 +9,7 @@ import vn.flast.entities.SaleProduct;
 import vn.flast.entities.SkuAttributed;
 import vn.flast.models.Attributed;
 import vn.flast.models.AttributedValue;
+import vn.flast.models.Media;
 import vn.flast.models.Product;
 import vn.flast.models.ProductAttributed;
 import vn.flast.models.ProductProperty;
@@ -19,6 +20,7 @@ import vn.flast.models.Provider;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.AttributedRepository;
 import vn.flast.repositories.AttributedValueRepository;
+import vn.flast.repositories.MediaRepository;
 import vn.flast.repositories.ProductAttributedRepository;
 import vn.flast.repositories.ProductPropertyRepository;
 import vn.flast.repositories.ProductRepository;
@@ -77,6 +79,9 @@ public class ProductService {
     @Autowired
     private MediaService mediaService;
 
+    @Autowired
+    private MediaRepository mediaRepository;
+
     public Product createdSeo(Product input){
 //        input.setImage(JsonUtils.toJson(input.getImageLists()));
         return productsRepository.save(input);
@@ -102,7 +107,9 @@ public class ProductService {
         Product product = new Product();
         CopyProperty.CopyIgnoreNull(input, product);
         var data = productsRepository.save(product);
-
+        if(input.getSessionId() != 0) {
+            updateMedia(input.getSessionId(), data.getId());
+        }
         /* Save Attributed */
         productAttributedRepository.deleteByProductId(data.getId());
         List<ProductAttributed> productAttributedList = input.getListProperties().stream().flatMap(
@@ -148,6 +155,14 @@ public class ProductService {
         );
         CopyProperty.CopyIgnoreNull(input, entity);
         return productsRepository.save(entity);
+    }
+
+    private void updateMedia(Long sessionId, Long id) {
+        List<Media> mediaList = mediaService.listSesionId(sessionId);
+        if (!mediaList.isEmpty()) {
+            mediaList.forEach(media -> media.setObjectId(Math.toIntExact(id))); // Không cần chuyển `Long` -> `int`
+            mediaRepository.saveAll(mediaList); // Batch update
+        }
     }
 
     public SaleProduct findName(String name) {

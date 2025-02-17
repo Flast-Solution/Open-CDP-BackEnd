@@ -33,7 +33,7 @@ public class Media {
     private Integer objectId;
 
     @Column(name = "section_id")
-    private Integer sectionId;
+    private Long sectionId;
 
     @Column(name = "status")
     private Integer status ;

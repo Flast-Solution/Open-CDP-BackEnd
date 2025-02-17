@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class MediaService {
         return Common.makeFolder(fd);
     }
 
-    public void uploadFileMediaProduct(List<MultipartFile> files, Integer productId) throws IOException, NoSuchAlgorithmException {
+    public List<?> uploadFileMediaProduct(List<MultipartFile> files, Long sessionId, Long productId) throws IOException, NoSuchAlgorithmException {
         var folderUpload = folderUpload();
         List<Media> medias = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -45,13 +46,19 @@ public class MediaService {
             File targetFile = new File(filePath);
             FileUtils.copyInputStreamToFile(fileStream, targetFile);
             Media model = new Media();
-            model.setObjectId(productId);
+            if(sessionId != 0) {
+                model.setSectionId(sessionId);
+            }
+            model.setObjectId(Math.toIntExact(productId));
             model.setObject(PRODUCT);
             model.setFileName(filePath.replace(System.getProperty("user.dir"), ""));
             model.setStatus(Media.ACTIVE);
             medias.add(model);
         }
-        mediaRepository.saveAll(medias);
+        var data = mediaRepository.saveAll(medias).stream().map(media -> {
+            return media.getFileName();
+        }).collect(Collectors.toList());
+        return data;
     }
 
     public List<Media> list(Integer objectId, String objetc){
@@ -59,6 +66,10 @@ public class MediaService {
         return data;
     }
 
+    public List<Media> listSesionId(Long sessionId){
+        var data = mediaRepository.listBySessionId(sessionId);
+        return data;
+    }
     public void removeFileProduct(String file, Integer productId){
         var media = mediaRepository.findFileName(file, productId).orElseThrow(
                 () -> new RuntimeException("Không tồn tại bản ghi này")

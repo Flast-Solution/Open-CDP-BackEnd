@@ -14,4 +14,7 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
 
     @Query("FROM Media m WHERE m.fileName = :fileName AND m.objectId = :objectId")
     Optional<Media> findFileName(String fileName, Integer objectId);
+
+    @Query("FROM Media m WHERE m.sectionId = :sessionId AND m.object = 'Product'")
+    List<Media> listBySessionId(Long sessionId);
 }

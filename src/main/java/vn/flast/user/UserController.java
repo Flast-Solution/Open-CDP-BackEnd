@@ -80,7 +80,7 @@ public class UserController {
 
     @PostMapping("/uploads-file")
     public MyResponse<?> multiFileUpload(
-            @RequestParam Integer sessionId,
+            @RequestParam Long sessionId,
             @RequestParam(defaultValue = "0") Integer userId,
             @RequestParam(value = "file") MultipartFile multipartFile
     ) throws Exception {
