@@ -15,5 +15,7 @@ public interface DataRepository extends JpaRepository<Data, Long> {
     @Query("FROM Data d WHERE (:ids IS NULL OR d.id IN (:ids))")
     List<Data> fetchDataIds(@Param("ids") List<Long> ids);
 
+    Boolean existsByCustomerMobile(String phone);
+
 
 }

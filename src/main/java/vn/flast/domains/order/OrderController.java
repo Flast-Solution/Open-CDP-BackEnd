@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import vn.flast.domains.payments.OrderPaymentInfo;
 import vn.flast.entities.MyResponse;
+import vn.flast.models.CustomerOrder;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.validator.ValidationErrorBuilder;
 
@@ -26,7 +28,12 @@ public class OrderController {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Input invalid .!");
         }
-        var order = orderService.save(entity);
+        OrderInput inputUpdate = entity;
+        if (entity.paymentInfo() != null) {
+            OrderPaymentInfo updatedPaymentInfo = entity.paymentInfo().withStatus(true);
+            inputUpdate = entity.withPaymentInfo(updatedPaymentInfo);
+        }
+        var order = orderService.create(inputUpdate);
         return MyResponse.response(order);
     }
 
@@ -44,7 +51,8 @@ public class OrderController {
 
     @GetMapping("/fetch")
     public MyResponse<?> list(OrderFilter filter) {
-        var order = orderService.fetchList(filter);
+        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
+        var order = orderService.fetchList(updatedFilter);
         return MyResponse.response(order);
     }
 }

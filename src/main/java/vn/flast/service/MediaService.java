@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +36,7 @@ public class MediaService {
         return Common.makeFolder(fd);
     }
 
-    public List<?> uploadFileMediaProduct(List<MultipartFile> files, Long sessionId, Long productId) throws IOException, NoSuchAlgorithmException {
+    public Map<String,Object> uploadFileMediaProduct(List<MultipartFile> files, Long sessionId, Long productId) throws IOException, NoSuchAlgorithmException {
         var folderUpload = folderUpload();
         List<Media> medias = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -58,7 +60,12 @@ public class MediaService {
         var data = mediaRepository.saveAll(medias).stream().map(media -> {
             return media.getFileName();
         }).collect(Collectors.toList());
-        return data;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("fileNames", data);
+        response.put("sessionId", sessionId);
+
+        return response;
     }
 
     public List<Media> list(Integer objectId, String objetc){

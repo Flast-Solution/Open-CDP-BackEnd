@@ -1,9 +1,14 @@
 package vn.flast.domains.order;
 
+import lombok.With;
 import vn.flast.domains.payments.OrderPaymentInfo;
+import vn.flast.domains.payments.PayService;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerPersonal;
+import vn.flast.models.StatusOrder;
+import vn.flast.repositories.StatusOrderRepository;
+import vn.flast.utils.BeanUtil;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.JsonUtils;
@@ -14,11 +19,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+
 public record OrderInput(
     Long id,
     CustomerPersonal customer,
     OrderDiscount discount,
-    OrderPaymentInfo paymentInfo,
+    @With OrderPaymentInfo paymentInfo,
     Integer vat,
     List<CustomerOrderDetail> details,
     String note,
@@ -39,7 +45,11 @@ public record OrderInput(
         if(NumberUtils.isNotNull(vat)) {
             order.setVat(vat);
         }
-        order.setPaid(Optional.ofNullable(paymentInfo).map(OrderPaymentInfo::amount).orElse(0.));
+        if(paymentInfo != null && paymentInfo().status()) {
+            order.setPaid(Optional.ofNullable(paymentInfo).map(OrderPaymentInfo::amount).orElse(0.));
+            var payService = BeanUtil.getBean(PayService.class);
+            payService.manualMethod(paymentInfo);
+        }
         boolean isPaid = NumberUtils.gteZero(order.getPaid());
         order.setType(isPaid ? CustomerOrder.TYPE_ORDER: CustomerOrder.TYPE_CO_HOI);
     }
@@ -53,7 +63,10 @@ public record OrderInput(
             detail.setCustomerOrderId(order.getId());
             detail.setCode(order.getCode().concat("-" + i));
             detail.setCreatedAt(new Date());
-            detail.setStatus(detailOrder.getStatus());
+            if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
+                var statusRepo =  BeanUtil.getBean(StatusOrderRepository.class);
+                detail.setStatus(statusRepo.findStartOrder().getId());
+            }
             OrderUtils.calDetailPrice(detail);
             detailList.add(detail);
             i++;

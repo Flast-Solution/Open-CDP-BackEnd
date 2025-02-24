@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.exception.InvalidParamsException;
+import vn.flast.models.CustomerOrderPayment;
 
 @RestController
 @RequestMapping("/pay")
@@ -35,5 +36,11 @@ public class PayController {
     public MyResponse<?> find(@RequestParam Long orderId) {
         var lists = payService.listByOrderId(orderId);
         return MyResponse.response(lists);
+    }
+
+    @PostMapping("/confirm-payment")
+    public MyResponse<?> confirmPayment(CustomerOrderPayment input){
+        payService.confirmPayment(input);
+        return MyResponse.response("oke");
     }
 }

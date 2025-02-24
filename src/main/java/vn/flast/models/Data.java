@@ -129,7 +129,7 @@ public class Data {
     private Date updateTime;
 
     @Column(name = "status")
-    private Integer status;
+    private Integer status = 0;
 
     @Column(name = "from_department")
     private Integer fromDepartment;

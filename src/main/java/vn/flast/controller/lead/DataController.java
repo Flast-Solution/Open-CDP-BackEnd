@@ -18,6 +18,7 @@ import vn.flast.controller.common.BaseController;
 import vn.flast.entities.lead.LeadCareFilter;
 import vn.flast.entities.lead.NoOrderFilter;
 import vn.flast.models.DataCare;
+import vn.flast.repositories.DataRepository;
 import vn.flast.searchs.DataFilter;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Data;
@@ -42,6 +43,9 @@ public class DataController extends BaseController {
     @Autowired
     private DataCareService dataCareService;
 
+    @Autowired
+    private DataRepository dataRepository;
+
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @PostMapping(value = "/create")
     public MyResponse<?> create(@Valid @RequestParam(defaultValue = "0") Integer sessionId, @RequestBody Data iodata, Errors errors) {
@@ -49,9 +53,20 @@ public class DataController extends BaseController {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        iodata.setFromDepartment(Data.FROM_DEPARTMENT.FROM_DATA.value());
-        var userName =getUsername();
+        var userName =getInfo();
         iodata.setStaff(getUsername());
+        boolean isAdminOrManager = userName.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_SALE")
+                        || auth.getAuthority().equals("ROLE_SALE_MANAGER"));
+        if(dataRepository.existsByCustomerMobile(iodata.getCustomerMobile())){
+            iodata.setFromDepartment(Data.FROM_DEPARTMENT.FROM_RQL.value());
+        }
+        else if(isAdminOrManager) {
+            iodata.setFromDepartment(Data.FROM_DEPARTMENT.FROM_SALE.value());
+        }
+        else {
+            iodata.setFromDepartment(Data.FROM_DEPARTMENT.FROM_DATA.value());
+        }
         iodata.setStatus(DataService.DATA_STATUS.CREATE_DATA.getStatusCode());
         dataService.saveData(iodata);
         int dataId = Optional.ofNullable(iodata.getId())

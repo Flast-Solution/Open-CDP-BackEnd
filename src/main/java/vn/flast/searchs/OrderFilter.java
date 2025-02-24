@@ -1,15 +1,19 @@
 package vn.flast.searchs;
 
+import lombok.With;
 import vn.flast.utils.NumberUtils;
 
 public record OrderFilter(
-    Integer page,
+    @With Integer page,
     Integer limit,
     String code,
+
+    @With String type,
     String customerName,
     String customerEmail,
     Integer customerId,
     Integer companyId,
+    Integer saleId,
     String customerPhone
 ) {
     @Override

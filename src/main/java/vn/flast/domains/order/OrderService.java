@@ -5,7 +5,9 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.flast.controller.common.BaseController;
 import vn.flast.entities.OrderResponse;
+import vn.flast.entities.OrderStatus;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.orchestration.EventDelegate;
@@ -18,6 +20,7 @@ import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataRepository;
+import vn.flast.repositories.StatusOrderRepository;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
@@ -51,16 +54,31 @@ public class OrderService  implements Publisher, Serializable {
     @Autowired
     private CustomerOrderDetailRepository detailRepository;
 
-    public Ipage<?> fetchList(OrderFilter filter) {
+    @Autowired
+    private BaseController baseController;
+
+    @Autowired
+    private StatusOrderRepository statusOrderRepository;
+
+    public Ipage<?>fetchList(OrderFilter filter) {
+        var sale = baseController.getInfo();
         Integer page = filter.page();
         var et = EntityQuery.create(entityManager, CustomerOrder.class);
+        if (filter.saleId() != null) {
+            boolean isAdminOrManager = sale.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                            || auth.getAuthority().equals("ROLE_SALE_MANAGER"));
+            et.integerEqualsTo("userCreateId", isAdminOrManager ? filter.saleId() : sale.getId());
+        } else {
+            et.integerEqualsTo("userCreateId", sale.getId());
+        }
         et.like("customerName", filter.customerName())
             .integerEqualsTo("customerId", filter.customerId())
-            .integerEqualsTo("companyId", filter.companyId())
             .stringEqualsTo("customerMobile", filter.customerPhone())
             .stringNotEquals("customerEmail", filter.customerEmail())
             .stringEqualsTo("code", filter.code())
             .addDescendingOrderBy("createdAt")
+            .stringEqualsTo("type", filter.type())
             .setMaxResults(filter.limit())
             .setFirstResult(page * filter.limit());
 
@@ -85,7 +103,7 @@ public class OrderService  implements Publisher, Serializable {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder save(OrderInput input) {
+    public CustomerOrder create(OrderInput input) {
         var order = new CustomerOrder();
         order.setCode(OrderUtils.createOrderCode());
         order.setUserCreateUsername(Common.getSsoId());
@@ -102,15 +120,32 @@ public class OrderService  implements Publisher, Serializable {
             );
             order.setDataId(data.getId());
             order.setSource(data.getSource());
-            orderRepository.save(order);
         }
-
+        if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
+            order.setStatus(statusOrderRepository.findStartOrder().getId());
+        }
         var listDetails = input.transformOnCreateDetail(order);
         order.setDetails(listDetails);
         detailRepository.saveAll(listDetails);
 
         OrderUtils.calculatorPrice(order);
+        orderRepository.save(order);
         this.sendMessageOnOrderChange(order);
+        return order;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public CustomerOrder updateOrder(OrderInput input){
+        CustomerOrder orderOld = orderRepository.findById(input.id()).orElseThrow(
+                () -> new RuntimeException("error no record exists")
+        );
+        CustomerOrder order = new CustomerOrder();
+        input.transformOrder(order);
+        CopyProperty.CopyIgnoreNull(orderOld, order);
+        var listDetails = input.transformOnCreateDetail(order);
+        order.setDetails(listDetails);
+        detailRepository.saveAll(listDetails);
+        OrderUtils.calculatorPrice(order);
         return order;
     }
 
@@ -171,5 +206,23 @@ public class OrderService  implements Publisher, Serializable {
                 + Common.getAlphaNumericString(1, false)
                 + Common.getAlphaNumericString(2, true)
                 + endCode;
+    }
+
+    @Transactional
+    public void cancelCohoi(Long orderId, Boolean detail){
+        Integer statusCancel = statusOrderRepository.findCancelOrder().getId();
+        if(detail){
+            var order = detailRepository.findById(orderId).orElseThrow(
+                    () -> new RuntimeException("error no record exists")
+            );
+            order.setStatus(statusCancel);
+        }
+        else {
+            var order = orderRepository.findById(orderId).orElseThrow(
+                    () -> new RuntimeException("error no record exists")
+            );
+            order.setStatus(statusCancel);
+        }
+
     }
 }
