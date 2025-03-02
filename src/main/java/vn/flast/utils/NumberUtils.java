@@ -36,4 +36,8 @@ public class NumberUtils {
     public static double calculatorPercent(double fee, double percent) {
         return (fee/100)*percent;
     }
+
+    public static int numberWithDefaultZero(Integer value) {
+        return gteZero(value) ? value : 0;
+    }
 }

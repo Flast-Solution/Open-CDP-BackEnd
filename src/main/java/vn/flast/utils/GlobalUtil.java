@@ -16,6 +16,7 @@ public class GlobalUtil {
 
     private static final int VALUE_NOT_CONVERT = 0;
 
+
     public static int getFolderUpload(Integer objectId) {
         String _dateStr = new SimpleDateFormat("MM-01-yyyy").format(new Date(objectId * 1000L));
         try {

@@ -22,7 +22,7 @@ import java.util.Optional;
 
 public record OrderInput(
     Long id,
-    CustomerPersonal customer,
+    @With CustomerPersonal customer,
     OrderDiscount discount,
     @With OrderPaymentInfo paymentInfo,
     Integer vat,
@@ -61,8 +61,10 @@ public record OrderInput(
             CustomerOrderDetail detail = new CustomerOrderDetail();
             CopyProperty.CopyIgnoreNull(detailOrder, detail);
             detail.setCustomerOrderId(order.getId());
-            detail.setCode(order.getCode().concat("-" + i));
-            detail.setCreatedAt(new Date());
+            if(detail.getCode() == null){
+                detail.setCode(order.getCode().concat("-" + i));
+                detail.setCreatedAt(new Date());
+            }
             if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
                 var statusRepo =  BeanUtil.getBean(StatusOrderRepository.class);
                 detail.setStatus(statusRepo.findStartOrder().getId());

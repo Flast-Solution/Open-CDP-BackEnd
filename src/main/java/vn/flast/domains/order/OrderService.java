@@ -1,6 +1,7 @@
 package vn.flast.domains.order;
 
 import jakarta.persistence.EntityManager;
+import lombok.extern.log4j.Log4j2;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import vn.flast.entities.OrderResponse;
 import vn.flast.entities.OrderStatus;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
+import vn.flast.models.CustomerPersonal;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
 import vn.flast.orchestration.Message;
@@ -35,6 +37,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 @Service("orderService")
+@Log4j2
 public class OrderService  implements Publisher, Serializable {
 
     private EventDelegate eventDelegate;
@@ -120,6 +123,7 @@ public class OrderService  implements Publisher, Serializable {
             );
             order.setDataId(data.getId());
             order.setSource(data.getSource());
+            orderRepository.save(order);
         }
         if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
             order.setStatus(statusOrderRepository.findStartOrder().getId());
@@ -127,7 +131,6 @@ public class OrderService  implements Publisher, Serializable {
         var listDetails = input.transformOnCreateDetail(order);
         order.setDetails(listDetails);
         detailRepository.saveAll(listDetails);
-
         OrderUtils.calculatorPrice(order);
         orderRepository.save(order);
         this.sendMessageOnOrderChange(order);
@@ -162,10 +165,12 @@ public class OrderService  implements Publisher, Serializable {
         return withOrderDetail(order);
     }
 
-    private OrderResponse withOrderDetail(CustomerOrder order) {
+    @Transactional
+    public OrderResponse withOrderDetail(CustomerOrder order) {
         Hibernate.initialize(order.getDetails());
         var orderRep = new OrderResponse();
         CopyProperty.CopyNormal(order.clone(), orderRep);
+        orderRep.setDetails(new ArrayList<>(order.getDetails()));
         orderRep.setCustomer(customerRepository.findById(orderRep.getCustomerId()).orElse(null));
         return orderRep;
     }
@@ -174,6 +179,14 @@ public class OrderService  implements Publisher, Serializable {
     public OrderResponse findByCode(String code) {
         var order = orderRepository.findByCode(code).orElseThrow(
             () -> new ResourceNotFoundException("Order not found .!")
+        );
+        return withOrderDetail(order);
+    }
+
+    @Transactional
+    public OrderResponse findById(Long id) {
+        var order = orderRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Order not found .!")
         );
         return withOrderDetail(order);
     }
@@ -224,5 +237,20 @@ public class OrderService  implements Publisher, Serializable {
             order.setStatus(statusCancel);
         }
 
+    }
+
+    public static long calTotal(CustomerOrder order) {
+        try {
+            Double subtotal = order.getSubtotal();
+            int shippingCost = NumberUtils.numberWithDefaultZero(order.getShippingCost());
+            long priceOff = NumberUtils.numberWithDefaultZero(order.getPriceOff().intValue());
+            int feeSaleOther = NumberUtils.numberWithDefaultZero(order.getFeeSaleOther());
+            int vatPrice = order.calVat();
+            long total = (long) (subtotal + shippingCost + feeSaleOther + vatPrice);
+            return (long) (total - priceOff - order.calCastBack());
+        } catch (Exception ex) {
+            log.info("Tính chi phí đơn hàng lỗi: {}", ex.getMessage());
+            return 0;
+        }
     }
 }

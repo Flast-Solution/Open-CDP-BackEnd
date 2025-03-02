@@ -180,6 +180,23 @@ public class ProductService {
         return saleProduct;
     }
 
+    public SaleProduct findById(Long id) {
+        var entity = productsRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Bản ghi không tồn tại !")
+        );
+        SaleProduct saleProduct = new SaleProduct();
+        CopyProperty.CopyIgnoreNull(entity, saleProduct);
+        saleProduct.setListProperties(productAttributedRepository.findByProduct(entity.getId()));
+        saleProduct.setSkus(skuService.listProductSkuAndDetail(entity.getId()));
+        saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(entity.getId()));
+        saleProduct.getSkus().forEach(
+                sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(entity.getId()))
+        );
+        saleProduct.setImageLists(mediaService.list(Math.toIntExact(id), "Product").stream()
+                .map(prt -> prt.getFileName()).collect(Collectors.toList()));
+        return saleProduct;
+    }
+
     public Ipage<?> fetch(ProductFilter filter){
 
         int LIMIT = filter.limit();

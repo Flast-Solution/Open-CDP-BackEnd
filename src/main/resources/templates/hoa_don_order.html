@@ -1,0 +1,89 @@
+<center style="width: 700px; background: #fff; text-align: left; margin: 16px auto 0; border-radius: 30px; padding: 20px 0px;">
+    $varHeader
+    <table cellspacing="0" cellpadding="0" border="0" align="center" width="100%">
+        <tr>
+            <td aria-hidden="true" height="16" style="font-size: 0; line-height: 0;">&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                <p style="font-weight: bold; font-size: 28px; text-align: center; margin: 0">HÓA ĐƠN BÁN HÀNG</p>
+            </td>
+        </tr>
+        <tr>
+            <td aria-hidden="true" height="16" style="font-size: 0; line-height: 0;">&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                <table style="line-height: 30px; width: 100%">
+                    <tr style="width: 100%">
+                        <td width="50%">
+                            <table style="width: 100%">
+                                <tr style="color: #4d84d6">
+                                    <th style="font-size: 13px;white-space:nowrap;text-align:left">THÔNG TIN KHÁCH HÀNG</th>
+                                </tr>
+                                $varCustomerInfo
+                            </table>
+                        </td>
+                        <td width="50%">
+                            <table style="width: 100%">
+                                <tr style="color: #4d84d6">
+                                    <th style="font-size: 13px;white-space:nowrap;text-align:left">THÔNG TIN ĐẠI DIỆN</th>
+                                </tr>
+                                <tr style="line-height:30px; padding: 10px; background: #cccccc52">
+                                    <td style="padding: 0 7px; font-size: 12px">Bộ phận:</td>
+                                    <td style="padding: 0 7px; font-size: 12px">Phòng kinh doanh</td>
+                                </tr>
+                                $varSaleInfo
+                                <tr style="line-height:30px; padding: 10px; background: #cccccc52">
+                                    <td style="padding: 0 7px; font-size: 12px">Số máy lẻ:</td>
+                                    <td style="padding: 0 7px; font-size: 12px">1900633313 - 107</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 20px 0;">
+                <table style="width: 100%; border: 1px solid #ddd; border-collapse: collapse; padding: 10px">
+                    <tr style="border-bottom: 1px solid #ddd;background: #3dbeb3; color: #fff">
+                        <th style="padding: 10px; text-align: center">STT</th>
+                        <th style="padding: 10px; text-align: center">Nội dung</th>
+                        <th style="padding: 10px; text-align: center">Số lượng</th>
+                        <th style="padding: 10px; text-align: center">Đơn giá</th>
+                        <th style="padding: 10px; text-align: center">Thành tiền</th>
+                    </tr>
+                    $varOrderInfo
+                </table>
+                <table style="width: 100%;">
+                    <tr>
+                        <td valign="top" width="100%" style="padding: 16px 0;">
+                            $varTotalOrder
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><b>Bằng chữ:</b> $textMoney</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p style="text-align: right;  margin: 0px; padding: 0px; padding-right: 80px; padding-top: 20px;">Ngày .... tháng .... năm 202..</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div style="width: 50%; float: left">
+                    <p style="text-align: center">Khách hàng</p>
+                </div>
+                <div style="width: 50%; float: left">
+                    <p style="text-align: center">Người lập hóa đơn</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+</center>

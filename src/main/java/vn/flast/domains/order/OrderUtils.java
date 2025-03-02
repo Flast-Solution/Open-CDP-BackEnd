@@ -67,4 +67,5 @@ public class OrderUtils {
         detail.setPriceOff(priceOff);
         detail.setTotal(feeAfterPromotion);
     }
+
 }

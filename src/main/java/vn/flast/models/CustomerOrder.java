@@ -10,16 +10,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import vn.flast.domains.order.OrderService;
+import vn.flast.entities.DiscountInfoObj;
+import vn.flast.utils.Common;
+import vn.flast.utils.JsonUtils;
 import vn.flast.utils.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 
 @Table(name = "customer_order")
 @Entity
@@ -28,6 +33,9 @@ public class CustomerOrder implements Cloneable {
 
     public static String TYPE_CO_HOI = "cohoi";
     public static String TYPE_ORDER = "order";
+
+    public static final int VAT_8 = 8;
+    public static final int VAT_10 = 10;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,6 +126,9 @@ public class CustomerOrder implements Cloneable {
     @Column(name = "paid")
     private Double paid;
 
+    @Column(name = "fee_sale_other", columnDefinition = "integer default 0")
+    private Integer feeSaleOther = 0;
+
     @Column(name = "flag_free_ship")
     private String flagFreeShip;
 
@@ -189,6 +200,7 @@ public class CustomerOrder implements Cloneable {
         }
     }
 
+
     @PrePersist
     public void beforeSave() {
         if(NumberUtils.isNull(status)) {
@@ -196,7 +208,6 @@ public class CustomerOrder implements Cloneable {
         }
         paymentStatus = 0;
     }
-
 
     private String orderSourceCode() {
         return isOffline() ? "F" : "O";
@@ -212,5 +223,41 @@ public class CustomerOrder implements Cloneable {
         }
         customerMobilePhone = customerMobilePhone.trim();
         this.code = OrderService.createOrderCode(customerMobilePhone, orderSourceCode()) ;
+    }
+
+    public boolean isOrder() {
+        return this.type.equals(TYPE_ORDER);
+    }
+
+    public boolean coLayVat() {
+        return vat != 0;
+    }
+
+    public int calVat() {
+        if(!coLayVat()) {
+            return 0;
+        }
+        int feeOtherInVat = Optional.ofNullable(feeSaleOther).orElse(0);
+        Double priceOff = getPriceOff();
+        long castBack = (long) calCastBack();
+        long totalCalVat = (long) (subtotal - priceOff - castBack);
+
+        if(vat == VAT_8){
+            return Common.vat8Price(totalCalVat + feeOtherInVat);
+        }
+        if (vat == VAT_10) {
+            return Common.vatPrice(totalCalVat + feeOtherInVat);
+        }
+        return Common.vatPrice(totalCalVat + feeOtherInVat);
+    }
+
+    public double calCastBack(){
+        DiscountInfoObj discountInfoObj = createDiscountInfo();
+        return discountInfoObj == null ? 0 : discountInfoObj.getMonney(total);
+    }
+
+    public DiscountInfoObj createDiscountInfo(){
+        Optional<String> discountOpt = Optional.ofNullable(this.discountInfo);
+        return discountOpt.map(d -> JsonUtils.Json2Object(d, DiscountInfoObj.class)).orElse(null);
     }
 }
