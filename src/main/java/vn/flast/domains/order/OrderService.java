@@ -11,6 +11,7 @@ import vn.flast.entities.OrderResponse;
 import vn.flast.entities.OrderStatus;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
+import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerPersonal;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
@@ -22,6 +23,7 @@ import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataRepository;
+import vn.flast.repositories.DetailItemRepository;
 import vn.flast.repositories.StatusOrderRepository;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.utils.Common;
@@ -63,18 +65,20 @@ public class OrderService  implements Publisher, Serializable {
     @Autowired
     private StatusOrderRepository statusOrderRepository;
 
+    @Autowired
+    private DetailItemRepository detailItemRepository;
+
     public Ipage<?>fetchList(OrderFilter filter) {
         var sale = baseController.getInfo();
         Integer page = filter.page();
         var et = EntityQuery.create(entityManager, CustomerOrder.class);
-        if (filter.saleId() != null) {
-            boolean isAdminOrManager = sale.getAuthorities().stream()
-                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
-                            || auth.getAuthority().equals("ROLE_SALE_MANAGER"));
-            et.integerEqualsTo("userCreateId", isAdminOrManager ? filter.saleId() : sale.getId());
-        } else {
-            et.integerEqualsTo("userCreateId", sale.getId());
-        }
+        boolean isAdminOrManager = sale.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                        || auth.getAuthority().equals("ROLE_SALE_MANAGER"));
+        Integer userCreateId = (filter.saleId() != null) ?
+                (isAdminOrManager ? filter.saleId() : sale.getId()) :
+                (isAdminOrManager ? null : sale.getId());
+        et.integerEqualsTo("userCreateId", userCreateId);
         et.like("customerName", filter.customerName())
             .integerEqualsTo("customerId", filter.customerId())
             .stringEqualsTo("customerMobile", filter.customerPhone())
@@ -96,6 +100,7 @@ public class OrderService  implements Publisher, Serializable {
         var newOrders = orders.stream().map(CustomerOrder::cloneNoDetail).toList();
         var orderIds = newOrders.stream().map(CustomerOrder::getId).toList();
         var details = detailRepository.fetchDetailOrdersId(orderIds);
+        transformItems(details);
         for( CustomerOrder order : newOrders ) {
             var detailOfOrder = details.stream().filter(
                 d -> d.getCustomerOrderId().equals(order.getId())
@@ -105,12 +110,29 @@ public class OrderService  implements Publisher, Serializable {
         return newOrders;
     }
 
+    public List<CustomerOrderDetail> transformItems(List<CustomerOrderDetail> details){
+        if(Common.CollectionIsEmpty(details)) {
+            return new ArrayList<>();
+        }
+
+        var detailIds = details.stream().map(CustomerOrderDetail::getId).toList();
+        var items = detailItemRepository.fetchDetailOrdersId(detailIds);
+        for( CustomerOrderDetail detail : details ) {
+            var itemOfOrder = items.stream().filter(
+                    d -> d.getOrderDetailId().equals(detail.getId())
+            );
+            detail.setItems(itemOfOrder.toList());
+        }
+        return details;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder create(OrderInput input) {
         var order = new CustomerOrder();
         order.setCode(OrderUtils.createOrderCode());
         order.setUserCreateUsername(Common.getSsoId());
         order.setUserCreateId(Common.getUserId());
+        input.transformCustomer(input.customer());
         input.transformOrder(order);
         if(NumberUtils.isNotNull(order.getId())) {
             var entity = orderRepository.findById(order.getId()).orElseThrow(
@@ -131,6 +153,7 @@ public class OrderService  implements Publisher, Serializable {
         var listDetails = input.transformOnCreateDetail(order);
         order.setDetails(listDetails);
         detailRepository.saveAll(listDetails);
+        detailItemRepository.saveAll(input.transformOnCreateDetailItem(listDetails));
         OrderUtils.calculatorPrice(order);
         orderRepository.save(order);
         this.sendMessageOnOrderChange(order);
@@ -148,7 +171,9 @@ public class OrderService  implements Publisher, Serializable {
         var listDetails = input.transformOnCreateDetail(order);
         order.setDetails(listDetails);
         detailRepository.saveAll(listDetails);
+        detailItemRepository.saveAll(input.transformOnCreateDetailItem(listDetails));
         OrderUtils.calculatorPrice(order);
+        orderRepository.save(order);
         return order;
     }
 

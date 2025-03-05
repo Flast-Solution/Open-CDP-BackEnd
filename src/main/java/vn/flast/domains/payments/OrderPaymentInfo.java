@@ -22,7 +22,7 @@ public record OrderPaymentInfo(
             payment.setMethod(method);
         }
         payment.setContent(content);
-        payment.setConfirmTime(datePay);
+
     }
 
     public boolean validate() {

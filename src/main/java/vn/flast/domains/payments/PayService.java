@@ -46,6 +46,7 @@ public class PayService {
             throw new RuntimeException("Paid not valid .!");
         }
         model.setCode(order.getCode());
+        model.setConfirmTime(new Date());
         model.setIsConfirm(OrderUtils.PAYMENT_IS_CONFIRM);
         paymentRepository.save(model);
 
@@ -54,6 +55,19 @@ public class PayService {
             order.setPaymentStatus(OrderUtils.PAYMENT_STATUS_DONE);
         }
         return model;
+    }
+
+    public void create(OrderPaymentInfo info){
+        var model = new CustomerOrderPayment();
+        info.transformPayment(model);
+        var order = orderService.view(info.id());
+        Double paid = order.getPaid();
+        if( (order.getTotal() - paid) < model.getAmount()) {
+            throw new RuntimeException("Paid not valid .!");
+        }
+        model.setCode(order.getCode());
+        model.setIsConfirm(OrderUtils.PAYMENT_IS_NOT_CONFIRM);
+        paymentRepository.save(model);
     }
 
     @Transactional(rollbackFor = Exception.class)

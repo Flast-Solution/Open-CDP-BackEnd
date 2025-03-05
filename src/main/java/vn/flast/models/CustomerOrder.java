@@ -34,6 +34,9 @@ public class CustomerOrder implements Cloneable {
     public static String TYPE_CO_HOI = "cohoi";
     public static String TYPE_ORDER = "order";
 
+    public static int CLASSIFICATION_BAN_LE = 1;
+    public static int CLASSIFICATION_SAN_XUAT = 2;
+
     public static final int VAT_8 = 8;
     public static final int VAT_10 = 10;
 
@@ -164,6 +167,10 @@ public class CustomerOrder implements Cloneable {
 
     @Column(name = "opportunity_at")
     private Date opportunityAt;
+
+    @Column(name = "classification")
+    private Integer classification = CLASSIFICATION_SAN_XUAT;
+
 
     @CreationTimestamp
     @Column(name = "created_at")

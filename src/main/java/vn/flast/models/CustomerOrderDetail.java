@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,6 +20,7 @@ import vn.flast.utils.BeanUtil;
 import vn.flast.utils.NumberUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "customer_order_detail")
 @Entity
@@ -55,7 +57,7 @@ public class CustomerOrderDetail {
     private Long price;
 
     @Column(name = "quantity")
-    private Integer quantity;
+    private Integer quantity = 0;
 
     @Column(name = "price_off")
     private Double priceOff;
@@ -105,4 +107,8 @@ public class CustomerOrderDetail {
         var statusRepo =  BeanUtil.getBean(StatusOrderRepository.class);
         return this.status == statusRepo.findStartOrder().getId();
     }
+
+    @Transient
+    private List<DetailItem> items;
+
 }

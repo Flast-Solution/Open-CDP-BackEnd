@@ -6,7 +6,10 @@ import vn.flast.domains.payments.PayService;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerPersonal;
+import vn.flast.models.DetailItem;
 import vn.flast.models.StatusOrder;
+import vn.flast.repositories.CustomerPersonalRepository;
+import vn.flast.repositories.DetailItemRepository;
 import vn.flast.repositories.StatusOrderRepository;
 import vn.flast.utils.BeanUtil;
 import vn.flast.utils.Common;
@@ -15,9 +18,13 @@ import vn.flast.utils.JsonUtils;
 import vn.flast.utils.NumberUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public record OrderInput(
@@ -45,7 +52,7 @@ public record OrderInput(
         if(NumberUtils.isNotNull(vat)) {
             order.setVat(vat);
         }
-        if(paymentInfo != null && paymentInfo().status()) {
+        if (paymentInfo != null && Boolean.TRUE.equals(paymentInfo.status())) {
             order.setPaid(Optional.ofNullable(paymentInfo).map(OrderPaymentInfo::amount).orElse(0.));
             var payService = BeanUtil.getBean(PayService.class);
             payService.manualMethod(paymentInfo);
@@ -53,6 +60,16 @@ public record OrderInput(
         boolean isPaid = NumberUtils.gteZero(order.getPaid());
         order.setType(isPaid ? CustomerOrder.TYPE_ORDER: CustomerOrder.TYPE_CO_HOI);
     }
+
+    public CustomerPersonal transformCustomer(CustomerPersonal customer) {
+        if (customer.getMobile() == null) {
+            throw new RuntimeException("Phone number cannot be left blank!");
+        }
+        var customerRepo = BeanUtil.getBean(CustomerPersonalRepository.class);
+        var customerOld = customerRepo.findByPhone(customer.getMobile());
+        return (customerOld != null) ? customerOld : customerRepo.save(customer);
+    }
+
 
     public List<CustomerOrderDetail> transformOnCreateDetail(CustomerOrder order) {
         List<CustomerOrderDetail> detailList = new ArrayList<>();
@@ -74,5 +91,42 @@ public record OrderInput(
             i++;
         }
         return detailList;
+    }
+
+    public List<DetailItem> transformOnCreateDetailItem(List<CustomerOrderDetail> orderDetails) {
+        if (orderDetails == null || orderDetails.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<DetailItem> detailItemList = new ArrayList<>();
+        var itemRepo = BeanUtil.getBean(DetailItemRepository.class);
+        List<DetailItem> itemsToUpdate = new ArrayList<>();
+
+        for (CustomerOrderDetail orderDetail : orderDetails) {
+            if (orderDetail.getItems() == null || orderDetail.getItems().isEmpty()) {
+                continue;
+            }
+            List<DetailItem> itemsOld = itemRepo.findByDetailId(orderDetail.getId());
+            Set<Long> newItemIds = orderDetail.getItems().stream()
+                    .map(DetailItem::getId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+            for (DetailItem oldItem : itemsOld) {
+                if (!newItemIds.contains(oldItem.getId())) {
+                    oldItem.setStatus(0);
+                    itemsToUpdate.add(oldItem);
+                }
+            }
+            for (DetailItem item : orderDetail.getItems()) {
+                DetailItem newItem = new DetailItem();
+                CopyProperty.CopyIgnoreNull(item, newItem);
+                newItem.setOrderDetailId(orderDetail.getId());
+                newItem.setCreatedAt(new Date());
+                detailItemList.add(newItem);
+            }
+        }
+        if (!itemsToUpdate.isEmpty()) {
+            itemRepo.saveAll(itemsToUpdate);
+        }
+        return detailItemList;
     }
 }
