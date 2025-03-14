@@ -32,6 +32,9 @@ public class Warehouse {
     @Column(name = "product_id")
     private Long productId;
 
+    @Column(name = "provider_id")
+    private Long providerId;
+
     @Column(name = "sku_id")
     private Long skuId;
 

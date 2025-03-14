@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.common.BaseController;
+import vn.flast.domains.payments.OrderPaymentInfo;
+import vn.flast.domains.payments.PayService;
 import vn.flast.entities.OrderResponse;
 import vn.flast.entities.OrderStatus;
 import vn.flast.exception.ResourceNotFoundException;
@@ -26,6 +28,7 @@ import vn.flast.repositories.DataRepository;
 import vn.flast.repositories.DetailItemRepository;
 import vn.flast.repositories.StatusOrderRepository;
 import vn.flast.searchs.OrderFilter;
+import vn.flast.utils.BeanUtil;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
@@ -36,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TimeZone;
 
 @Service("orderService")
@@ -157,6 +161,11 @@ public class OrderService  implements Publisher, Serializable {
         OrderUtils.calculatorPrice(order);
         orderRepository.save(order);
         this.sendMessageOnOrderChange(order);
+        if (input.paymentInfo() != null && Boolean.TRUE.equals(input.paymentInfo().status())) {
+            order.setPaid(Optional.ofNullable(input.paymentInfo()).map(OrderPaymentInfo::amount).orElse(0.));
+            var payService = BeanUtil.getBean(PayService.class);
+            payService.manualMethod(input.paymentInfo());
+        }
         return order;
     }
 
@@ -174,6 +183,11 @@ public class OrderService  implements Publisher, Serializable {
         detailItemRepository.saveAll(input.transformOnCreateDetailItem(listDetails));
         OrderUtils.calculatorPrice(order);
         orderRepository.save(order);
+        if (input.paymentInfo() != null && Boolean.TRUE.equals(input.paymentInfo().status())) {
+            order.setPaid(Optional.ofNullable(input.paymentInfo()).map(OrderPaymentInfo::amount).orElse(0.));
+            var payService = BeanUtil.getBean(PayService.class);
+            payService.manualMethod(input.paymentInfo());
+        }
         return order;
     }
 

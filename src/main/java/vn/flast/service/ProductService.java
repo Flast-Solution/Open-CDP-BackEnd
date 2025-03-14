@@ -206,6 +206,7 @@ public class ProductService {
         final String totalSQL = "FROM `product` p ";
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
         sqlBuilder.addIntegerEquals("p.status", filter.status());
+        sqlBuilder.addIntegerEquals("p.service_id", filter.serviceId());
         sqlBuilder.addStringEquals("p.code", filter.code());
         sqlBuilder.like("p.name", filter.name());
         sqlBuilder.addIntegerEquals("p.provider_id", filter.providerId());

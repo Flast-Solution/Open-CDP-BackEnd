@@ -42,7 +42,7 @@ public class QuoteController {
         CustomerOrder order = Optional.ofNullable(findOrder).orElseThrow(
                 () -> new RuntimeException("Không tìm thấy Cơ Hội!")
         );
-        CustomerPersonal customer = findOrder.getCustomer();
+//        CustomerPersonal customer = findOrder.getCustomer();
         String strOrder = quoteBuilder.create(order, false).render();
         Document doc = Jsoup.parse(strOrder);
         Element mainContent = doc.selectFirst("tr#main__content");
@@ -59,6 +59,6 @@ public class QuoteController {
         data.setInfoCustomer(extractedCustomer);
         data.setInfoSale(extractedSale);
         data.setInfoPrice(extractedPay);
-        return ResponseEntity.ok(data);
+        return ResponseEntity.ok(strOrder);
     }
 }

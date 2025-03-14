@@ -25,7 +25,7 @@ public class ProviderService {
     }
 
     public Ipage<?> fetch(ProviderFilter filter){
-        int LIMIT = 20;
+        int LIMIT = filter.limit();
         int currentPage = filter.page();
         var et = EntityQuery.create(entityManager, Provider.class);
         et.like("name", filter.name())

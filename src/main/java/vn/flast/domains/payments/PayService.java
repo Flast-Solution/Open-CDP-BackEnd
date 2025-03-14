@@ -38,9 +38,9 @@ public class PayService {
 
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderPayment manualMethod(OrderPaymentInfo info) {
+        var order = orderService.view(info.id());
         var model = new CustomerOrderPayment();
         info.transformPayment(model);
-        var order = orderService.view(info.id());
         Double paid = order.getPaid();
         if( (order.getTotal() - paid) < model.getAmount()) {
             throw new RuntimeException("Paid not valid .!");
@@ -49,11 +49,12 @@ public class PayService {
         model.setConfirmTime(new Date());
         model.setIsConfirm(OrderUtils.PAYMENT_IS_CONFIRM);
         paymentRepository.save(model);
-
+        order.setType(CustomerOrder.TYPE_ORDER);
         order.setPaid(paid + model.getAmount());
         if(order.getPaid() >= order.getTotal()) {
             order.setPaymentStatus(OrderUtils.PAYMENT_STATUS_DONE);
         }
+        orderRepository.save(order);
         return model;
     }
 

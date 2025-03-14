@@ -15,6 +15,8 @@ import vn.flast.entities.MyResponse;
 import vn.flast.models.CustomerOrder;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.searchs.OrderFilter;
+import vn.flast.service.DataService;
+import vn.flast.utils.NumberUtils;
 
 
 @Log4j2
@@ -25,10 +27,15 @@ public class CustomerOrderController {
 
     private final OrderService orderService;
 
+    private final DataService dataService;
+
 
     @PostMapping("/sale-create-co-hoi")
     public MyResponse<?> saleCreateOrder(@RequestBody OrderInput input){
         var data = orderService.create(input);
+        if(NumberUtils.isNotNull(input.dataId())){
+            dataService.updateStatusCohoi(input.dataId());
+        }
         return MyResponse.response(data);
     }
 

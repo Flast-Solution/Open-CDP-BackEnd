@@ -35,6 +35,7 @@ public record OrderInput(
     Integer vat,
     List<CustomerOrderDetail> details,
     String note,
+    String address,
     Long dataId
 ) {
     public void transformOrder(CustomerOrder order) {
@@ -48,14 +49,10 @@ public record OrderInput(
         order.setCustomerMobilePhone(customer.getMobile());
         order.setDiscountInfo(JsonUtils.toJson(discount));
         order.setCustomerNote(note);
+        order.setCustomerAddress(address);
         order.setOpportunityAt(new Date());
         if(NumberUtils.isNotNull(vat)) {
             order.setVat(vat);
-        }
-        if (paymentInfo != null && Boolean.TRUE.equals(paymentInfo.status())) {
-            order.setPaid(Optional.ofNullable(paymentInfo).map(OrderPaymentInfo::amount).orElse(0.));
-            var payService = BeanUtil.getBean(PayService.class);
-            payService.manualMethod(paymentInfo);
         }
         boolean isPaid = NumberUtils.gteZero(order.getPaid());
         order.setType(isPaid ? CustomerOrder.TYPE_ORDER: CustomerOrder.TYPE_CO_HOI);

@@ -5,7 +5,8 @@ import vn.flast.utils.NumberUtils;
 public record ProviderFilter(
     String name,
     String mobile,
-    Integer page
+    Integer page,
+    Integer limit
 ) {
     @Override
     public Integer page() {

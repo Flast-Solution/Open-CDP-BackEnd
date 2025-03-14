@@ -59,7 +59,4 @@ public class WarehouseService {
         wareHouseRepository.delete(data);
     }
 
-//    public List<Stock> fetchWarehouseInfo(){
-//
-//    }
 }

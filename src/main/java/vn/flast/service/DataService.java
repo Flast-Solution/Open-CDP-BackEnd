@@ -435,5 +435,12 @@ public class DataService extends Subscriber implements Publisher {
         }
     }
 
-
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    public void updateStatusCohoi(Long dataId){
+        var data = dataRepository.findById(dataId).orElseThrow(
+                () -> new RuntimeException("Lead does not exist")
+        );
+        data.setStatus(DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
+        dataRepository.save(data);
+    }
 }

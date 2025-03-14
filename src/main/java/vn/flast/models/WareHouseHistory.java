@@ -23,8 +23,11 @@ public class WareHouseHistory {
     @Column(name = "warehouse_retain_id")
     private Long warehouseRetainId;
 
-    @Column(name = "stock_id")
-    private Long stockId;
+    @Column(name = "warehouser_id")
+    private Long warehouserId;
+
+    @Column(name = "provider_id")
+    private Long providerId;
 
     @Column(name = "user_name")
     private String userName;

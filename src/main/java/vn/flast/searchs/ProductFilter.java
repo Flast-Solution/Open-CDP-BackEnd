@@ -8,7 +8,9 @@ public record ProductFilter(
     Integer limit,
     Integer status,
     String code,
-    Integer providerId
+    Integer providerId,
+
+    Integer serviceId
 ) {
     @Override
     public Integer page() {

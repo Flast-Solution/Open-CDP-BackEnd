@@ -31,6 +31,9 @@ public class DetailItem {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "product_id")
+    private Long productId;
+
     @Column(name = "order_detail_id", nullable = false)
     private Long orderDetailId;
 
