@@ -9,9 +9,13 @@ public class ConfigUtil {
 
     public static String HOST_URL;
 
+    public static String VERIFY_TOKEN_FB;
+
     @Autowired
-    public void loadConfig(@Value("${server.host}") String hostUrl) {
+    public void loadConfig(@Value("${server.host}") String hostUrl,
+                           @Value("${verify.token.fb}") String verifyTokenFB) {
         HOST_URL = hostUrl;
+        VERIFY_TOKEN_FB = verifyTokenFB;
     }
 
     public static String getRootPath() {

@@ -14,6 +14,8 @@ import vn.flast.repositories.CustomerOrderPaymentRepository;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -46,6 +48,4 @@ public class AccountantService {
         var lists = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrderPayment.class);
         return  Ipage.generator(LIMIT, count, PAGE, lists);
     }
-
-
 }

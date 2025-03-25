@@ -3,6 +3,7 @@ package vn.flast.domains.payments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.flast.controller.common.BaseController;
 import vn.flast.domains.order.OrderService;
 import vn.flast.domains.order.OrderUtils;
 import vn.flast.exception.ResourceNotFoundException;
@@ -12,6 +13,8 @@ import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderPaymentRepository;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.StatusOrderRepository;
+import vn.flast.utils.CopyProperty;
+import vn.flast.utils.NumberUtils;
 
 import java.util.Collections;
 import java.util.Date;
@@ -38,22 +41,29 @@ public class PayService {
 
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderPayment manualMethod(OrderPaymentInfo info) {
-        var order = orderService.view(info.id());
+        var orderResponse = orderService.view(info.id());
         var model = new CustomerOrderPayment();
         info.transformPayment(model);
-        Double paid = order.getPaid();
-        if( (order.getTotal() - paid) < model.getAmount()) {
+        Double paid = orderResponse.getPaid();
+        if( (orderResponse.getTotal() - paid) < model.getAmount()) {
             throw new RuntimeException("Paid not valid .!");
         }
-        model.setCode(order.getCode());
+        model.setCode(orderResponse.getCode());
         model.setConfirmTime(new Date());
         model.setIsConfirm(OrderUtils.PAYMENT_IS_CONFIRM);
+        model.setSsoId("1");
         paymentRepository.save(model);
-        order.setType(CustomerOrder.TYPE_ORDER);
-        order.setPaid(paid + model.getAmount());
-        if(order.getPaid() >= order.getTotal()) {
-            order.setPaymentStatus(OrderUtils.PAYMENT_STATUS_DONE);
+        orderResponse.setType(CustomerOrder.TYPE_ORDER);
+        orderResponse.setPaid(paid + model.getAmount());
+        boolean isPaid = NumberUtils.gteZero(orderResponse.getPaid());
+        orderResponse.setType(isPaid ? CustomerOrder.TYPE_ORDER: CustomerOrder.TYPE_CO_HOI);
+        Integer statusStartOrder = statusOrderRepository.findStartOrder().getId();
+        orderResponse.setStatus(statusStartOrder);
+        if(orderResponse.getPaid() >= orderResponse.getTotal()) {
+            orderResponse.setPaymentStatus(OrderUtils.PAYMENT_STATUS_DONE);
         }
+        CustomerOrder order = new CustomerOrder();
+        CopyProperty.CopyIgnoreNull(orderResponse, order);
         orderRepository.save(order);
         return model;
     }

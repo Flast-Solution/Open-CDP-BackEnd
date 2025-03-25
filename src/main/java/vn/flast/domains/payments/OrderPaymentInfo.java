@@ -9,7 +9,7 @@ import java.util.Date;
 
 public record OrderPaymentInfo(
     Double amount,
-    Long id,
+    @With Long id,
     String method,
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     Date datePay,

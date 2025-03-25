@@ -7,6 +7,6 @@ import vn.flast.models.WareHouseHistory;
 
 @Repository
 public interface WareHouseHistoryRepository extends JpaRepository<WareHouseHistory, Integer> {
-
-    @Query("SELECT ")
+//
+//    @Query("SELECT ")
 }

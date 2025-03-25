@@ -27,6 +27,7 @@ public class CustomerOrderController {
 
     private final OrderService orderService;
 
+
     private final DataService dataService;
 
 
@@ -38,6 +39,11 @@ public class CustomerOrderController {
         }
         return MyResponse.response(data);
     }
+
+//    @PostMapping("/create-flast-order")
+//    public MyResponse<?> createFlastOrder(){
+//
+//    }
 
     @GetMapping("/fetch-cohoi")
     public MyResponse<?> fetchCohoi(OrderFilter filter) {

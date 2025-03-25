@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
+import vn.flast.entities.WarehouseHistoryFilter;
 import vn.flast.models.WareHouseHistory;
 import vn.flast.service.WarehouseHistoryService;
 import vn.flast.validator.ValidationErrorBuilder;
@@ -39,8 +40,8 @@ public class WarehouseHistoryController {
     }
 
     @GetMapping("/fetch")
-    public MyResponse<?> fetch(@RequestParam Integer page) {
-        var data = warehouseHistoryService.fetch(page);
+    public MyResponse<?> fetch(WarehouseHistoryFilter filter) {
+        var data = warehouseHistoryService.fetch(filter);
         return MyResponse.response(data);
     }
 

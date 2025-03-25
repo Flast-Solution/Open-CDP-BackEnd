@@ -248,7 +248,6 @@ public class CustomerOrder implements Cloneable {
         Double priceOff = getPriceOff();
         long castBack = (long) calCastBack();
         long totalCalVat = (long) (subtotal - priceOff - castBack);
-
         if(vat == VAT_8){
             return Common.vat8Price(totalCalVat + feeOtherInVat);
         }

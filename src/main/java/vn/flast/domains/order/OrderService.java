@@ -15,6 +15,7 @@ import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerPersonal;
+import vn.flast.models.Data;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
 import vn.flast.orchestration.Message;
@@ -28,6 +29,7 @@ import vn.flast.repositories.DataRepository;
 import vn.flast.repositories.DetailItemRepository;
 import vn.flast.repositories.StatusOrderRepository;
 import vn.flast.searchs.OrderFilter;
+import vn.flast.service.DataService;
 import vn.flast.utils.BeanUtil;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
@@ -136,7 +138,7 @@ public class OrderService  implements Publisher, Serializable {
         order.setCode(OrderUtils.createOrderCode());
         order.setUserCreateUsername(Common.getSsoId());
         order.setUserCreateId(Common.getUserId());
-        input.transformCustomer(input.customer());
+        input = input.withCustomer(input.transformCustomer(input.customer()));
         input.transformOrder(order);
         if(NumberUtils.isNotNull(order.getId())) {
             var entity = orderRepository.findById(order.getId()).orElseThrow(
@@ -144,11 +146,21 @@ public class OrderService  implements Publisher, Serializable {
             );
             CopyProperty.CopyIgnoreNull(entity, order);
         } else {
-            var data = dataRepository.findFirstByPhone(input.customer().getMobile()).orElseThrow(
-                    () -> new RuntimeException("This phone number does not exist in the system.")
-            );
+            OrderInput finalInput = input;
+            Data data = dataRepository.findFirstByPhone(input.customer().getMobile())
+                    .orElseGet(() -> {
+                        Data newData = new Data();
+                        newData.setCustomerMobile(finalInput.customer().getMobile());
+                        newData.setSource(DataService.DATA_SOURCE.DIRECT.getSource()); // Thay đổi nếu cần
+                        newData.setCustomerName(finalInput.customer().getName());
+                        newData.setStaff(Common.getSsoId());
+                        newData.setSaleId(Common.getUserId());
+                        newData.setStatus(DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
+                        return dataRepository.save(newData);
+                    });
             order.setDataId(data.getId());
             order.setSource(data.getSource());
+            order.setPaid(0.);
             orderRepository.save(order);
         }
         if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
@@ -156,6 +168,7 @@ public class OrderService  implements Publisher, Serializable {
         }
         var listDetails = input.transformOnCreateDetail(order);
         order.setDetails(listDetails);
+
         detailRepository.saveAll(listDetails);
         detailItemRepository.saveAll(input.transformOnCreateDetailItem(listDetails));
         OrderUtils.calculatorPrice(order);
@@ -163,8 +176,9 @@ public class OrderService  implements Publisher, Serializable {
         this.sendMessageOnOrderChange(order);
         if (input.paymentInfo() != null && Boolean.TRUE.equals(input.paymentInfo().status())) {
             order.setPaid(Optional.ofNullable(input.paymentInfo()).map(OrderPaymentInfo::amount).orElse(0.));
+            OrderPaymentInfo updatedPaymentInfo = input.paymentInfo().withId(order.getId());
             var payService = BeanUtil.getBean(PayService.class);
-            payService.manualMethod(input.paymentInfo());
+            payService.manualMethod(updatedPaymentInfo);
         }
         return order;
     }
@@ -185,8 +199,9 @@ public class OrderService  implements Publisher, Serializable {
         orderRepository.save(order);
         if (input.paymentInfo() != null && Boolean.TRUE.equals(input.paymentInfo().status())) {
             order.setPaid(Optional.ofNullable(input.paymentInfo()).map(OrderPaymentInfo::amount).orElse(0.));
+            OrderPaymentInfo updatedPaymentInfo = input.paymentInfo().withId(order.getId());
             var payService = BeanUtil.getBean(PayService.class);
-            payService.manualMethod(input.paymentInfo());
+            payService.manualMethod(updatedPaymentInfo);
         }
         return order;
     }
