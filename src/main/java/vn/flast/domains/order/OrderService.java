@@ -11,6 +11,7 @@ import vn.flast.domains.payments.OrderPaymentInfo;
 import vn.flast.domains.payments.PayService;
 import vn.flast.entities.OrderResponse;
 import vn.flast.entities.OrderStatus;
+import vn.flast.entities.ReceivableFilter;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
@@ -189,7 +190,7 @@ public class OrderService  implements Publisher, Serializable {
                 () -> new RuntimeException("error no record exists")
         );
         CustomerOrder order = new CustomerOrder();
-        input.transformOrder(order);
+        input.transformOrder(orderOld);
         CopyProperty.CopyIgnoreNull(orderOld, order);
         var listDetails = input.transformOnCreateDetail(order);
         order.setDetails(listDetails);
@@ -306,5 +307,32 @@ public class OrderService  implements Publisher, Serializable {
             log.info("Tính chi phí đơn hàng lỗi: {}", ex.getMessage());
             return 0;
         }
+    }
+
+    public Ipage<?> fetchReceivable(ReceivableFilter filter){
+        var sale = baseController.getInfo();
+        int LIMIT = filter.getLimit();
+        int PAGE = filter.page();
+        int OFFSET = (filter.page()) * LIMIT;
+        var et = EntityQuery.create(entityManager, CustomerOrder.class);
+        boolean isAdminOrManager = sale.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                        || auth.getAuthority().equals("ROLE_SALE_MANAGER"));
+        Integer userCreateId = (filter.getSaleId() != null) ?
+                (isAdminOrManager ? filter.getSaleId() : sale.getId()) :
+                (isAdminOrManager ? null : sale.getId());
+        et.integerEqualsTo("userCreateId", userCreateId);
+        et.lessThanOrEqualsTo("paid", "total");
+        et.like("customerName", filter.getCustomerName())
+                .integerEqualsTo("customerId", filter.getCustomerId())
+                .stringEqualsTo("customerMobile", filter.getCustomerPhone())
+                .stringEqualsTo("code", filter.getCode())
+                .addDescendingOrderBy("createdAt")
+                .stringEqualsTo("type", CustomerOrder.TYPE_ORDER)
+                .setMaxResults(LIMIT)
+                .setFirstResult(OFFSET);
+
+        var lists = transformDetails(et.list());
+        return Ipage.generator(LIMIT, et.count(), PAGE, lists);
     }
 }

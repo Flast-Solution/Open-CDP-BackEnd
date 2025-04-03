@@ -28,12 +28,7 @@ public class OrderController {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Input invalid .!");
         }
-        OrderInput inputUpdate = entity;
-        if (entity.paymentInfo() != null) {
-            OrderPaymentInfo updatedPaymentInfo = entity.paymentInfo().withStatus(true);
-            inputUpdate = entity.withPaymentInfo(updatedPaymentInfo);
-        }
-        var order = orderService.create(inputUpdate);
+        var order = orderService.create(entity);
         return MyResponse.response(order);
     }
 

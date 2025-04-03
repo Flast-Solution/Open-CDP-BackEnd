@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import vn.flast.domains.order.OrderService;
 import vn.flast.domains.payments.OrderPaymentInfo;
 import vn.flast.domains.payments.PayService;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.PaymentFilter;
+import vn.flast.entities.ReceivableFilter;
 import vn.flast.service.AccountantService;
 
 @Log4j2
@@ -24,6 +26,9 @@ public class AccountantController {
     @Autowired
     private PayService payService;
 
+    @Autowired
+    private OrderService orderService;
+
     @GetMapping("/fetch-payment")
     public MyResponse<?> fetchPayment(PaymentFilter filter){
         var data = accountantService.fetch(filter);
@@ -36,5 +41,9 @@ public class AccountantController {
         return MyResponse.response("oke");
     }
 
-
+    @GetMapping("/fetch-receivable")
+    public MyResponse<?> fetchReceivable(ReceivableFilter filter){
+        var data = orderService.fetchReceivable(filter);
+        return MyResponse.response(data);
+    }
 }

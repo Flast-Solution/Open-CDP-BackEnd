@@ -28,6 +28,7 @@ import vn.flast.repositories.ProductSkusDetailsRepository;
 import vn.flast.repositories.ProductSkusPriceRepository;
 import vn.flast.repositories.ProductSkusRepository;
 import vn.flast.repositories.ProviderRepository;
+import vn.flast.repositories.WarehouseRepository;
 import vn.flast.searchs.ProductFilter;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
@@ -81,6 +82,9 @@ public class ProductService {
 
     @Autowired
     private MediaRepository mediaRepository;
+
+    @Autowired
+    private WarehouseRepository warehouseRepository;
 
     public Product createdSeo(Product input){
 //        input.setImage(JsonUtils.toJson(input.getImageLists()));
@@ -230,11 +234,30 @@ public class ProductService {
             saleProduct.getSkus().forEach(
                 sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(product.getId()))
             );
+            saleProduct.setWarehouses(warehouseRepository.findByProductId(product.getId()));
             saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product").stream()
                     .map(prt -> prt.getFileName()).collect(Collectors.toList()));
             return saleProduct;
         }).toList();
         return  Ipage.generator(LIMIT, count, PAGE, listSaleProduct);
+    }
+
+    public List<SaleProduct> findByListId(List<Long> ids){
+        var productList = productsRepository.findByListId(ids);
+        List<SaleProduct> listSaleProduct = productList.stream().map(product -> {
+            SaleProduct saleProduct = new SaleProduct();
+            CopyProperty.CopyIgnoreNull(product, saleProduct);
+            saleProduct.setListProperties(productAttributedRepository.findByProduct(product.getId()));
+            saleProduct.setSkus(skuService.listProductSkuAndDetail(product.getId()));
+            saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(product.getId()));
+            saleProduct.getSkus().forEach(
+                    sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(product.getId()))
+            );
+            saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product").stream()
+                    .map(prt -> prt.getFileName()).collect(Collectors.toList()));
+            return saleProduct;
+        }).toList();
+        return listSaleProduct;
     }
 
     @Transactional(rollbackFor = Exception.class)

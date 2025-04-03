@@ -1,19 +1,23 @@
 package vn.flast.domains.payments;
 
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.common.BaseController;
 import vn.flast.domains.order.OrderService;
 import vn.flast.domains.order.OrderUtils;
+import vn.flast.entities.ReceivableFilter;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderPayment;
+import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderPaymentRepository;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.StatusOrderRepository;
 import vn.flast.utils.CopyProperty;
+import vn.flast.utils.EntityQuery;
 import vn.flast.utils.NumberUtils;
 
 import java.util.Collections;
@@ -38,6 +42,12 @@ public class PayService {
 
     @Autowired
     private CustomerOrderRepository orderRepository;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private BaseController baseController;
 
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderPayment manualMethod(OrderPaymentInfo info) {
@@ -126,4 +136,5 @@ public class PayService {
         });
         orderRepository.save(order);
     }
+
 }

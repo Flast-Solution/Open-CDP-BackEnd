@@ -91,4 +91,7 @@ public class Product {
 
     @Transient
     private List<String> imageLists;
+
+    @Transient
+    private List<Warehouse> warehouses;
 }

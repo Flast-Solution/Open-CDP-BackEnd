@@ -104,4 +104,11 @@ public class ProductController {
             throw new RuntimeException(e);
         }
     }
+
+    @GetMapping("/find-list-id")
+    public MyResponse<?> findListId(@RequestParam List<Long> ids){
+        var data = productService.findByListId(ids);
+        return MyResponse.response(data);
+    }
+
 }

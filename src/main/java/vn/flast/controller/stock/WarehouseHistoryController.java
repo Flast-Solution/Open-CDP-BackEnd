@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.WarehouseHistoryFilter;
 import vn.flast.models.WareHouseHistory;
+import vn.flast.models.WareHouseStatus;
 import vn.flast.service.WarehouseHistoryService;
+import vn.flast.service.WarehouseService;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
@@ -22,6 +24,9 @@ public class WarehouseHistoryController {
 
     @Autowired
     private WarehouseHistoryService warehouseHistoryService;
+
+    @Autowired
+    private WarehouseService warehouseService;
 
     @PostMapping("/created")
     public MyResponse<?> created(@Valid @RequestBody WareHouseHistory input, Errors errors) {
@@ -49,5 +54,17 @@ public class WarehouseHistoryController {
     public MyResponse<?> delete(@RequestParam Integer id) {
         warehouseHistoryService.delete(id);
         return MyResponse.response("Xáo bản ghi thành công .!");
+    }
+
+    @PostMapping("/created-status")
+    public MyResponse<?> createStatus(@RequestBody WareHouseStatus input){
+        var data = warehouseService.createStatus(input);
+        return MyResponse.response(data);
+    }
+
+    @GetMapping("/fetch-status")
+    public MyResponse<?> fetchStatus(){
+        var data = warehouseService.fetchStatus();
+        return MyResponse.response(data);
     }
 }

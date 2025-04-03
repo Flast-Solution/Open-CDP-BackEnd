@@ -33,6 +33,7 @@ public record OrderInput(
     OrderDiscount discount,
     @With OrderPaymentInfo paymentInfo,
     Integer vat,
+    Integer shipping,
     List<CustomerOrderDetail> details,
     String note,
     String address,
@@ -50,6 +51,7 @@ public record OrderInput(
         order.setDiscountInfo(JsonUtils.toJson(discount));
         order.setCustomerNote(note);
         order.setCustomerAddress(address);
+        order.setShippingCost(shipping);
         order.setOpportunityAt(new Date());
         if(NumberUtils.isNotNull(vat)) {
             order.setVat(vat);

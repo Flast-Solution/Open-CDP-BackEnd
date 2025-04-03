@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
+import vn.flast.models.WareHouseStock;
 import vn.flast.models.Warehouse;
 import vn.flast.service.WarehouseService;
 import vn.flast.validator.ValidationErrorBuilder;
@@ -52,5 +53,23 @@ public class WarehouseController {
     public MyResponse<?> delete(@RequestParam Integer id) {
         warehouseService.delete(id);
         return MyResponse.response("Xáo bản ghi thành công .!");
+    }
+
+    @GetMapping("/fetch-stock")
+    public MyResponse<?> fetchStock(){
+        var data = warehouseService.fetchStock();
+        return MyResponse.response(data);
+    }
+
+    @PostMapping("/created-stock")
+    public MyResponse<?> createdStock(WareHouseStock input){
+        warehouseService.createStock(input);
+        return MyResponse.response("oke");
+    }
+
+    @PostMapping("/update-stock")
+    public MyResponse<?> updateStock(WareHouseStock input){
+        warehouseService.updateStock(input);
+        return MyResponse.response("oke");
     }
 }
