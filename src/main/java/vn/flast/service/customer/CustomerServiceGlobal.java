@@ -8,6 +8,8 @@ import vn.flast.dao.DataDao;
 import vn.flast.entities.OrderStatus;
 import vn.flast.entities.customer.CustomerFilter;
 import vn.flast.entities.customer.CustomerInfo;
+import vn.flast.models.CustomerOrder;
+import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.resultset.CustomerLever;
 import vn.flast.models.CustomerEnterprise;
 import vn.flast.models.CustomerPersonal;
@@ -37,7 +39,7 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
     private DataCareService dataCareService;
 
     @Autowired
-    private CustomerOrderDao customerOrderDao;
+    private CustomerOrderRepository customerOrderRepository;
 
     @Autowired
     private DataOwnerRepository dataOwnerRepository;
@@ -59,8 +61,8 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
         var info = new CustomerInfo();
         info.iCustomer = customer;
         info.lichSuTuongTac = dataDao.lastInteracted(phone);
-        info.donChuaHoanThanh = customerOrderDao.findByStatusAndCustomer(OrderStatus.BAO_GIA, cId);
-        var listDonHoanThanh = customerOrderDao.findByStatusAndCustomer(OrderStatus.ACOUNTANT_HOAN_THANH, cId);
+        info.donChuaHoanThanh = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_CO_HOI);
+        var listDonHoanThanh = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_ORDER);
 //        info.customerService = findCusService(cId);
         info.dataCares = dataCareService.findByCustomerId(cId);
         info.baDonGanNhat = listDonHoanThanh;
@@ -96,20 +98,19 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
 
     public Ipage<?> fetchCustomerPersonal(CustomerFilter filter){
         EntityQuery<CustomerPersonal> et = EntityQuery.create(entityManager, CustomerPersonal.class);
-        et.setMaxResults(filter.getLimit()).setFirstResult(filter.getPage() * filter.getLimit());
+        et.setMaxResults(filter.getLimit()).setFirstResult(filter.page() * filter.getLimit());
         et.integerEqualsTo("level",filter.getLevel());
         et.integerEqualsTo("saleId", filter.getSaleId());
         et.stringEqualsTo("email", filter.getEmail());
         et.stringEqualsTo("mobilePhone", filter.getPhone());
         et.addDescendingOrderBy("id");
-        List<CustomerPersonal> results = et.list();
-        long countItems = et.count();
-        return new Ipage<>(filter.getLimit(), Math.toIntExact(countItems), filter.getPage(), results);
+        List<CustomerPersonal> lists = et.list();
+        return Ipage.generator(filter.getLimit(), et.count(), filter.page(), lists);
     }
 
     public Ipage<?> fetchCustomerEnterprise(CustomerFilter filter){
         int LIMIT = filter.getLimit();
-        int OFFSET = ( filter.page() - 1 ) * LIMIT;
+        int OFFSET = filter.page() * LIMIT;
         final String totalSQL = "FROM `customer_enterprise` e left join `customer_order` c on e.id = c.enterprise_id";
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);;
         sqlBuilder.addStringEquals("e.email", filter.getEmail());

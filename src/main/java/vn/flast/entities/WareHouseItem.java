@@ -16,6 +16,6 @@ public class WareHouseItem {
     private String skuInfo;
     private Integer fee;
     private Long quantity;
-    private Long price;
+    private Long priceRef;
     private String discount;
 }

@@ -11,5 +11,7 @@ public interface WareHouseStatusRepository extends JpaRepository<WareHouseStatus
 
     Boolean existsByName(String name);
 
+    @Query("From WareHouseStatus w WHERE w.type = 1")
+    WareHouseStatus findByType();
 
 }

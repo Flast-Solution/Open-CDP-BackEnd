@@ -93,7 +93,21 @@ public class WarehouseService {
         if(wareHouseStatusRepository.existsByName(input.getName())){
             return null;
         }
+        if(input.getType() == WareHouseStatus.TYPE_CONFIRM){
+            List<WareHouseStatus> statuses = wareHouseStatusRepository.findAll();
+            for(WareHouseStatus status : statuses){
+                if(status.getType() == WareHouseStatus.TYPE_CONFIRM){
+                    status.setType(WareHouseStatus.TYPE_NOT_CONFIRM);
+                    wareHouseStatusRepository.save(status);
+                }
+            }
+        }
         return wareHouseStatusRepository.save(input);
+    }
+
+    public Map<Integer, Warehouse> findByIds(List<Integer> ids) {
+        List<Warehouse> warehouses = wareHouseRepository.findByIds(ids);
+        return warehouses.stream().collect(Collectors.toMap(Warehouse::getId, Function.identity()));
     }
     public List<WareHouseStatus> fetchStatus(){
         var data = wareHouseStatusRepository.findAll();

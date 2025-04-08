@@ -9,11 +9,11 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Table(name = "warehouse_status")
+@Table(name = "warehouse_export_status")
 @Entity
 @Getter
 @Setter
-public class WareHouseStatus {
+public class WarehouseExportStatus {
 
     public static int TYPE_CONFIRM = 1;
     public static int TYPE_NOT_CONFIRM = 0;

@@ -58,7 +58,6 @@ public class WarehouseHistoryService {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         long count = wareHouseHistoryRepository.countByCreatedDate(LocalDate.now());
         String code = String.format("WH-%s-%04d", today, count + 1);
-
         input.setCode(code); // Gán mã lệnh nhập kho vào input
         input.setStockName(stock.getName());
         input.setInfo(JsonUtils.toJson(input.getItems()));
@@ -77,7 +76,7 @@ public class WarehouseHistoryService {
         var user = baseController.getInfo();
         boolean isAdminOrManager = user.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
-        var statusConfirm = wareHouseStatusRepository.findByName("Duyệt").getId();
+        var statusConfirm = wareHouseStatusRepository.findByType().getId();
         if(isAdminOrManager && input.getStatus().equals(statusConfirm)){
             for (WareHouseItem item : input.getItems()) {
                 item.setProviderId(input.getProviderId());
@@ -113,6 +112,11 @@ public class WarehouseHistoryService {
 
     public Ipage<?> fetch(WarehouseHistoryFilter filter) {
         var et = EntityQuery.create(entityManager, WareHouseHistory.class);
+        et.integerEqualsTo("status", filter.getStatus());
+        et.longEqualsTo("productId", filter.getProductId());
+        et.longEqualsTo("providerId", filter.getProviderId());
+        et.between("inTime", filter.getFrom(), filter.getTo());
+        et.addDescendingOrderBy("id");
         et.setMaxResults(filter.getLimit()).setFirstResult(filter.getLimit() * filter.page());
         var lists = et.list();
         lists.forEach(item -> item.setItems(JsonUtils.Json2ListObject(item.getInfo(), WareHouseItem.class)));

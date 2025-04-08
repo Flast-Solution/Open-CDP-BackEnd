@@ -62,13 +62,13 @@ public class WarehouseController {
     }
 
     @PostMapping("/created-stock")
-    public MyResponse<?> createdStock(WareHouseStock input){
+    public MyResponse<?> createdStock(@RequestBody WareHouseStock input){
         warehouseService.createStock(input);
         return MyResponse.response("oke");
     }
 
     @PostMapping("/update-stock")
-    public MyResponse<?> updateStock(WareHouseStock input){
+    public MyResponse<?> updateStock(@RequestBody WareHouseStock input){
         warehouseService.updateStock(input);
         return MyResponse.response("oke");
     }

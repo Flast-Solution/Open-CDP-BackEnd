@@ -1,7 +1,7 @@
 package vn.flast.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,13 +9,12 @@ import vn.flast.utils.NumberUtils;
 
 import java.util.Date;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
-public class WarehouseHistoryFilter {
-    private Long providerId;
-    private Long productId;
-    private Integer status;
+public class ExportFilter {
+    private Integer warehouseId;
+    private Long orderId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date from;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
