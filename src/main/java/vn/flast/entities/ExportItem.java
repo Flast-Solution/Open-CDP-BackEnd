@@ -9,6 +9,8 @@ import java.util.List;
 @Getter
 @Setter
 public class ExportItem {
+    private Integer status = 0;
+    private Integer statusConfirm = 0;
     private List<DetailItem> detaiItems;
     private Integer stt;
 }

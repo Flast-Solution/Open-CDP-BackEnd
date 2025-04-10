@@ -6,4 +6,7 @@ import vn.flast.models.WarehouseExport;
 
 public interface WarehouseExportRepository extends JpaRepository<WarehouseExport, Integer> {
 
+    @Query("FROM WarehouseExport WHERE orderId = :orderId")
+    WarehouseExport findByOrderId(Long orderId);
+
 }

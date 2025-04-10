@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import vn.flast.controller.common.BaseController;
 import vn.flast.entities.ExportFilter;
 import vn.flast.entities.ExportInput;
 import vn.flast.entities.ExportItem;
@@ -33,28 +34,40 @@ public class WarehouseExportService {
 
     private final WarehouseService warehouseService;
 
+    private final BaseController baseController;
+
 
     public WarehouseExport create(ExportInput order){
-        List<DetailItem> items = order.getDetails().stream()
-                .flatMap(detail -> detail.getItems().stream()).toList();
-        WarehouseExport warehouseExport = new WarehouseExport();
-        warehouseExport.setOrderId(order.getOrderId());
-        warehouseExport.setNote(order.getNote());
-        ExportItem exportItem = new ExportItem();
-        exportItem.setDetaiItems(items);
-        exportItem.setStt(1);
-        warehouseExport.setItems(List.of(exportItem));
-        warehouseExport.setInfo(JsonUtils.toJson(items));
-        return warehouseExportRepository.save(warehouseExport);
+        var warehouseExportOld = warehouseExportRepository.findByOrderId(order.getOrderId());
+        if(warehouseExportOld != null) {
+            return warehouseExportOld;
+        }
+        else {
+            List<DetailItem> items = order.getDetails().stream()
+                    .flatMap(detail -> detail.getItems().stream()).toList();
+            WarehouseExport warehouseExport = new WarehouseExport();
+            warehouseExport.setOrderId(order.getOrderId());
+            warehouseExport.setNote(order.getNote());
+            ExportItem exportItem = new ExportItem();
+            exportItem.setDetaiItems(items);
+            exportItem.setStt(1);
+            var info = List.of(exportItem);
+            warehouseExport.setItems(info);
+            warehouseExport.setInfo(JsonUtils.toJson(info));
+            return warehouseExportRepository.save(warehouseExport);
+        }
     }
 
     public WarehouseExport update(WarehouseExport input){
         var warehouseExport = warehouseExportRepository.findById(input.getId()).orElseThrow(
                 () -> new RuntimeException("Bản ghi không tồn tại !")
         );
-        warehouseExport.setStatus(warehouseExport.getStatus());
         warehouseExport.setNote(warehouseExport.getNote());
         List<ExportItem> items = input.getItems();
+        Integer statusConfirm = warehouseExportStatusRepository.findByType()
+                .orElseThrow(() -> new RuntimeException("Chưa có trạng thái duyệt xuất kho !"))
+                .getId();
+        exportProduct(items, statusConfirm);
         int maxStt = items.stream()
                 .filter(item -> item.getStt() != null)
                 .mapToInt(ExportItem::getStt)
@@ -67,9 +80,27 @@ public class WarehouseExportService {
         }
         warehouseExport.setInfo(JsonUtils.toJson(input.getItems()));
         return warehouseExportRepository.save(warehouseExport);
-
     }
 
+    private void exportProduct(List<ExportItem> items, Integer statusConfirm){
+        var userName = baseController.getInfo();
+        boolean isAdminOrWarehouse = userName.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                        || auth.getAuthority().equals("ROLE_WAREHOUSE"));
+        for(ExportItem item : items){
+            if (item.getStatus().equals(statusConfirm) && item.getStatusConfirm() == WarehouseExportStatus.TYPE_NOT_CONFIRM && isAdminOrWarehouse) {
+                item.setStatusConfirm(WarehouseExportStatus.TYPE_CONFIRM);
+                for (DetailItem detailItem : item.getDetaiItems()) {
+                    var warehouse = warehouseService.findById(detailItem.getWarehouseId());
+                    if (detailItem.getQuantity() > warehouse.getQuantity()) {
+                        throw new RuntimeException("Số lượng trong kho không đủ để xuất!");
+                    }
+                    warehouse.setQuantity(warehouse.getQuantity() - detailItem.getQuantity());
+                    warehouseService.updated(warehouse);
+                }
+            }
+        }
+    }
 
     public Ipage<?> fetch(ExportFilter filter){
         var et = EntityQuery.create(entityManager, WarehouseExport.class);

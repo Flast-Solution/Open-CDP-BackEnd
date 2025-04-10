@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import vn.flast.models.WarehouseExport;
 import vn.flast.models.WarehouseExportStatus;
 
+import java.util.Optional;
+
 public interface WarehouseExportStatusRepository extends JpaRepository<WarehouseExportStatus, Long> {
 
     @Query("FROM WarehouseExportStatus w WHERE w.name = :name")
@@ -13,5 +15,5 @@ public interface WarehouseExportStatusRepository extends JpaRepository<Warehouse
     Boolean existsByName(String name);
 
     @Query("From WarehouseExportStatus w WHERE w.type = 1")
-    WarehouseExportStatus findByType();
+    Optional<WarehouseExportStatus> findByType();
 }

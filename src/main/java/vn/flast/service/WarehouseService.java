@@ -105,6 +105,13 @@ public class WarehouseService {
         return wareHouseStatusRepository.save(input);
     }
 
+    public Warehouse findById(Integer id){
+        var data = wareHouseRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Bản ghi không tồn tại !")
+        );
+        return data;
+    }
+
     public Map<Integer, Warehouse> findByIds(List<Integer> ids) {
         List<Warehouse> warehouses = wareHouseRepository.findByIds(ids);
         return warehouses.stream().collect(Collectors.toMap(Warehouse::getId, Function.identity()));
