@@ -31,9 +31,6 @@ public class WarehouseExport {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "warehouse_id")
-    private Integer warehouseId;
-
     @Column(name = "order_id")
     private Long orderId;
 

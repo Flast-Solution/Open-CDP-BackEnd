@@ -10,6 +10,7 @@ import vn.flast.models.CustomerOrder;
 @NoArgsConstructor
 public class ExportInput extends CustomerOrder {
 
+    private Integer status;
     private Long orderId;
     private Integer warehouseId;
     private String note;

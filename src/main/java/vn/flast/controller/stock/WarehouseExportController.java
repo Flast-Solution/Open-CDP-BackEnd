@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.ExportFilter;
 import vn.flast.entities.ExportInput;
@@ -48,6 +49,12 @@ public class WarehouseExportController {
     @GetMapping("/fetch-status")
     public MyResponse<?> fetchStatus(){
         var data = warehouseExportService.fetchStatus();
+        return MyResponse.response(data);
+    }
+
+    @GetMapping("/find-order-id")
+    public MyResponse<?> findOrderId(@RequestParam Long orderId){
+        var data = warehouseExportService.findOrderId(orderId);
         return MyResponse.response(data);
     }
 
