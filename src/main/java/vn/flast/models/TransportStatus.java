@@ -9,19 +9,21 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Table(name = "transporter")
+@Table(name = "transport_status")
 @Entity
-@Getter @Setter
-public class Transporter {
+@Getter
+@Setter
+
+public class TransportStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private Integer id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "status")
-    private Integer status;
+    @Column(name= "type")
+    private Integer type;
 }

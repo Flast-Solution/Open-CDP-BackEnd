@@ -2,12 +2,14 @@ package vn.flast.service.customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.flast.dao.CustomerOrderDao;
 import vn.flast.dao.DaoImpl;
 import vn.flast.dao.DataDao;
 import vn.flast.entities.OrderStatus;
 import vn.flast.entities.customer.CustomerFilter;
 import vn.flast.entities.customer.CustomerInfo;
+import vn.flast.entities.customer.CustomerOrderWithoutDetails;
 import vn.flast.models.CustomerOrder;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.resultset.CustomerLever;
@@ -21,9 +23,11 @@ import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataOwnerRepository;
 import vn.flast.repositories.UserRepository;
 import vn.flast.service.cskh.DataCareService;
+import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -61,11 +65,17 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
         var info = new CustomerInfo();
         info.iCustomer = customer;
         info.lichSuTuongTac = dataDao.lastInteracted(phone);
-        info.donChuaHoanThanh = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_CO_HOI);
+        var listChuaHt = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_CO_HOI);
+        List<CustomerOrderWithoutDetails> donChuaht = CopyProperty.copyListIgnoreNull(
+                listChuaHt, CustomerOrderWithoutDetails::new
+        );
+        info.donChuaHoanThanh = donChuaht;
         var listDonHoanThanh = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_ORDER);
-//        info.customerService = findCusService(cId);
+        List<CustomerOrderWithoutDetails> donHoanThanh = CopyProperty.copyListIgnoreNull(
+                listDonHoanThanh, CustomerOrderWithoutDetails::new
+        );
         info.dataCares = dataCareService.findByCustomerId(cId);
-        info.baDonGanNhat = listDonHoanThanh;
+        info.baDonGanNhat = donHoanThanh;
         info.saleTakeCare = saleTakeCare(phone);
         return info;
     }

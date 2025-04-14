@@ -14,8 +14,8 @@ public class CustomerInfo {
     public CustomerPersonal iCustomer;
     public User saleTakeCare;
     public List<Data> lichSuTuongTac;
-    public List<CustomerOrder> donChuaHoanThanh;
-    public List<CustomerOrder> baDonGanNhat;
+    public List<CustomerOrderWithoutDetails> donChuaHoanThanh;
+    public List<CustomerOrderWithoutDetails> baDonGanNhat;
     public List<CustomerServiceGlobal> customerService;
     public List<DataCare> dataCares;
 }
