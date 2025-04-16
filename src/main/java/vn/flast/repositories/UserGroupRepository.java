@@ -15,4 +15,7 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Integer> {
 
     @Query("FROM UserGroup u WHERE u.type = :type AND u.id NOT IN (:id)")
     List<UserGroup> findAllByType(Integer type, Integer id);
+
+    @Query("FROM UserGroup u WHERE u.type = 1 AND u.leaderId = :userId AND u.status NOT IN (0)")
+    UserGroup findBySaleManager(Integer userId);
 }

@@ -160,6 +160,7 @@ public class UserService {
         return et.integerEqualsTo("leaderId", leaderId).uniqueResult();
     }
 
+
     public List<User> findBySale(){
         String initQuery = "FROM user u LEFT JOIN user_link_profile p ON u.id = p.user_id";
         SqlBuilder sqlCondiBuilder = SqlBuilder.init(initQuery);

@@ -176,7 +176,7 @@ public class OrderService  implements Publisher, Serializable {
         orderRepository.save(order);
         this.sendMessageOnOrderChange(order);
         if (input.paymentInfo() != null && Boolean.TRUE.equals(input.paymentInfo().status())) {
-            order.setPaid(Optional.ofNullable(input.paymentInfo()).map(OrderPaymentInfo::amount).orElse(0.));
+            order.setPaid(0.);
             OrderPaymentInfo updatedPaymentInfo = input.paymentInfo().withId(order.getId());
             var payService = BeanUtil.getBean(PayService.class);
             payService.manualMethod(updatedPaymentInfo);

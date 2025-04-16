@@ -12,6 +12,7 @@ import vn.flast.utils.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Log4j2
@@ -32,6 +33,16 @@ public class GetUserRole extends BaseController {
             return JsonUtils.Json2ListObject(leaderGroups.getMemberList(), Integer.class);
         }
         ids.add(user.getId());
+        return ids;
+    }
+
+    public List<Integer> listUserIdsByleader(Integer leaderId) {
+        var leaderGroups = userService.findByLeaderId(leaderId);
+        Validate.notNull(leaderGroups, "Không tìm thấy sale leader id trong userGroup");
+        List<Integer> ids = Optional.ofNullable(leaderGroups.getMemberList())
+                .map(json -> JsonUtils.Json2ListObject(json, Integer.class))
+                .orElse(new ArrayList<>());
+        ids.add(leaderId);
         return ids;
     }
 }
