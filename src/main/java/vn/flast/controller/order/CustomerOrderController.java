@@ -63,4 +63,10 @@ public class CustomerOrderController {
         orderService.cancelCohoi(orderId, detail);
         return MyResponse.response("oke");
     }
+
+    @GetMapping("/find-id")
+    public MyResponse<?> findById(@RequestParam Long orderId) {
+        var order = orderService.findById(orderId);
+        return MyResponse.response(order);
+    }
 }

@@ -190,6 +190,7 @@ public class OrderService  implements Publisher, Serializable {
                 () -> new RuntimeException("error no record exists")
         );
         CustomerOrder order = new CustomerOrder();
+        input = input.withCustomer(input.transformCustomer(input.customer()));
         input.transformOrder(orderOld);
         CopyProperty.CopyIgnoreNull(orderOld, order);
         var listDetails = input.transformOnCreateDetail(order);
@@ -214,7 +215,7 @@ public class OrderService  implements Publisher, Serializable {
 
     @Transactional
     public OrderResponse view(Long id) {
-        var order = orderRepository.findById(id).orElseThrow(
+        var order = orderRepository.fetchWithCustomer(id).orElseThrow(
             () -> new ResourceNotFoundException("Order not found .!")
         );
         return withOrderDetail(order);
@@ -243,6 +244,7 @@ public class OrderService  implements Publisher, Serializable {
         var order = orderRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Order not found .!")
         );
+        log.info(order.getCustomerId());
         return withOrderDetail(order);
     }
 

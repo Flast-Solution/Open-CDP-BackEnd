@@ -15,4 +15,5 @@ public class ExportInput extends CustomerOrder {
     private Integer warehouseId;
     private String note;
     private String createdBy;
+    private String exportCode;
 }

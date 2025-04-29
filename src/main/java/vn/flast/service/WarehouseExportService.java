@@ -8,14 +8,19 @@ import vn.flast.controller.common.BaseController;
 import vn.flast.entities.ExportFilter;
 import vn.flast.entities.ExportInput;
 import vn.flast.entities.ExportItem;
+import vn.flast.entities.ExportNotOrdrerInput;
 import vn.flast.models.DetailItem;
+import vn.flast.models.WareHouseHistory;
 import vn.flast.models.WarehouseExport;
 import vn.flast.models.WarehouseExportStatus;
 import vn.flast.pagination.Ipage;
+import vn.flast.repositories.WareHouseHistoryRepository;
 import vn.flast.repositories.WarehouseExportRepository;
 import vn.flast.repositories.WarehouseExportStatusRepository;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
+
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -28,6 +33,8 @@ public class WarehouseExportService {
     private final WarehouseExportRepository warehouseExportRepository;
 
     private final WarehouseExportStatusRepository warehouseExportStatusRepository;
+
+    private final WareHouseHistoryRepository warehouseHistoryRepository;
 
     private final WarehouseService warehouseService;
 
@@ -54,6 +61,45 @@ public class WarehouseExportService {
             warehouseExport.setInfo(JsonUtils.toJson(info));
             return warehouseExportRepository.save(warehouseExport);
         }
+    }
+
+    public WarehouseExport createExportNotOrder(ExportNotOrdrerInput input){
+        WarehouseExport warehouseExport = new WarehouseExport();
+        warehouseExport.setWarehouseDeliveryId(input.getWarehouseDeliveryId());
+        warehouseExport.setWarehouseReceivingId(input.getWarehouseReceivingId());
+        warehouseExport.setNote(input.getNote());
+        warehouseExport.setCreatedBy(new Date());
+        warehouseExport.setType(WarehouseExport.TYPE_EXPORT_NOT_ORDER);
+        ExportItem exportItem = new ExportItem();
+        exportItem.setDetaiItems(input.getItems());
+        exportItem.setStatus(input.getStatus());
+        exportItem.setStt(1);
+        var info = List.of(exportItem);
+        warehouseExport.setItems(info);
+        Integer statusConfirm = warehouseExportStatusRepository.findByType()
+                .orElseThrow(() -> new RuntimeException("Chưa có trạng thái duyệt xuất kho !"))
+                .getId();
+        if(input.getStatus() == statusConfirm){
+            exportItem.setStatusConfirm(WarehouseExportStatus.TYPE_CONFIRM);
+            warehouseExport.setUserExport(baseController.getInfo().getId());
+            for (DetailItem detailItem : input.getItems()) {
+                var warehouse = warehouseService.findById(detailItem.getWarehouseId());
+                if (detailItem.getQuantity() > warehouse.getQuantity()) {
+                    throw new RuntimeException("Số lượng trong kho không đủ để xuất!");
+                }
+                warehouse.setQuantity(warehouse.getQuantity() - detailItem.getQuantity());
+                warehouseService.updated(warehouse);
+            }
+            WareHouseHistory wareHouseHistory = new WareHouseHistory();
+            wareHouseHistory.setCode("WH-" + System.currentTimeMillis());
+            wareHouseHistory.setStockId(input.getWarehouseReceivingId());
+            wareHouseHistory.setInfo(JsonUtils.toJson(input.getItems()));
+            wareHouseHistory.setStatusConfirm(0);
+            warehouseHistoryRepository.save(wareHouseHistory);
+        }
+        warehouseExport.setInfo(JsonUtils.toJson(info));
+        return warehouseExportRepository.save(warehouseExport);
+
     }
 
     public WarehouseExport update(WarehouseExport input){
@@ -136,11 +182,10 @@ public class WarehouseExportService {
 
     public WarehouseExport findOrderId(Long orderId){
         var warehouseExport = warehouseExportRepository.findByOrderId(orderId);
-        warehouseExport.setItems(JsonUtils.Json2ListObject(warehouseExport.getInfo(), ExportItem.class));
-        if(warehouseExport != null) {
+        if (warehouseExport != null) {
+            warehouseExport.setItems(JsonUtils.Json2ListObject(warehouseExport.getInfo(), ExportItem.class));
             return warehouseExport;
-        }
-        else {
+        } else {
             return null;
         }
     }

@@ -42,8 +42,6 @@ public class WarehouseHistoryService {
 
     private final WarehouseStockRepository warehouseStockRepository;
 
-    private final ProductRepository productRepository;
-
     private final ProductSkusRepository productSkusRepository;
     private final BaseController baseController;
 
@@ -67,48 +65,59 @@ public class WarehouseHistoryService {
 
     @Transactional(rollbackFor = Exception.class)
     public WareHouseHistory updated(WareHouseHistory input) {
-        var warehouseHistory = wareHouseHistoryRepository.findById(input.getId()).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
-        );
-        var stock = warehouseStockRepository.findById(input.getStockId()).orElseThrow(
-                () -> new RuntimeException("record does not exist.")
-        );
+        var warehouseHistory = wareHouseHistoryRepository.findById(input.getId())
+                .orElseThrow(() -> new RuntimeException("Bản ghi không tồn tại !"));
+
+        var stock = warehouseStockRepository.findById(input.getStockId())
+                .orElseThrow(() -> new RuntimeException("record does not exist."));
+
         var user = baseController.getInfo();
-        boolean isAdminOrManager = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        boolean isAdmin = user.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_WAREHOUSE"));
+
         var statusConfirm = wareHouseStatusRepository.findByType().getId();
-        if(isAdminOrManager && input.getStatus().equals(statusConfirm)){
+        boolean isConfirming = input.getStatus().equals(statusConfirm);
+        boolean isNotConfirmed = warehouseHistory.getStatusConfirm() != WareHouseHistory.CONFIRM_WAREHOUSE;
+
+        if (isAdmin && isConfirming && isNotConfirmed) {
             for (WareHouseItem item : input.getItems()) {
                 item.setProviderId(input.getProviderId());
-                var warehouseOld = warehouseRepository.findProductStock(input.getProviderId(), item.getProductId(), item.getSkuId(), input.getStockId());
-                Warehouse warehouse = new Warehouse();
+
+                var warehouseOld = warehouseRepository.findProductStock(
+                        input.getProviderId(), item.getProductId(), item.getSkuId(), input.getStockId()
+                );
 
                 if (warehouseOld == null) {
+                    var skuProduct = productSkusRepository.findById(item.getSkuId())
+                            .orElseThrow(() -> new RuntimeException("Sku does not exist!"));
+
+                    Warehouse warehouse = new Warehouse();
                     CopyProperty.CopyIgnoreNull(item, warehouse);
-                    var skuProduct = productSkusRepository.findById(item.getSkuId()).orElseThrow(
-                            () -> new RuntimeException("Sku does not exist!")
-                    );
                     warehouse.setTotal(item.getQuantity());
                     warehouse.setStockId(input.getStockId());
                     warehouse.setStockName(stock.getName());
                     warehouse.setSkuInfo(item.getSkuInfo());
                     warehouse.setSkuName(skuProduct.getName());
                     warehouseRepository.save(warehouse);
+
                     input.setWarehouserId(warehouse.getId());
                 } else {
-                    warehouseOld.setTotal(warehouseOld.getTotal() + item.getQuantity());
+                    warehouseOld.setQuantity(warehouseOld.getQuantity() + item.getQuantity());
                     warehouseRepository.save(warehouseOld);
+
                     input.setWarehouserId(warehouseOld.getId());
                 }
             }
             input.setStatusConfirm(WareHouseHistory.CONFIRM_WAREHOUSE);
-            return wareHouseHistoryRepository.save(input);
+        } else if (!isNotConfirmed) {
+            input.setStatusConfirm(WareHouseHistory.CONFIRM_WAREHOUSE);
         }
-        else{
-            CopyProperty.CopyIgnoreNull(input, warehouseHistory);
-            return wareHouseHistoryRepository.save(warehouseHistory);
-        }
+
+        input.setInfo(JsonUtils.toJson(input.getItems()));
+        CopyProperty.CopyIgnoreNull(input, warehouseHistory);
+        return wareHouseHistoryRepository.save(warehouseHistory);
     }
+
 
     public Ipage<?> fetch(WarehouseHistoryFilter filter) {
         var et = EntityQuery.create(entityManager, WareHouseHistory.class);

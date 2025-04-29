@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.ExportFilter;
 import vn.flast.entities.ExportInput;
+import vn.flast.entities.ExportNotOrdrerInput;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.WarehouseExport;
 import vn.flast.models.WarehouseExportStatus;
@@ -25,6 +26,12 @@ public class WarehouseExportController {
     @PostMapping("/created")
     public MyResponse<?> create(@RequestBody ExportInput input) {
         var data = warehouseExportService.create(input);
+        return MyResponse.response(data, "Nhập thành công .!");
+    }
+
+    @PostMapping("/created-not-order")
+    public MyResponse<?> create(@RequestBody ExportNotOrdrerInput input) {
+        var data = warehouseExportService.createExportNotOrder(input);
         return MyResponse.response(data, "Nhập thành công .!");
     }
 

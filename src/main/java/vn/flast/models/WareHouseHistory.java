@@ -67,7 +67,7 @@ public class WareHouseHistory {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "in_time")
-    private Date inTime;
+    private Date inTime = new Date();
 
     @Column(name = "status")
     private Integer status;

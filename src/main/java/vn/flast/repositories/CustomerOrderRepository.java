@@ -13,6 +13,9 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
     @Query("FROM CustomerOrder c WHERE c.code =:code")
     Optional<CustomerOrder> findByCode(String code);
 
+    @Query("SELECT o FROM CustomerOrder o WHERE o.id = :id")
+    Optional<CustomerOrder> fetchWithCustomer(@Param("id") Long id);
+
     @Query("FROM CustomerOrder c WHERE c.code IN (:codes)")
     List<CustomerOrder> findByCodes(Collection<String> codes);
 

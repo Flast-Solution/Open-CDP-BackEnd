@@ -11,7 +11,7 @@ import vn.flast.domains.order.OrderService;
 import vn.flast.domains.payments.OrderPaymentInfo;
 import vn.flast.domains.payments.PayService;
 import vn.flast.entities.MyResponse;
-import vn.flast.entities.PaymentFilter;
+import vn.flast.entities.payment.PaymentFilter;
 import vn.flast.entities.ReceivableFilter;
 import vn.flast.service.AccountantService;
 

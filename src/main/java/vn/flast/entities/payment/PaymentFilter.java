@@ -1,4 +1,4 @@
-package vn.flast.entities;
+package vn.flast.entities.payment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;

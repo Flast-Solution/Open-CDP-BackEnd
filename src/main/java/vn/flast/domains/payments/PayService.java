@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.common.BaseController;
 import vn.flast.domains.order.OrderService;
 import vn.flast.domains.order.OrderUtils;
-import vn.flast.entities.ReceivableFilter;
+import vn.flast.entities.payment.OrderPayment;
+import vn.flast.entities.payment.PaymentFilter;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderPayment;
-import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderPaymentRepository;
 import vn.flast.repositories.CustomerOrderRepository;
@@ -20,7 +20,6 @@ import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.NumberUtils;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -105,6 +104,23 @@ public class PayService {
     public List<CustomerOrderPayment> listByOrderId(Long orderId){
         var order = orderService.view(orderId);
         return paymentRepository.findCodes(order.getCode());
+    }
+
+    public List<OrderPayment>listOrderPayment(PaymentFilter filter) {
+        var et = EntityQuery.create(entityManager, CustomerOrder.class);
+        et.stringEqualsTo("code", filter.getCode());
+        et.between("createdTime", filter.getFrom(), filter.getTo());
+        et.addDescendingOrderBy("id");
+        et.setMaxResults(filter.getLimit()).setFirstResult(filter.getLimit() * filter.page());
+        var listsOrder = et.list();
+        var listOrderPay = listsOrder.stream().map(order -> {
+            OrderPayment op = new OrderPayment();
+            CopyProperty.CopyIgnoreNull(order, op);
+            List<CustomerOrderPayment> payments = listByOrderId(order.getId());
+            op.setPayments(payments);
+            return op;
+        }).toList();
+        return listOrderPay;
     }
 
     @Transactional(rollbackFor = Exception.class)

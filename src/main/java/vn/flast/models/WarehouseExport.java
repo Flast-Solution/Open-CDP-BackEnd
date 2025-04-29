@@ -26,6 +26,11 @@ import java.util.List;
 @Setter
 public class WarehouseExport {
 
+
+    public static final int TYPE_EXPORT_NOT_ORDER = 1;
+
+    public static final int TYPE_EXPORT_ORDER = 0;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -36,6 +41,12 @@ public class WarehouseExport {
 
     @Column(name = "status")
     private Integer status;
+
+    @Column(name = "warehouse_delivery_id")
+    private Integer warehouseDeliveryId;
+
+    @Column(name = "warehouse_receiving_id")
+    private Integer warehouseReceivingId;
 
     @Column(name = "note")
     private String note;
@@ -59,6 +70,12 @@ public class WarehouseExport {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_by")
     private Date createdBy;
+
+    @Column(name = "type")
+    private Integer type;
+
+    @Column(name = "user_export")
+    private Integer userExport;
 
     @Transient
     List<ExportItem> items;

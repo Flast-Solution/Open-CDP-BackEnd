@@ -112,6 +112,8 @@ public class WarehouseService {
         return data;
     }
 
+
+
     public Map<Integer, Warehouse> findByIds(List<Integer> ids) {
         List<Warehouse> warehouses = wareHouseRepository.findByIds(ids);
         return warehouses.stream().collect(Collectors.toMap(Warehouse::getId, Function.identity()));

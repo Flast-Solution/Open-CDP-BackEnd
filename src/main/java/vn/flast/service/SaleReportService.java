@@ -55,7 +55,6 @@ public class SaleReportService extends BaseController {
                 filter.setSaleId(userIds);
             }else {
                 userIds.add(getInfo().getId());
-
             }
         }else {
             userIds.add(getInfo().getId());
@@ -80,4 +79,6 @@ public class SaleReportService extends BaseController {
         }
         return "UNKNOWN";
     }
+
+
 }

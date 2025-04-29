@@ -6,15 +6,12 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import vn.flast.entities.PaymentFilter;
+import vn.flast.entities.payment.PaymentFilter;
 import vn.flast.models.CustomerOrderPayment;
-import vn.flast.models.Product;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerOrderPaymentRepository;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
