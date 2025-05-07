@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import vn.flast.models.DetailItem;
 
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -11,6 +12,9 @@ import java.util.List;
 public class ExportItem {
     private Integer status = 0;
     private Integer statusConfirm = 0;
+    private Date createdDate;
+    private Date updateDate;
+    private String note;
     private List<DetailItem> detaiItems;
     private Integer stt;
 }

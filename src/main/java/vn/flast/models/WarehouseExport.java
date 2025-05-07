@@ -39,6 +39,12 @@ public class WarehouseExport {
     @Column(name = "order_id")
     private Long orderId;
 
+    @Column(name = "order_code")
+    private String  orderCode;
+
+    @Column(name = "sale")
+    private String  sale;
+
     @Column(name = "status")
     private Integer status;
 

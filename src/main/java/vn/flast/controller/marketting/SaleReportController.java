@@ -21,4 +21,16 @@ public class SaleReportController {
         var data = saleReportService.reportDataLeadSale(filter);
         return MyResponse.response(data);
     }
+
+    @GetMapping("/data-revenue")
+    public MyResponse<?> getReportDataRevenue(DataSaleFilter filter){
+        var data = saleReportService.reportDataRevenue();
+        return MyResponse.response(data);
+    }
+
+    @GetMapping("/data-activity")
+    public MyResponse<?> getReportDataActivity(){
+        var data = saleReportService.newFeedReport();
+        return MyResponse.response(data);
+    }
 }

@@ -67,6 +67,7 @@ public class PayService {
         boolean isPaid = NumberUtils.gteZero(orderResponse.getPaid());
         orderResponse.setType(isPaid ? CustomerOrder.TYPE_ORDER: CustomerOrder.TYPE_CO_HOI);
         Integer statusStartOrder = statusOrderRepository.findStartOrder().getId();
+        orderResponse.setCreatedAt(new Date());
         orderResponse.setStatus(statusStartOrder);
         if(orderResponse.getPaid() >= orderResponse.getTotal()) {
             orderResponse.setPaymentStatus(OrderUtils.PAYMENT_STATUS_DONE);
