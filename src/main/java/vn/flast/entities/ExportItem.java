@@ -1,5 +1,6 @@
 package vn.flast.entities;
 
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 import vn.flast.models.DetailItem;
@@ -16,5 +17,6 @@ public class ExportItem {
     private Date updateDate;
     private String note;
     private List<DetailItem> detaiItems;
+    private Integer warehouseDeliveryId;
     private Integer stt;
 }

@@ -2,6 +2,7 @@ package vn.flast.domains.order;
 
 import jakarta.persistence.EntityManager;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,12 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.common.BaseController;
 import vn.flast.domains.payments.OrderPaymentInfo;
 import vn.flast.domains.payments.PayService;
+import vn.flast.entities.OrderCare;
 import vn.flast.entities.OrderResponse;
 import vn.flast.entities.OrderStatus;
 import vn.flast.entities.ReceivableFilter;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
+import vn.flast.models.CustomerOrderNote;
 import vn.flast.models.CustomerPersonal;
 import vn.flast.models.Data;
 import vn.flast.orchestration.EventDelegate;
@@ -24,6 +27,7 @@ import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.Publisher;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerOrderDetailRepository;
+import vn.flast.repositories.CustomerOrderNoteRepository;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataRepository;
@@ -36,10 +40,13 @@ import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.NumberUtils;
+import vn.flast.utils.SqlBuilder;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -75,6 +82,9 @@ public class OrderService  implements Publisher, Serializable {
     @Autowired
     private DetailItemRepository detailItemRepository;
 
+    @Autowired
+    private CustomerOrderNoteRepository orderNoteRepository;
+
     public Ipage<?>fetchList(OrderFilter filter) {
         var sale = baseController.getInfo();
         Integer page = filter.page();
@@ -96,8 +106,46 @@ public class OrderService  implements Publisher, Serializable {
             .setMaxResults(filter.limit())
             .setFirstResult(page * filter.limit());
 
+
         var lists = transformDetails(et.list());
         return Ipage.generator(filter.limit(), et.count(), page, lists);
+    }
+
+    public Ipage<?>fetchListNotCare(OrderFilter filter) {
+        var sale = baseController.getInfo();
+        Integer page = filter.page();
+        boolean isAdminOrManager = sale.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                        || auth.getAuthority().equals("ROLE_CSKH"));
+        Integer userCreateId = (filter.saleId() != null) ?
+                (isAdminOrManager ? filter.saleId() : sale.getId()) :
+                (isAdminOrManager ? null : sale.getId());
+        int LIMIT = filter.limit();
+        int OFFSET = filter.page() * LIMIT;
+        final String totalSQL = " FROM `customer_order` c left join `customer_order_note` n on c.code = n.order_code ";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+        sqlBuilder.addIntegerEquals("c.user_create_id", userCreateId);
+        sqlBuilder.addStringEquals("c.type", CustomerOrder.TYPE_CO_HOI);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        Date dayBeforeYesterday = calendar.getTime();
+        sqlBuilder.addDateLessThan("c.created_at", dayBeforeYesterday);
+        sqlBuilder.like("c.customer_name", filter.customerName());
+        sqlBuilder.addIntegerEquals("c.customer_id", filter.customerId());
+        sqlBuilder.addStringEquals("c.customer_mobile", filter.customerPhone());
+        sqlBuilder.addStringEquals("c.customer_email", filter.customerEmail());
+        sqlBuilder.addStringEquals("c.code", filter.code());
+        sqlBuilder.addIsEmpty("n.order_code");
+
+        String finalQuery = sqlBuilder.builder();
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+        var nativeQuery = entityManager.createNativeQuery("SELECT c.* " + finalQuery + " ORDER BY c.created_at DESC" , CustomerOrder.class);
+        nativeQuery.setMaxResults(LIMIT);
+        nativeQuery.setFirstResult(OFFSET);
+        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        var lists = transformDetails(listData);
+        return Ipage.generator(LIMIT, count, filter.page(), lists);
     }
 
     public List<CustomerOrder> transformDetails(List<CustomerOrder> orders) {
@@ -337,4 +385,44 @@ public class OrderService  implements Publisher, Serializable {
         var lists = transformDetails(et.list());
         return Ipage.generator(LIMIT, et.count(), PAGE, lists);
     }
+
+    public CustomerOrderNote takeCareNoteCohoi(OrderCare input) {
+        var order = orderRepository.findByCode(input.getOrderCode())
+                .orElseThrow(() -> new RuntimeException("error no record exists"));
+
+        var care = orderNoteRepository.findByOrderCode(input.getOrderCode());
+        String currentNote = input.getNote();
+
+        if (StringUtils.isNotEmpty(currentNote)) {
+            StringBuilder sb = new StringBuilder();
+            String preNote = care != null ? care.getNote() : null;
+
+            if (StringUtils.isNotEmpty(preNote)) {
+                sb.append(preNote);
+            }
+            String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            sb.append("<div class='i-note'>")
+                    .append("<p class='note-edit'>")
+                    .append(baseController.getInfo().getSsoId())
+                    .append(" (").append(formattedDate).append(")")
+                    .append("</p>")
+                    .append("<div class='content-note'>").append(currentNote).append("</div>")
+                    .append("</div>");
+
+            input.setNote(sb.toString());
+        }
+
+        if (care == null) {
+            var noteOrder = new CustomerOrderNote();
+
+            CopyProperty.CopyIgnoreNull(input, noteOrder);
+            noteOrder.setUserName(baseController.getInfo().getSsoId());
+            noteOrder.setUsesId(baseController.getInfo().getId());
+            return orderNoteRepository.save(noteOrder);
+        } else {
+            CopyProperty.CopyIgnoreNull(input, care);
+            return orderNoteRepository.save(care);
+        }
+    }
+
 }

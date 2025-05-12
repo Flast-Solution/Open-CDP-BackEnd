@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.domains.order.OrderInput;
 import vn.flast.domains.order.OrderService;
 import vn.flast.entities.MyResponse;
+import vn.flast.entities.OrderCare;
 import vn.flast.models.CustomerOrder;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.searchs.OrderFilter;
@@ -49,6 +50,24 @@ public class CustomerOrderController {
     public MyResponse<?> fetchCohoi(OrderFilter filter) {
         OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_CO_HOI);
         return MyResponse.response(orderService.fetchList(updatedFilter));
+    }
+
+    @GetMapping("/fetch-cohoi-not-care")
+    public MyResponse<?> fetchCohoiNotCare(OrderFilter filter) {
+        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_CO_HOI);
+        return MyResponse.response(orderService.fetchListNotCare(updatedFilter));
+    }
+
+    @GetMapping("/find-cohoi-care")
+    public MyResponse<?> findCohoiCare(@RequestParam Long orderId) {
+        var order = orderService.findById(orderId);
+        return MyResponse.response(order);
+    }
+
+    @PostMapping("/take-care-cohoi")
+    public MyResponse<?> takeCareCohoi(@RequestBody OrderCare input){
+        var data = orderService.takeCareNoteCohoi(input);
+        return MyResponse.response(data);
     }
 
 

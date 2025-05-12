@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import vn.flast.dao.UserProfileDao;
 import vn.flast.entities.UserInput;
 import vn.flast.models.User;
 import vn.flast.searchs.UserFilter;
@@ -32,6 +33,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserProfileDao userProfileDao;
 
     @GetMapping("/list")
     public MyResponse<?> list(UserFilter filter) {
@@ -94,6 +98,12 @@ public class UserController {
     @GetMapping("/list-sale")
     public MyResponse<?> listSale(){
         var data = userService.findBySale();
+        return MyResponse.response(data);
+    }
+
+    @GetMapping("/list-role")
+    public MyResponse<?> listRole(){
+        var data = userProfileDao.findAll();
         return MyResponse.response(data);
     }
 }

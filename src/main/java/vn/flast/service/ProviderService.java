@@ -25,15 +25,12 @@ public class ProviderService {
     }
 
     public Ipage<?> fetch(ProviderFilter filter){
-        int LIMIT = filter.limit();
-        int currentPage = filter.page();
+
         var et = EntityQuery.create(entityManager, Provider.class);
         et.like("name", filter.name())
-            .stringEqualsTo("mobile", filter.mobile())
-            .setMaxResults(LIMIT)
-            .setFirstResult(LIMIT * currentPage);
+            .stringEqualsTo("mobile", filter.mobile());
         var lists = et.list();
-        return  Ipage.generator(LIMIT, et.count(), currentPage, lists);
+        return  Ipage.generator(10, et.count(), 1, lists);
     }
 
     @Transactional(rollbackFor = Exception.class)

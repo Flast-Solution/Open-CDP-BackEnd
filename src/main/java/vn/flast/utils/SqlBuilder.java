@@ -188,7 +188,6 @@ public class SqlBuilder {
 
     public SqlBuilder addDesc(String column) {
         if (StringUtils.isNotEmpty(column)) {
-            // Append "ORDER BY column DESC" to the SQL query
             maps.put(" ORDER BY ".concat(column).concat(" DESC"), null);
         }
         return this;

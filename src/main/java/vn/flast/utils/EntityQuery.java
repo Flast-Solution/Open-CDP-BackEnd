@@ -145,6 +145,14 @@ public class EntityQuery<E> {
         root.fetch(attribute, JoinType.INNER);
         return this;
     }
+    public EntityQuery<E> innerJoin(String path) {
+        root.join(path, JoinType.INNER);
+        return this;
+    }
+    public EntityQuery<E> leftJoinFetch(String attribute) {
+        root.fetch(attribute, JoinType.LEFT);
+        return this;
+    }
 
     public EntityQuery<E> addAscendingOrderBy(String path) {
         orders.add(criteriaBuilder.asc(toJpaPath(path)));
@@ -186,6 +194,7 @@ public class EntityQuery<E> {
         }
         return this;
     }
+
 
 	@SafeVarargs
     public final EntityQuery<E> addInDisjunction(Optional<Predicate>... optionalPredicates) {

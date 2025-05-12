@@ -164,6 +164,7 @@ public class DataController extends BaseController {
         return MyResponse.response(data);
     }
 
+
     @PostMapping("/re-assign")
     public MyResponse<?> reassign(@RequestParam Integer dataId, @RequestParam Integer saleId) {
         dataService.reAssignLeadManual(dataId, saleId);
