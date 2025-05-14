@@ -28,6 +28,8 @@ public class SaleReportController {
         return MyResponse.response(data);
     }
 
+
+
     @GetMapping("/data-activity")
     public MyResponse<?> getReportDataActivity(){
         var data = saleReportService.newFeedReport();

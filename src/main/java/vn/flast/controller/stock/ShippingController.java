@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Shipping;
+import vn.flast.models.ShippingStatus;
+import vn.flast.models.WarehouseExportStatus;
 import vn.flast.service.ShippingService;
 import vn.flast.validator.ValidationErrorBuilder;
 
@@ -52,5 +54,17 @@ public class ShippingController {
     public MyResponse<?> delete(@RequestParam Integer id) {
         shippingService.delete(id);
         return MyResponse.response("Xáo bản ghi thành công .!");
+    }
+
+    @PostMapping("/created-status")
+    public MyResponse<?> createStatus(@RequestBody ShippingStatus input){
+        var data = shippingService.createStatus(input);
+        return MyResponse.response(data);
+    }
+
+    @GetMapping("/fetch-status")
+    public MyResponse<?> fetchStatus(){
+        var data = shippingService.fetchStatus();
+        return MyResponse.response(data);
     }
 }

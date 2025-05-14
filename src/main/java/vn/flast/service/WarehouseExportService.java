@@ -54,6 +54,7 @@ public class WarehouseExportService {
             warehouseExport.setNote(order.getNote());
             ExportItem exportItem = new ExportItem();
             exportItem.setDetaiItems(items);
+            exportItem.setWarehouseDeliveryId(order.getWarehouseDeliveryId());
             exportItem.setStatus(order.getStatus());
             exportItem.setStt(1);
             var info = List.of(exportItem);
@@ -135,7 +136,7 @@ public class WarehouseExportService {
             if (item.getStatus().equals(statusConfirm) && item.getStatusConfirm() == WarehouseExportStatus.TYPE_NOT_CONFIRM && isAdminOrWarehouse) {
                 item.setStatusConfirm(WarehouseExportStatus.TYPE_CONFIRM);
                 for (DetailItem detailItem : item.getDetaiItems()) {
-                    var warehouse = warehouseService.findById(detailItem.getWarehouseId());
+                    var warehouse = warehouseService.findByStockAndSku(item.getWarehouseDeliveryId(), detailItem.getProductId(), detailItem.getSkuId());
                     if (detailItem.getQuantity() > warehouse.getQuantity()) {
                         throw new RuntimeException("Số lượng trong kho không đủ để xuất!");
                     }

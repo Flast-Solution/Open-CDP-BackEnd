@@ -112,6 +112,11 @@ public class WarehouseService {
         return data;
     }
 
+    public Warehouse findByStockAndSku(Integer stockId, Long productId, Long skuId){
+        var data = wareHouseRepository.findProductSku(productId, skuId, stockId);
+        return data;
+    }
+
 
 
     public Map<Integer, Warehouse> findByIds(List<Integer> ids) {

@@ -179,11 +179,16 @@ public class SaleReportService extends BaseController {
                 .toList();
     }
 
+//    public List<?> reportActivitySale(){
+//
+//    }
+
 
     public ReportActivity newFeedReport(){
         ReportActivity reportActivity = new ReportActivity();
         reportActivity.setActivityLead(reportActivityLead());
         reportActivity.setActivityRevenue(reportDataRevenue());
+//        reportActivity.setActivitySale();
         return reportActivity;
     }
 

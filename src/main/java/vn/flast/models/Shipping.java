@@ -1,14 +1,19 @@
 package vn.flast.models;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 
@@ -25,6 +30,9 @@ public class Shipping {
 
     @Column(name = "stock_id")
     private Long stockId;
+
+    @Column(name = "order_code")
+    private String orderCode;
 
     @Column(name = "customer_phone")
     private String customerPhone;
@@ -71,9 +79,18 @@ public class Shipping {
     @Column(name = "address")
     private String address;
 
+    @CreationTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "in_time")
     private Date inTime;
 
+    @UpdateTimestamp
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "update_time")
+    private Date updateTime;
+
     @Column(name = "status")
-    private String status;
+    private Integer status;
 }

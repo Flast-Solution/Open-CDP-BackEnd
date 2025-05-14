@@ -12,4 +12,9 @@ import java.util.List;
 public class ReportActivity {
     private List<?> ActivityLead;
     private List<?> ActivityRevenue;
+    private List<?> ActivitySale;
+    private List<?> ActivityGroup;
+    private List<?> ActivityCustomer;
+    private List<?> ActivityOrder;
+    private List<?> ActivityProduct;
 }

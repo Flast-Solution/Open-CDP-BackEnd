@@ -7,12 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.models.Shipping;
+import vn.flast.models.ShippingStatus;
 import vn.flast.models.Stock;
+import vn.flast.models.WarehouseExportStatus;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.ShippingRepository;
+import vn.flast.repositories.ShippingStatusRepository;
 import vn.flast.repositories.StockRepository;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
+
+import java.util.List;
 
 @Service
 public class ShippingService {
@@ -22,6 +27,9 @@ public class ShippingService {
 
     @Autowired
     private ShippingRepository shippingRepository;
+
+    @Autowired
+    private ShippingStatusRepository shippingStatusRepository;
 
 
     public Shipping created(Shipping input){
@@ -51,5 +59,18 @@ public class ShippingService {
                 () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         shippingRepository.delete(data);
+    }
+
+    public ShippingStatus createStatus(ShippingStatus input){
+        if(shippingStatusRepository.existsByName(input.getName())){
+            return null;
+        }
+
+        return shippingStatusRepository.save(input);
+    }
+
+    public List<ShippingStatus> fetchStatus(){
+        var data = shippingStatusRepository.findAll();
+        return data;
     }
 }
