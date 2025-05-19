@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,9 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.components.InvoiceBuilder;
 import vn.flast.components.QuoteBuilder;
 import vn.flast.domains.order.OrderService;
+import vn.flast.entities.MyResponse;
 import vn.flast.entities.OrderContent;
 import vn.flast.models.CustomerOrder;
+import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerPersonal;
+import vn.flast.repositories.DetailItemRepository;
 import vn.flast.utils.CopyProperty;
 
 import java.util.Optional;
@@ -33,6 +37,8 @@ public class QuoteController {
     private final InvoiceBuilder invoiceBuilder;
 
     private final QuoteBuilder quoteBuilder;
+
+    private final DetailItemRepository detailItemRepository;
 
     @RequestMapping(value = "/invoice", method = RequestMethod.GET)
     public ResponseEntity<?> invoice(@RequestParam("id") Long id, @RequestParam(required = false) String code) {
@@ -60,5 +66,20 @@ public class QuoteController {
         data.setInfoSale(extractedSale);
         data.setInfoPrice(extractedPay);
         return ResponseEntity.ok(strOrder);
+    }
+
+    @GetMapping("/info-order")
+    public MyResponse<?> getInfoOrder(@RequestParam("id") Long id, @RequestParam(required = false) String code){
+        var findOrder = StringUtils.isNotEmpty(code)
+                ? orderService.findByCode(code)
+                : orderService.findById(id);
+        CustomerOrder order = Optional.ofNullable(findOrder).orElseThrow(
+                () -> new RuntimeException("Không tìm thấy Cơ Hội!")
+        );
+        for(CustomerOrderDetail detail : order.getDetails()){
+            var items = detailItemRepository.findByDetailId(detail.getId());
+            detail.setItems(items);
+        }
+        return MyResponse.response(order);
     }
 }

@@ -10,6 +10,7 @@ import vn.flast.models.DetailItem;
 import vn.flast.models.StatusOrder;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DetailItemRepository;
+import vn.flast.repositories.ProductRepository;
 import vn.flast.repositories.StatusOrderRepository;
 import vn.flast.utils.BeanUtil;
 import vn.flast.utils.Common;
@@ -118,6 +119,10 @@ public record OrderInput(
             for (DetailItem item : orderDetail.getItems()) {
                 DetailItem newItem = new DetailItem();
                 CopyProperty.CopyIgnoreNull(item, newItem);
+                if(newItem.getName() == null) {
+                    var productRepo =  BeanUtil.getBean(ProductRepository.class);
+                    newItem.setName(productRepo.findNameBySkuId(newItem.getSkuId()));
+                }
                 newItem.setOrderDetailId(orderDetail.getId());
                 newItem.setCreatedAt(new Date());
                 detailItemList.add(newItem);

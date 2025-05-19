@@ -12,7 +12,9 @@ import vn.flast.entities.report.ReportActivity;
 import vn.flast.models.User;
 import vn.flast.resultset.ReportActivityLead;
 import vn.flast.resultset.ReportActivityRevenue;
+import vn.flast.resultset.ReportGroup;
 import vn.flast.resultset.ReportLeadSale;
+import vn.flast.resultset.ReportSaleTotal;
 import vn.flast.service.user.UserService;
 import vn.flast.utils.DateUtils;
 import vn.flast.utils.EntityQuery;
@@ -25,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -78,7 +81,10 @@ public class SaleReportService extends BaseController {
         nativeQuery.setParameter("from", from);
         nativeQuery.setParameter("to", to);
 
-        List<ReportActivityLead> data = EntityQuery.getListOfNativeQuery(nativeQuery, ReportActivityLead.class);
+        List<ReportActivityLead> data = EntityQuery.getListOfNativeQuery(nativeQuery, ReportActivityLead.class)
+                .stream()
+                .filter(Objects::nonNull)
+                .toList();
 
         Set<Integer> saleIds = data.stream().map(ReportActivityLead::getSaleId).collect(Collectors.toSet());
         LocalDate start = from.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -179,16 +185,52 @@ public class SaleReportService extends BaseController {
                 .toList();
     }
 
-//    public List<?> reportActivitySale(){
-//
-//    }
+    public List<?> reportActivitySale(){
+        final String sql = """
+                        SELECT c.user_create_username as sale, SUM(c.total) AS total
+                        FROM `user` u JOIN user_link_profile p ON u.id = p.user_id
+                        LEFT JOIN customer_order c ON u.id = c.user_create_id AND c.created_at BETWEEN :from AND :to
+                        AND c.`type` = 'order' WHERE p.user_profile_id IN (5, 13)
+                        GROUP BY c.user_create_username;
+                """;
+        Date startDate = DateUtils.getFirstDayOfCurrentMonth();
+        Date endDate = DateUtils.getLastDayOfCurrentMonth();
+        var nativeQuery = entityManager.createNativeQuery(sql, ReportSaleTotal.REPORT_SALE_TOTAL);
+        nativeQuery.setParameter("from", startDate);
+        nativeQuery.setParameter("to", endDate);
+        List<ReportSaleTotal> data = EntityQuery.getListOfNativeQuery(nativeQuery, ReportSaleTotal.class);
+        return data;
+    }
+
+    public List<?> reportActivityGroup(){
+        final String sql = """
+                        SELECT ug.id AS groupId,
+                        ug.name AS groupName,
+                        ug.leader_name AS `leader`,
+                        SUM(c.total) AS total
+                        FROM user_group ug JOIN
+                        `user` u ON JSON_CONTAINS(ug.member_list, CAST(u.id AS JSON))
+                        LEFT JOIN customer_order c ON u.id = c.user_create_id
+                        WHERE c.created_at between :from and :to GROUP BY ug.id;
+                """;
+        Date startDate = DateUtils.getFirstDayOfCurrentMonth();
+        Date endDate = DateUtils.getLastDayOfCurrentMonth();
+        var nativeQuery = entityManager.createNativeQuery(sql, ReportGroup.REPORT_GROUP);
+        nativeQuery.setParameter("from", startDate);
+        nativeQuery.setParameter("to", endDate);
+        List<ReportGroup> data = EntityQuery.getListOfNativeQuery(nativeQuery, ReportGroup.class);
+        return data;
+
+    }
 
 
     public ReportActivity newFeedReport(){
         ReportActivity reportActivity = new ReportActivity();
         reportActivity.setActivityLead(reportActivityLead());
         reportActivity.setActivityRevenue(reportDataRevenue());
-//        reportActivity.setActivitySale();
+        reportActivity.setActivitySale(reportActivitySale());
+        reportActivity.setActivityGroup(reportActivityGroup());
+//        reportActivity.setActivityCustomer();
         return reportActivity;
     }
 

@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.service.user.UserService;
 import vn.flast.utils.CopyProperty;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -104,6 +107,17 @@ public class UserController {
     @GetMapping("/list-role")
     public MyResponse<?> listRole(){
         var data = userProfileDao.findAll();
+        return MyResponse.response(data);
+    }
+
+    @GetMapping("/list-name-id")
+    public MyResponse<?> listNameId(){
+        var data = userRepository.findAll().stream()
+                .map(user -> Map.of(
+                        "id", user.getId(),
+                        "name", user.getSsoId()
+                ))
+                .collect(Collectors.toList());
         return MyResponse.response(data);
     }
 }
