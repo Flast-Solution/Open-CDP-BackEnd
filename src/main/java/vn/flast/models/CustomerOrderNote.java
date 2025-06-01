@@ -22,6 +22,11 @@ public class CustomerOrderNote {
 
     public static final int NOTE_NOIBO = 0;
     public static final int NOTE_KHACHHANG = 1;
+    public static final int NOTE_NHACUNGCAP = 2;
+
+    public static final int TYPE_COHOI = 0;
+    public static final int TYPE_ORDER = 1;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +38,9 @@ public class CustomerOrderNote {
 
     @Column(name = "note")
     private String note;
+
+    @Column(name = "type_note")
+    private Integer typeNote;
 
     @Column(name = "user_id")
     private Integer usesId;

@@ -110,6 +110,9 @@ public class PayService {
     public List<OrderPayment>listOrderPayment(PaymentFilter filter) {
         var et = EntityQuery.create(entityManager, CustomerOrder.class);
         et.stringEqualsTo("code", filter.getCode());
+        et.like("customerMobilePhone", filter.getPhone());
+        et.like("customerEmail", filter.getEmail());
+        et.integerEqualsTo("userCreateId", filter.getSaleId());
         et.between("createdTime", filter.getFrom(), filter.getTo());
         et.addDescendingOrderBy("id");
         et.setMaxResults(filter.getLimit()).setFirstResult(filter.getLimit() * filter.page());

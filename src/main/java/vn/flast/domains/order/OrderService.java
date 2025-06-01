@@ -98,20 +98,18 @@ public class OrderService  implements Publisher, Serializable {
         et.integerEqualsTo("userCreateId", userCreateId);
         et.like("customerName", filter.customerName())
             .integerEqualsTo("customerId", filter.customerId())
-            .stringEqualsTo("customerMobile", filter.customerPhone())
-            .stringNotEquals("customerEmail", filter.customerEmail())
-            .stringEqualsTo("code", filter.code())
+            .like("customerMobile", filter.customerPhone())
+            .like("customerEmail", filter.customerEmail())
+            .like("code", filter.code())
             .addDescendingOrderBy("createdAt")
             .stringEqualsTo("type", filter.type())
             .setMaxResults(filter.limit())
             .setFirstResult(page * filter.limit());
-
-
         var lists = transformDetails(et.list());
         return Ipage.generator(filter.limit(), et.count(), page, lists);
     }
 
-    public Ipage<?>fetchListNotCare(OrderFilter filter) {
+    public Ipage<?>fetchListCoHoiNotCare(OrderFilter filter) {
         var sale = baseController.getInfo();
         Integer page = filter.page();
         boolean isAdminOrManager = sale.getAuthorities().stream()
@@ -132,11 +130,144 @@ public class OrderService  implements Publisher, Serializable {
         sqlBuilder.addDateLessThan("c.created_at", dayBeforeYesterday);
         sqlBuilder.like("c.customer_name", filter.customerName());
         sqlBuilder.addIntegerEquals("c.customer_id", filter.customerId());
-        sqlBuilder.addStringEquals("c.customer_mobile", filter.customerPhone());
-        sqlBuilder.addStringEquals("c.customer_email", filter.customerEmail());
-        sqlBuilder.addStringEquals("c.code", filter.code());
+        sqlBuilder.like("c.customer_mobile", filter.customerPhone());
+        sqlBuilder.like("c.customer_email", filter.customerEmail());
+        sqlBuilder.like("c.code", filter.code());
         sqlBuilder.addIsEmpty("n.order_code");
+        String finalQuery = sqlBuilder.builder();
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+        var nativeQuery = entityManager.createNativeQuery("SELECT c.* " + finalQuery + " ORDER BY c.created_at DESC" , CustomerOrder.class);
+        nativeQuery.setMaxResults(LIMIT);
+        nativeQuery.setFirstResult(OFFSET);
+        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        var lists = transformDetails(listData);
+        return Ipage.generator(LIMIT, count, filter.page(), lists);
+    }
 
+    public Ipage<?>fetchListCoHoiCare(OrderFilter filter) {
+        var sale = baseController.getInfo();
+        Integer page = filter.page();
+        boolean isAdminOrManager = sale.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                        || auth.getAuthority().equals("ROLE_CSKH"));
+        Integer userCreateId = (filter.saleId() != null) ?
+                (isAdminOrManager ? filter.saleId() : sale.getId()) :
+                (isAdminOrManager ? null : sale.getId());
+        int LIMIT = filter.limit();
+        int OFFSET = filter.page() * LIMIT;
+        final String totalSQL = " FROM `customer_order` c left join `customer_order_note` n on c.code = n.order_code ";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+        sqlBuilder.addIntegerEquals("c.user_create_id", userCreateId);
+        sqlBuilder.addStringEquals("c.type", CustomerOrder.TYPE_CO_HOI);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        Date dayBeforeYesterday = calendar.getTime();
+        sqlBuilder.addDateLessThan("c.created_at", dayBeforeYesterday);
+        sqlBuilder.like("c.customer_name", filter.customerName());
+        sqlBuilder.addIntegerEquals("c.customer_id", filter.customerId());
+        sqlBuilder.like("c.customer_mobile", filter.customerPhone());
+        sqlBuilder.like("c.customer_email", filter.customerEmail());
+        sqlBuilder.like("c.code", filter.code());
+        sqlBuilder.addIntegerEquals("n.type", CustomerOrderNote.TYPE_COHOI);
+
+        String finalQuery = sqlBuilder.builder();
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+        var nativeQuery = entityManager.createNativeQuery("SELECT c.* " + finalQuery + " ORDER BY c.created_at DESC" , CustomerOrder.class);
+        nativeQuery.setMaxResults(LIMIT);
+        nativeQuery.setFirstResult(OFFSET);
+        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        var lists = transformDetails(listData);
+        return Ipage.generator(LIMIT, count, filter.page(), lists);
+    }
+
+    public Ipage<?>fetchLisOrderNotCare(OrderFilter filter) {
+        var sale = baseController.getInfo();
+        Integer page = filter.page();
+        boolean isAdminOrManager = sale.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                        || auth.getAuthority().equals("ROLE_CSKH"));
+        Integer userCreateId = (filter.saleId() != null) ?
+                (isAdminOrManager ? filter.saleId() : sale.getId()) :
+                (isAdminOrManager ? null : sale.getId());
+        int LIMIT = filter.limit();
+        int OFFSET = filter.page() * LIMIT;
+        final String totalSQL = " FROM `customer_order` c left join `customer_order_note` n on c.code = n.order_code ";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+        sqlBuilder.addIntegerEquals("c.user_create_id", userCreateId);
+        sqlBuilder.addStringEquals("c.type", CustomerOrder.TYPE_ORDER);
+        sqlBuilder.like("c.customer_name", filter.customerName());
+        sqlBuilder.addIntegerEquals("c.customer_id", filter.customerId());
+        sqlBuilder.like("c.customer_mobile", filter.customerPhone());
+        sqlBuilder.like("c.customer_email", filter.customerEmail());
+        sqlBuilder.like("c.code", filter.code());
+        sqlBuilder.addIsEmpty("n.order_code");
+        sqlBuilder.addIntegerEquals("n.type", CustomerOrderNote.TYPE_ORDER);
+        String finalQuery = sqlBuilder.builder();
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+        var nativeQuery = entityManager.createNativeQuery("SELECT c.* " + finalQuery + " ORDER BY c.created_at DESC" , CustomerOrder.class);
+        nativeQuery.setMaxResults(LIMIT);
+        nativeQuery.setFirstResult(OFFSET);
+        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        var lists = transformDetails(listData);
+        return Ipage.generator(LIMIT, count, filter.page(), lists);
+    }
+
+    public Ipage<?>fetchLisOrderCancel(OrderFilter filter) {
+        var sale = baseController.getInfo();
+        boolean isAdminOrManager = sale.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                        || auth.getAuthority().equals("ROLE_CSKH"));
+        Integer userCreateId = (filter.saleId() != null) ?
+                (isAdminOrManager ? filter.saleId() : sale.getId()) :
+                (isAdminOrManager ? null : sale.getId());
+        int LIMIT = filter.limit();
+        int OFFSET = filter.page() * LIMIT;
+        final String totalSQL = " FROM `customer_order` c left join `customer_order_note` n on c.code = n.order_code ";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+        sqlBuilder.addIntegerEquals("c.user_create_id", userCreateId);
+        sqlBuilder.addStringEquals("c.type", CustomerOrder.TYPE_ORDER);
+        sqlBuilder.like("c.customer_name", filter.customerName());
+        sqlBuilder.addIntegerEquals("c.customer_id", filter.customerId());
+        sqlBuilder.like("c.customer_mobile", filter.customerPhone());
+        sqlBuilder.like("c.customer_email", filter.customerEmail());
+        sqlBuilder.like("c.code", filter.code());
+        sqlBuilder.addIsEmpty("n.order_code");
+        sqlBuilder.addIntegerEquals("n.type", CustomerOrderNote.TYPE_ORDER);
+        String finalQuery = sqlBuilder.builder();
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+        var nativeQuery = entityManager.createNativeQuery("SELECT c.* " + finalQuery + " ORDER BY c.created_at DESC" , CustomerOrder.class);
+        nativeQuery.setMaxResults(LIMIT);
+        nativeQuery.setFirstResult(OFFSET);
+        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        var lists = transformDetails(listData);
+        return Ipage.generator(LIMIT, count, filter.page(), lists);
+    }
+    public Ipage<?>fetchLisOrderCare(OrderFilter filter) {
+        var sale = baseController.getInfo();
+        Integer page = filter.page();
+        boolean isAdminOrManager = sale.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                        || auth.getAuthority().equals("ROLE_CSKH"));
+        Integer userCreateId = (filter.saleId() != null) ?
+                (isAdminOrManager ? filter.saleId() : sale.getId()) :
+                (isAdminOrManager ? null : sale.getId());
+        int LIMIT = filter.limit();
+        int OFFSET = filter.page() * LIMIT;
+        final String totalSQL = " FROM `customer_order` c left join `customer_order_note` n on c.code = n.order_code ";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+        sqlBuilder.addIntegerEquals("c.user_create_id", userCreateId);
+        sqlBuilder.addStringEquals("c.type", CustomerOrder.TYPE_ORDER);
+        sqlBuilder.like("c.customer_name", filter.customerName());
+        sqlBuilder.addIntegerEquals("c.customer_id", filter.customerId());
+        sqlBuilder.like("c.customer_mobile", filter.customerPhone());
+        sqlBuilder.like("c.customer_email", filter.customerEmail());
+        sqlBuilder.like("c.code", filter.code());
+        sqlBuilder.addNotNUL("n.order_code");
+        sqlBuilder.addIntegerEquals("n.type", CustomerOrderNote.TYPE_ORDER);
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
         Long count = sqlBuilder.countOrSumQuery(countQuery);
@@ -217,7 +348,6 @@ public class OrderService  implements Publisher, Serializable {
         }
         var listDetails = input.transformOnCreateDetail(order);
         order.setDetails(listDetails);
-
         detailRepository.saveAll(listDetails);
         detailItemRepository.saveAll(input.transformOnCreateDetailItem(listDetails));
         OrderUtils.calculatorPrice(order);
@@ -341,7 +471,6 @@ public class OrderService  implements Publisher, Serializable {
             );
             order.setStatus(statusCancel);
         }
-
     }
 
     public static long calTotal(CustomerOrder order) {
@@ -372,7 +501,7 @@ public class OrderService  implements Publisher, Serializable {
                 (isAdminOrManager ? filter.getSaleId() : sale.getId()) :
                 (isAdminOrManager ? null : sale.getId());
         et.integerEqualsTo("userCreateId", userCreateId);
-        et.lessThanOrEqualsTo("paid", "total");
+        et.fieldLessThan("paid", "total");
         et.like("customerName", filter.getCustomerName())
                 .integerEqualsTo("customerId", filter.getCustomerId())
                 .stringEqualsTo("customerMobile", filter.getCustomerPhone())
@@ -408,13 +537,11 @@ public class OrderService  implements Publisher, Serializable {
                     .append("</p>")
                     .append("<div class='content-note'>").append(currentNote).append("</div>")
                     .append("</div>");
-
             input.setNote(sb.toString());
         }
 
         if (care == null) {
             var noteOrder = new CustomerOrderNote();
-
             CopyProperty.CopyIgnoreNull(input, noteOrder);
             noteOrder.setUserName(baseController.getInfo().getSsoId());
             noteOrder.setUsesId(baseController.getInfo().getId());

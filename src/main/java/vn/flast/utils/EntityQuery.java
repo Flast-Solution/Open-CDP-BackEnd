@@ -6,6 +6,7 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
@@ -271,6 +272,21 @@ public class EntityQuery<E> {
         if (!collection.isEmpty()) {
             predicates.add(criteriaBuilder.in(toJpaPath(path)).value(collection).not());
         }
+        return this;
+    }
+
+    public EntityQuery<E> fieldLessThanOrEqualTo(String left, String right) {
+        Path<BigDecimal> leftPath = toJpaPath(left);
+        Path<BigDecimal> rightPath = toJpaPath(right);
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(leftPath, rightPath));
+        return this;
+    }
+
+
+    public EntityQuery<E> fieldLessThan(String left, String right) {
+        Path<BigDecimal> leftPath = toJpaPath(left);
+        Path<BigDecimal> rightPath = toJpaPath(right);
+        predicates.add(criteriaBuilder.lessThan(leftPath, rightPath));
         return this;
     }
 

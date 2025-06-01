@@ -18,13 +18,19 @@ import vn.flast.components.QuoteBuilder;
 import vn.flast.domains.order.OrderService;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.OrderContent;
+import vn.flast.entities.QuoteOrder;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
-import vn.flast.models.CustomerPersonal;
+import vn.flast.repositories.ConfigRepository;
 import vn.flast.repositories.DetailItemRepository;
+import vn.flast.repositories.ProductRepository;
+import vn.flast.service.MediaService;
+import vn.flast.service.user.UserService;
 import vn.flast.utils.CopyProperty;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RestController
@@ -34,11 +40,15 @@ public class QuoteController {
 
     private final OrderService orderService;
 
-    private final InvoiceBuilder invoiceBuilder;
-
     private final QuoteBuilder quoteBuilder;
 
     private final DetailItemRepository detailItemRepository;
+
+    private final MediaService mediaService;
+
+    private final UserService userService;
+
+    private final ConfigRepository configRepository;
 
     @RequestMapping(value = "/invoice", method = RequestMethod.GET)
     public ResponseEntity<?> invoice(@RequestParam("id") Long id, @RequestParam(required = false) String code) {
@@ -78,8 +88,18 @@ public class QuoteController {
         );
         for(CustomerOrderDetail detail : order.getDetails()){
             var items = detailItemRepository.findByDetailId(detail.getId());
+            for (var item : items) {
+                var imageList = mediaService.list(Math.toIntExact(item.getProductId()), "Product").stream()
+                        .map(prt -> prt.getFileName()).collect(Collectors.toList());
+                item.setImageLists(imageList);
+            }
             detail.setItems(items);
         }
-        return MyResponse.response(order);
+        var sale = userService.findById(order.getUserCreateId());
+        QuoteOrder quoteOrder = new QuoteOrder();
+        quoteOrder.setOrder(order);
+        quoteOrder.setSale(sale);
+        quoteOrder.setInfoBank(configRepository.findByKey("info_bank"));
+        return MyResponse.response(quoteOrder);
     }
 }

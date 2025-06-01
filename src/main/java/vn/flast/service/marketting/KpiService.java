@@ -14,6 +14,7 @@ import vn.flast.utils.CopyProperty;
 import vn.flast.utils.DateUtils;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
+import vn.flast.utils.NumberUtils;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,7 +32,7 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
 
 
     public Ipage<UserKpi> listKpi(int userId, int page, Integer idFilter, Integer month, Integer year, Integer department, Integer limit) {
-
+        var Page = NumberUtils.isNull(page) ? 0 : (page - 1);
         EntityQuery<UserKpi> et = EntityQuery.create(entityManager, UserKpi.class);
         et.setMaxResults(limit).setFirstResult(page * limit);
         if(userService.isAdmin(userId) || userService.isSaleManager(userId)) {
@@ -61,7 +62,7 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
         data.setMonth((long) localDate.getMonthValue());
         if(!input.getListFee().isEmpty()) {
             data.setListFee(JsonUtils.toJson(input.getListFee()));
-            data.setFee(input.calculatorTotalFee());
+            data.setFee(Math.toIntExact(input.calculatorTotalFee()));
         }
         return userKpiRepository.save(data);
     }
@@ -80,7 +81,7 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
         data.setMonth((long) localDate.getMonthValue());
         if(!input.getListFee().isEmpty()) {
             data.setListFee(JsonUtils.toJson(input.getListFee()));
-            data.setFee(input.calculatorTotalFee());
+            data.setFee(Math.toIntExact(input.calculatorTotalFee()));
         }
         return userKpiRepository.save(data);
     }

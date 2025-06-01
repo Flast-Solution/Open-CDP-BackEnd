@@ -20,8 +20,8 @@ public class SaleKpiProperty {
     private int fee = 0;
     private List<FreeOfChannel> listFee = new ArrayList<>();
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
-    private Date inTime;
-    private int department = UserKpi.DEPARTMENT_SALE;
+    private Date inTime = new Date();
+    private int department = 0;
 
     public Long calculatorTotalFee () {
         if(listFee.isEmpty()) {

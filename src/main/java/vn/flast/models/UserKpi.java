@@ -31,13 +31,13 @@ public class UserKpi {
     private String type;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Integer userId;
 
     @Column(name = "kpi_total")
-    private Long kpiTotal;
+    private Integer kpiTotal;
 
     @Column(name = "kpi_revenue")
-    private Long kpiRevenue;
+    private Integer kpiRevenue;
 
     @Column(name = "month")
     private Long month;
@@ -46,7 +46,7 @@ public class UserKpi {
     private Long year;
 
     @Column(name = "fee")
-    private long fee = 0L;
+    private Integer fee = 0;
 
     @Column(name = "list_fee")
     private String listFee;

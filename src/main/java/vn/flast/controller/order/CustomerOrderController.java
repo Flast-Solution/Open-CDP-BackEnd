@@ -14,6 +14,7 @@ import vn.flast.domains.order.OrderService;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.OrderCare;
 import vn.flast.models.CustomerOrder;
+import vn.flast.models.CustomerOrderNote;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.service.DataService;
@@ -44,7 +45,7 @@ public class CustomerOrderController {
 //    @PostMapping("/create-flast-order")
 //    public MyResponse<?> createFlastOrder(){
 //
-//    }j
+//    }
 
     @GetMapping("/fetch-cohoi")
     public MyResponse<?> fetchCohoi(OrderFilter filter) {
@@ -55,7 +56,13 @@ public class CustomerOrderController {
     @GetMapping("/fetch-cohoi-not-care")
     public MyResponse<?> fetchCohoiNotCare(OrderFilter filter) {
         OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_CO_HOI);
-        return MyResponse.response(orderService.fetchListNotCare(updatedFilter));
+        return MyResponse.response(orderService.fetchListCoHoiNotCare(updatedFilter));
+    }
+
+    @GetMapping("/fetch-cohoi-care")
+    public MyResponse<?> fetchCohoiCare(OrderFilter filter) {
+        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_CO_HOI);
+        return MyResponse.response(orderService.fetchListCoHoiCare(updatedFilter));
     }
 
     @GetMapping("/find-cohoi-care")
@@ -66,10 +73,34 @@ public class CustomerOrderController {
 
     @PostMapping("/take-care-cohoi")
     public MyResponse<?> takeCareCohoi(@RequestBody OrderCare input){
+        input.setType(CustomerOrderNote.TYPE_COHOI);
+        var data = orderService.takeCareNoteCohoi(input);
+        return MyResponse.response(data);
+    }
+    @GetMapping("/fetch-order-completed")
+    public MyResponse<?> fetchOrderCompleted(OrderFilter filter) {
+        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
+        return MyResponse.response(orderService.fetchLisOrderNotCare(updatedFilter));
+    }
+
+    @GetMapping("/fetch-order-cancel")
+    public MyResponse<?> fetchOrderCancel(OrderFilter filter) {
+        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
+        return MyResponse.response(orderService.fetchLisOrderCancel(updatedFilter));
+    }
+
+    @PostMapping("/take-care-order")
+    public MyResponse<?> takeCareOrder(@RequestBody OrderCare input){
+        input.setType(CustomerOrderNote.TYPE_ORDER);
         var data = orderService.takeCareNoteCohoi(input);
         return MyResponse.response(data);
     }
 
+    @GetMapping("/fetch-order-take-care")
+    public MyResponse<?> fetchOrderTakeCare(OrderFilter filter) {
+        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
+        return MyResponse.response(orderService.fetchLisOrderCare(updatedFilter));
+    }
 
     @PostMapping("/update-cohoi")
     public MyResponse<?> updateCohoi(@RequestBody OrderInput input){

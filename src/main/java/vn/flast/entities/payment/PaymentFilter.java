@@ -16,6 +16,7 @@ public class PaymentFilter {
     private String code;
     private Integer saleId;
     private String phone;
+    private String email;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date from;
