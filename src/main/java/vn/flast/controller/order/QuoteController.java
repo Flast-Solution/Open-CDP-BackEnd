@@ -13,22 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import vn.flast.components.InvoiceBuilder;
 import vn.flast.components.QuoteBuilder;
 import vn.flast.domains.order.OrderService;
 import vn.flast.entities.MyResponse;
-import vn.flast.entities.OrderContent;
+import vn.flast.entities.order.OrderContent;
 import vn.flast.entities.QuoteOrder;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.repositories.ConfigRepository;
 import vn.flast.repositories.DetailItemRepository;
-import vn.flast.repositories.ProductRepository;
 import vn.flast.service.MediaService;
 import vn.flast.service.user.UserService;
 import vn.flast.utils.CopyProperty;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

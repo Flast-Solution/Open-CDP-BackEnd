@@ -1,9 +1,8 @@
-package vn.flast.entities;
+package vn.flast.entities.order;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.flast.models.CustomerOrder;
 
 @Getter
 @Setter

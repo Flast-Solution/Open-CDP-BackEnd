@@ -10,47 +10,59 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.common.BaseController;
 import vn.flast.domains.payments.OrderPaymentInfo;
 import vn.flast.domains.payments.PayService;
-import vn.flast.entities.OrderCare;
-import vn.flast.entities.OrderResponse;
-import vn.flast.entities.OrderStatus;
+import vn.flast.entities.order.OrderCare;
+import vn.flast.entities.order.OrderComment;
+import vn.flast.entities.order.OrderInputAI;
+import vn.flast.entities.order.OrderResponse;
 import vn.flast.entities.ReceivableFilter;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerOrderNote;
+import vn.flast.models.CustomerOrderStatus;
 import vn.flast.models.CustomerPersonal;
 import vn.flast.models.Data;
+import vn.flast.models.DetailItem;
+import vn.flast.models.ProductSkusDetails;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
 import vn.flast.orchestration.Message;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.Publisher;
 import vn.flast.pagination.Ipage;
+import vn.flast.repositories.ConfigRepository;
 import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderNoteRepository;
 import vn.flast.repositories.CustomerOrderRepository;
+import vn.flast.repositories.CustomerOrderStatusRepository;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataRepository;
 import vn.flast.repositories.DetailItemRepository;
-import vn.flast.repositories.StatusOrderRepository;
+import vn.flast.repositories.ProductRepository;
+import vn.flast.repositories.ProductSkusDetailsRepository;
+import vn.flast.repositories.UserRepository;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.service.DataService;
 import vn.flast.utils.BeanUtil;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
+import vn.flast.utils.JsonUtils;
 import vn.flast.utils.NumberUtils;
 import vn.flast.utils.SqlBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 @Service("orderService")
 @Log4j2
@@ -77,13 +89,25 @@ public class OrderService  implements Publisher, Serializable {
     private BaseController baseController;
 
     @Autowired
-    private StatusOrderRepository statusOrderRepository;
+    private CustomerOrderStatusRepository statusOrderRepository;
 
     @Autowired
     private DetailItemRepository detailItemRepository;
 
     @Autowired
     private CustomerOrderNoteRepository orderNoteRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ProductSkusDetailsRepository productSkusDetailsRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ConfigRepository configRepository;
 
     public Ipage<?>fetchList(OrderFilter filter) {
         var sale = baseController.getInfo();
@@ -145,9 +169,50 @@ public class OrderService  implements Publisher, Serializable {
         return Ipage.generator(LIMIT, count, filter.page(), lists);
     }
 
-    public Ipage<?>fetchListCoHoiCare(OrderFilter filter) {
+    public List<OrderComment> fetchListOrderStatus(OrderFilter filter) {
         var sale = baseController.getInfo();
-        Integer page = filter.page();
+        var et = EntityQuery.create(entityManager, CustomerOrder.class);
+        boolean isAdminOrManager = sale.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
+                        || auth.getAuthority().equals("ROLE_SALE_MANAGER"));
+        Integer userCreateId = (filter.saleId() != null) ?
+                (isAdminOrManager ? filter.saleId() : sale.getId()) :
+                (isAdminOrManager ? null : sale.getId());
+        et.integerEqualsTo("userCreateId", userCreateId);
+        et.like("customerName", filter.customerName())
+                .integerEqualsTo("customerId", filter.customerId())
+                .like("customerMobile", filter.customerPhone())
+                .like("customerEmail", filter.customerEmail())
+                .like("code", filter.code())
+                .dateIsNull("doneAt")
+                .addDescendingOrderBy("createdAt")
+                .stringEqualsTo("type", filter.type());
+        var lists = transformDetails(et.list());
+        var listOrderPay = lists.stream().map(order -> {
+            OrderComment op = new OrderComment();
+            CopyProperty.CopyIgnoreNull(order, op);
+            op.setNotes(orderNoteRepository.findByOrderCode(order.getCode()));
+            return op;
+        }).toList();
+        return listOrderPay;
+    }
+
+    public CustomerOrder completeOrder(Long id) {
+        CustomerOrder order = orderRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("error no record exists")
+        );
+        if (order.getType().equals(CustomerOrder.TYPE_CO_HOI)) {
+            throw new RuntimeException("Không thể hoàn thành đơn hàng cơ hội. Vui lòng cập nhật trạng thái đơn hàng cơ hội thông qua chức năng khác.");
+        }
+        order.setDoneAt(new Date());
+        orderRepository.save(order);
+        return order;
+    }
+
+
+
+    public Ipage<?> fetchListCoHoiCare(OrderFilter filter) {
+        var sale = baseController.getInfo();
         boolean isAdminOrManager = sale.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
                         || auth.getAuthority().equals("ROLE_CSKH"));
@@ -170,7 +235,6 @@ public class OrderService  implements Publisher, Serializable {
         sqlBuilder.like("c.customer_email", filter.customerEmail());
         sqlBuilder.like("c.code", filter.code());
         sqlBuilder.addIntegerEquals("n.type", CustomerOrderNote.TYPE_COHOI);
-
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
         Long count = sqlBuilder.countOrSumQuery(countQuery);
@@ -203,7 +267,6 @@ public class OrderService  implements Publisher, Serializable {
         sqlBuilder.like("c.customer_email", filter.customerEmail());
         sqlBuilder.like("c.code", filter.code());
         sqlBuilder.addIsEmpty("n.order_code");
-        sqlBuilder.addIntegerEquals("n.type", CustomerOrderNote.TYPE_ORDER);
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
         Long count = sqlBuilder.countOrSumQuery(countQuery);
@@ -363,6 +426,85 @@ public class OrderService  implements Publisher, Serializable {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public String createAI(OrderInputAI input) {
+        var order = new CustomerOrder();
+        order.setCode(OrderUtils.createOrderCode());
+        var sale = userRepository.findBySsoId("saleai");
+        order.setUserCreateUsername(sale.getSsoId());
+        order.setUserCreateId(sale.getId());
+        order.setOpportunityAt(new Date());
+        order.setType(CustomerOrder.TYPE_CO_HOI);
+        if (input.getVat() == 1){
+            order.setVat(CustomerOrder.VAT_10);
+        }
+        else {
+            order.setVat(0);
+        }
+        var customer = customerRepository.findByPhone(input.getCustomerPhone());
+        if (customer == null) {
+            customer = new CustomerPersonal();
+            customer.setName(input.getCustomerName());
+            customer.setMobile(input.getCustomerPhone());
+            customer.setEmail(input.getCustomerEmail());
+            customerRepository.save(customer);
+        }
+        Data data = dataRepository.findFirstByPhone(input.getCustomerPhone())
+                .orElseGet(() -> {
+                    Data newData = new Data();
+                    newData.setCustomerMobile(input.getCustomerPhone());
+                    newData.setSource(DataService.DATA_SOURCE.DIRECT.getSource()); // Thay đổi nếu cần
+                    newData.setCustomerName(input.getCustomerName());
+                    newData.setStaff(sale.getSsoId());
+                    newData.setSaleId(sale.getId());
+                    newData.setStatus(DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
+                    return dataRepository.save(newData);
+                });
+        order.setDataId(data.getId());
+        order.setSource(data.getSource());
+        order.setCustomerId(customer.getId());
+        order.setCustomerReceiverName(customer.getName());
+        order.setCustomerAddress(input.getCustomerAddress());
+        order.setPaid(0.);
+        orderRepository.save(order);
+        CustomerOrderDetail detail = new CustomerOrderDetail();
+        detail.setCode(order.getCode().concat("-" + 1));
+        detail.setCustomerOrderId(order.getId());
+        detail.setCreatedAt(new Date());
+        detailRepository.save(detail);
+        var listitemDetail = productSkusDetailsRepository.findByListId(input.getSkuDetailid());
+        Map<Long, List<ProductSkusDetails>> grouped = listitemDetail.stream()
+                .collect(Collectors.groupingBy(ProductSkusDetails::getProductId));
+
+        List<List<ProductSkusDetails>> result = new ArrayList<>(grouped.values());
+        Long total = 0L;
+        for (List<ProductSkusDetails> productSkusDetails : result) {
+            DetailItem item = new DetailItem();
+            detail.setItems(new ArrayList<>());
+            var product = productRepository.findById(productSkusDetails.get(0).getProductId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Product not found .!")
+            );
+            item.setOrderDetailId(detail.getId());
+            item.setProductId(productSkusDetails.get(0).getProductId());
+            item.setName(product.getName());
+            item.setPrice(input.getPrice());
+            item.setQuantity(productSkusDetails.size());
+            item.setSkuInfo(JsonUtils.toJson(productSkusDetails));
+            item.setSkuId(productSkusDetails.get(0).getSkuId());
+            total = total + input.getPrice();
+            detailItemRepository.save(item);
+            detail.getItems().add(item);
+        }
+        OrderUtils.calDetailPrice(detail);
+        detailRepository.save(detail);
+        order.setDetails(new ArrayList<>(List.of(detail)));
+        OrderUtils.calculatorPrice(order);
+        orderRepository.save(order);
+
+        var configUrl = configRepository.findByKey(input.getBid().toString());
+        return configUrl.getValue() + "bao-gia-don-hang-i" + order.getId();
+
+    }
+    @Transactional(rollbackFor = Exception.class)
     public CustomerOrder updateOrder(OrderInput input){
         CustomerOrder orderOld = orderRepository.findById(input.id()).orElseThrow(
                 () -> new RuntimeException("error no record exists")
@@ -383,6 +525,23 @@ public class OrderService  implements Publisher, Serializable {
             var payService = BeanUtil.getBean(PayService.class);
             payService.manualMethod(updatedPaymentInfo);
         }
+        return order;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public CustomerOrder updateStatusOrder(Long orderId, Integer statusId) {
+        CustomerOrder order = orderRepository.findById(orderId).orElseThrow(
+                () -> new RuntimeException("error no record exists")
+        );
+        if (order.getType().equals(CustomerOrder.TYPE_CO_HOI)) {
+            throw new RuntimeException("Không thể cập nhật trạng thái vì đơn hàng là cơ hội. Vui lòng cập nhật trạng thái đơn hàng cơ hội thông qua chức năng khác.");
+        }
+        CustomerOrderStatus status = statusOrderRepository.findById(statusId).orElseThrow(
+                () -> new RuntimeException("error no record exists")
+        );
+        order.setStatus(status.getId());
+        orderRepository.save(order);
+        this.sendMessageOnOrderChange(order);
         return order;
     }
 

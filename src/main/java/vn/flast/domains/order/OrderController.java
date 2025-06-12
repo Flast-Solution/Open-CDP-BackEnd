@@ -50,4 +50,17 @@ public class OrderController {
         var order = orderService.fetchList(updatedFilter);
         return MyResponse.response(order);
     }
+
+    @PostMapping("/complete")
+    public MyResponse<?> complete(@RequestParam Long id) {
+        var order = orderService.completeOrder(id);
+        return MyResponse.response(order);
+    }
+
+    @GetMapping("/fetch-by-process")
+    public MyResponse<?> fetchByProcess(OrderFilter filter) {
+        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
+        var orders = orderService.fetchListOrderStatus(filter);
+        return MyResponse.response(orders);
+    }
 }

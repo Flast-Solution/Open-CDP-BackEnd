@@ -318,6 +318,17 @@ public class EntityQuery<E> {
         return this;
     }
 
+    public EntityQuery<E> dateIsNotNull(String path) {
+        predicates.add(criteriaBuilder.isNotNull(toJpaPath(path)));
+        return this;
+    }
+
+    public EntityQuery<E> dateIsNull(String path) {
+        predicates.add(criteriaBuilder.isNull(toJpaPath(path)));
+        return this;
+    }
+
+
     private void addEqualPredicate(String path, Object value) {
         predicates.add(equalPredicate(path, value));
     }

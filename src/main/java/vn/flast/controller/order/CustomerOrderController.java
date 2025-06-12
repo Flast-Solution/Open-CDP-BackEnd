@@ -2,7 +2,6 @@ package vn.flast.controller.order;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.domains.order.OrderInput;
 import vn.flast.domains.order.OrderService;
 import vn.flast.entities.MyResponse;
-import vn.flast.entities.OrderCare;
+import vn.flast.entities.order.OrderCare;
+import vn.flast.entities.order.OrderInputAI;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderNote;
-import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.service.DataService;
 import vn.flast.utils.NumberUtils;
@@ -39,6 +38,12 @@ public class CustomerOrderController {
         if(NumberUtils.isNotNull(input.dataId())){
             dataService.updateStatusCohoi(input.dataId());
         }
+        return MyResponse.response(data);
+    }
+
+    @PostMapping("/ai-create-co-hoi")
+    public MyResponse<?> aiCreateOrder(@RequestBody OrderInputAI input){
+        var data = orderService.createAI(input);
         return MyResponse.response(data);
     }
 
@@ -106,6 +111,12 @@ public class CustomerOrderController {
     public MyResponse<?> updateCohoi(@RequestBody OrderInput input){
         var data = orderService.updateOrder(input);
         return MyResponse.response(data);
+    }
+
+    @PostMapping("/update-status-order")
+    public MyResponse<?> updateStatusOrder(@RequestParam Long orderId, @RequestParam Integer statusId){
+        orderService.updateStatusOrder(orderId, statusId);
+        return MyResponse.response("oke");
     }
 
     @PostMapping("/cancel-cohoi")

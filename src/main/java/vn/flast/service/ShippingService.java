@@ -8,15 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.models.Shipping;
 import vn.flast.models.ShippingStatus;
-import vn.flast.models.Stock;
-import vn.flast.models.WarehouseExportStatus;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.ShippingRepository;
 import vn.flast.repositories.ShippingStatusRepository;
-import vn.flast.repositories.StockRepository;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
-
 import java.util.List;
 
 @Service

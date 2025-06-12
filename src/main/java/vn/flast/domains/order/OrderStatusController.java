@@ -27,12 +27,12 @@ public class OrderStatusController {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Input invalid .!");
         }
-        statusRepository.save(orderStatus);
-        return  MyResponse.response("Ok");
+        var data = statusRepository.save(orderStatus);
+        return  MyResponse.response(data);
     }
 
     @GetMapping(value = "/fetch")
     public MyResponse<?> fetch() {
-        return  MyResponse.response(statusRepository.findAll(Sort.by("order")));
+        return  MyResponse.response(statusRepository.findAll(Sort.by("id")));
     }
 }

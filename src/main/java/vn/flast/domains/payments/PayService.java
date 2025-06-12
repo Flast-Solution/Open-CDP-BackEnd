@@ -15,7 +15,7 @@ import vn.flast.models.CustomerOrderPayment;
 import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderPaymentRepository;
 import vn.flast.repositories.CustomerOrderRepository;
-import vn.flast.repositories.StatusOrderRepository;
+import vn.flast.repositories.CustomerOrderStatusRepository;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.NumberUtils;
@@ -34,7 +34,7 @@ public class PayService {
     private CustomerOrderPaymentRepository paymentRepository;
 
     @Autowired
-    private StatusOrderRepository statusOrderRepository;
+    private CustomerOrderStatusRepository statusOrderRepository;
 
     @Autowired
     private CustomerOrderDetailRepository detailRepository;

@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import vn.flast.repositories.StatusOrderRepository;
+import vn.flast.repositories.CustomerOrderStatusRepository;
 import vn.flast.utils.BeanUtil;
 import vn.flast.utils.NumberUtils;
 
@@ -107,7 +107,7 @@ public class CustomerOrderDetail {
     }
 
     public boolean donHang() {
-        var statusRepo =  BeanUtil.getBean(StatusOrderRepository.class);
+        var statusRepo =  BeanUtil.getBean(CustomerOrderStatusRepository.class);
         return this.status == statusRepo.findStartOrder().getId();
     }
 

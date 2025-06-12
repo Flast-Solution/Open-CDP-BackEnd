@@ -2,16 +2,14 @@ package vn.flast.domains.order;
 
 import lombok.With;
 import vn.flast.domains.payments.OrderPaymentInfo;
-import vn.flast.domains.payments.PayService;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerPersonal;
 import vn.flast.models.DetailItem;
-import vn.flast.models.StatusOrder;
+import vn.flast.repositories.CustomerOrderStatusRepository;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DetailItemRepository;
 import vn.flast.repositories.ProductRepository;
-import vn.flast.repositories.StatusOrderRepository;
 import vn.flast.utils.BeanUtil;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
@@ -23,7 +21,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -83,7 +80,7 @@ public record OrderInput(
                 detail.setCreatedAt(new Date());
             }
             if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
-                var statusRepo =  BeanUtil.getBean(StatusOrderRepository.class);
+                var statusRepo =  BeanUtil.getBean(CustomerOrderStatusRepository.class);
                 detail.setStatus(statusRepo.findStartOrder().getId());
             }
             OrderUtils.calDetailPrice(detail);

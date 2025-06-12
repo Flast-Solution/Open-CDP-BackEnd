@@ -16,4 +16,7 @@ public interface ProductSkusDetailsRepository extends JpaRepository<ProductSkusD
     @Modifying
     @Query("UPDATE ProductSkusDetails p SET p.del = 1 WHERE p.productId = :productId AND p.id IN :ids")
     void updateDelProductSkus(@Param("productId") Long productId, @Param("ids") List<Integer> ids);
+
+    @Query("FROM ProductSkusDetails p WHERE p.id IN (:ids)")
+    List<ProductSkusDetails> findByListId(List<Long> ids);
 }

@@ -1,4 +1,4 @@
-package vn.flast.entities;
+package vn.flast.entities.order;
 
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;

@@ -25,9 +25,12 @@ public class CustomerOrderStatus {
     @Column(name = "color")
     private String color;
 
-    @Column(name = "order")
+    @Column(name = "`order`")
     private Integer order;
 
     @Column(name = "del_flag")
     private Integer delFlag;
+
+    @Column(name = "status")
+    private Integer status;
 }

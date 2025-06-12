@@ -2,11 +2,8 @@ package vn.flast.service.customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import vn.flast.dao.CustomerOrderDao;
 import vn.flast.dao.DaoImpl;
 import vn.flast.dao.DataDao;
-import vn.flast.entities.OrderStatus;
 import vn.flast.entities.customer.CustomerFilter;
 import vn.flast.entities.customer.CustomerInfo;
 import vn.flast.entities.customer.CustomerOrderWithoutDetails;
@@ -27,7 +24,6 @@ import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

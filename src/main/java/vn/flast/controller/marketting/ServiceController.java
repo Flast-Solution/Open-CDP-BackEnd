@@ -21,7 +21,6 @@ public class ServiceController {
 
     private final ServiceDataService serviceDataService;
 
-
     @GetMapping(value = "/list")
     public MyResponse<?> listService(){
         var data = serviceDataService.listService();
