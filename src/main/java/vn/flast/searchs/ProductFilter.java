@@ -9,7 +9,6 @@ public record ProductFilter(
     Integer status,
     String code,
     Integer providerId,
-
     Integer serviceId
 ) {
     @Override

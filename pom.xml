@@ -16,21 +16,9 @@
 	<version>0.0.1</version>
 	<name>cdp-service</name>
 	<description>Open Cdp BE Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
 	<properties>
 		<java.version>19</java.version>
+		<maven.compiler.release>19</maven.compiler.release>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -139,4 +127,3 @@
 		</plugins>
 	</build>
 </project>
-

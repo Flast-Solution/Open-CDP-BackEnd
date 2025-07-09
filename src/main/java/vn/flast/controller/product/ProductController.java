@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.SaleProduct;
-import vn.flast.models.Media;
 import vn.flast.models.Product;
 import vn.flast.repositories.ProductRepository;
 import vn.flast.searchs.ProductFilter;
@@ -79,9 +77,10 @@ public class ProductController {
 
     @PostMapping(path = "/upload-file", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public MyResponse<?> uploadFileMedia(
-            @RequestParam(value = "files") List<MultipartFile> files,
-            @RequestParam(defaultValue = "0") Long sessionId,
-            @RequestParam(defaultValue = "0") Long productId){
+        @RequestParam(value = "files") List<MultipartFile> files,
+        @RequestParam(defaultValue = "0") Long sessionId,
+        @RequestParam(defaultValue = "0") Long productId
+    ) throws NoSuchAlgorithmException {
         if (files.isEmpty()) {
             return MyResponse.response(403);
         }
@@ -89,8 +88,6 @@ public class ProductController {
             var data = mediaService.uploadFileMediaProduct(files, sessionId, productId);
             return MyResponse.response(data);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
@@ -110,5 +107,4 @@ public class ProductController {
         var data = productService.findByListId(ids);
         return MyResponse.response(data);
     }
-
 }
