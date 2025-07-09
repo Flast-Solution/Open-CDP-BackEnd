@@ -15,7 +15,6 @@ import java.util.TimeZone;
 public class OrderUtils {
 
     public static Integer PAYMENT_IS_CONFIRM = 1;
-
     public static Integer PAYMENT_IS_NOT_CONFIRM = 0;
     public static Integer PAYMENT_STATUS_DONE = 1;
 
@@ -45,8 +44,8 @@ public class OrderUtils {
             return;
         }
         double subTotal = order.getDetails()
-                .stream()
-                .mapToDouble(CustomerOrderDetail::getTotal).sum();
+            .stream()
+            .mapToDouble(CustomerOrderDetail::getTotal).sum();
         double priceOff = 0;
         if (StringUtils.isNotEmpty(order.getDiscountInfo())) {
             OrderDiscount orderDiscount = JsonUtils.Json2Object(order.getDiscountInfo(), OrderDiscount.class);
@@ -64,10 +63,8 @@ public class OrderUtils {
         if (detail.getQuantity() != null && detail.getQuantity() != 0) {
             subTotal = detail.getPrice() * detail.getQuantity();
         } else {
-            detail.getItems().forEach(item -> calItemPrice(item));
-             subTotal = detail.getItems()
-                    .stream()
-                    .mapToDouble(DetailItem::getTotal).sum();
+            detail.getItems().forEach(OrderUtils::calItemPrice);
+            subTotal = detail.getItems().stream().mapToDouble(DetailItem::getTotal).sum();
         }
         double priceOff = 0;
         if (StringUtils.isNotEmpty(detail.getDiscount())) {
