@@ -33,9 +33,9 @@ import vn.flast.searchs.ProductFilter;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
-import vn.flast.utils.JsonUtils;
 import vn.flast.utils.SqlBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -86,26 +86,22 @@ public class ProductService {
     @Autowired
     private WarehouseRepository warehouseRepository;
 
-    public Product createdSeo(Product input){
-//        input.setImage(JsonUtils.toJson(input.getImageLists()));
+    public Product createdSeo(Product input) {
         return productsRepository.save(input);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Product saveProduct(SaleProduct input){
+    public Product saveProduct(SaleProduct input) {
         if(input.getCode() == null) {
             Provider provider = providerRepository.findById(input.getProviderId()).orElseThrow(
                 () -> new RuntimeException("Nhà cung cấp chưa tồn tại")
             );
             String twoLetterService = provider.getName().substring(0, 2);
-            String name = Common.deAccent(input.getName());
-            String twoLetterName = name.length() >= 2 ? name.substring(0, 2) : name;
             String code;
             do {
-                String random = Common.getAlphaNumericString(4, false);
-                code = (twoLetterService + twoLetterName + random).toUpperCase();
+                String random = Common.getAlphaNumericString(8, false);
+                code = (twoLetterService + random).toUpperCase();
             } while (productsRepository.findByCode(code) != null);
-            // Đặt mã code vào đối tượng input
             input.setCode(code);
         }
         Product product = new Product();
@@ -186,7 +182,7 @@ public class ProductService {
 
     public SaleProduct findById(Long id) {
         var entity = productsRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         SaleProduct saleProduct = new SaleProduct();
         CopyProperty.CopyIgnoreNull(entity, saleProduct);
@@ -194,10 +190,11 @@ public class ProductService {
         saleProduct.setSkus(skuService.listProductSkuAndDetail(entity.getId()));
         saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(entity.getId()));
         saleProduct.getSkus().forEach(
-                sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(entity.getId()))
+            sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(entity.getId()))
         );
-        saleProduct.setImageLists(mediaService.list(Math.toIntExact(id), "Product").stream()
-                .map(prt -> prt.getFileName()).collect(Collectors.toList()));
+        saleProduct.setImageLists(mediaService.list(Math.toIntExact(id), "Product")
+            .stream()
+            .map(Media::getFileName).collect(Collectors.toList()));
         return saleProduct;
     }
 
@@ -235,29 +232,32 @@ public class ProductService {
                 sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(product.getId()))
             );
             saleProduct.setWarehouses(warehouseRepository.findByProductId(product.getId()));
-            saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product").stream()
-                    .map(prt -> prt.getFileName()).collect(Collectors.toList()));
+            saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product")
+                .stream()
+                .map(Media::getFileName).collect(Collectors.toList()));
             return saleProduct;
         }).toList();
-        return  Ipage.generator(LIMIT, count, PAGE, listSaleProduct);
+        return Ipage.generator(LIMIT, count, PAGE, listSaleProduct);
     }
 
-    public List<SaleProduct> findByListId(List<Long> ids){
+    public List<SaleProduct> findByListId(List<Long> ids) {
         var productList = productsRepository.findByListId(ids);
-        List<SaleProduct> listSaleProduct = productList.stream().map(product -> {
+        List<SaleProduct> list = new ArrayList<>();
+        for (Product product : productList) {
             SaleProduct saleProduct = new SaleProduct();
             CopyProperty.CopyIgnoreNull(product, saleProduct);
             saleProduct.setListProperties(productAttributedRepository.findByProduct(product.getId()));
             saleProduct.setSkus(skuService.listProductSkuAndDetail(product.getId()));
             saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(product.getId()));
             saleProduct.getSkus().forEach(
-                    sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(product.getId()))
+                sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(product.getId()))
             );
-            saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product").stream()
-                    .map(prt -> prt.getFileName()).collect(Collectors.toList()));
-            return saleProduct;
-        }).toList();
-        return listSaleProduct;
+            saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product")
+                .stream()
+                .map(Media::getFileName).collect(Collectors.toList()));
+            list.add(saleProduct);
+        }
+        return list;
     }
 
     @Transactional(rollbackFor = Exception.class)
