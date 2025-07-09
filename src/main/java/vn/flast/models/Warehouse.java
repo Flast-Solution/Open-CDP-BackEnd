@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import vn.flast.entities.SaleProduct;
-
 import java.util.Date;
 
 @Table(name = "warehouse")

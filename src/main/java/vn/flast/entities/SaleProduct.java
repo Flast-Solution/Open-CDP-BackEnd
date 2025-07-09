@@ -7,7 +7,6 @@ import vn.flast.models.Product;
 import vn.flast.models.ProductAttributed;
 import vn.flast.models.ProductProperty;
 import vn.flast.models.ProductSkus;
-
 import java.util.List;
 
 @Getter @Setter

@@ -121,7 +121,7 @@ public class InfoCommon {
 
     public static String generateProductItem(MutableInt stt, CustomerOrderDetail orderDetail, SaleProduct product) {
         String note = orderDetail.getCustomerNote();
-        String dayDuote = orderDetail.getDayDuote();
+        String dayDuote = orderDetail.getDayQuote();
         int tt = Math.toIntExact(orderDetail.getPrice());
 
         String productName = product.getName();
@@ -198,11 +198,11 @@ public class InfoCommon {
     }
 
     public static String buildIntentTime(CustomerOrderDetail dt) {
-        var dayDuote = dt.getDayDuote();
+        var dayDuote = dt.getDayQuote();
         if (StringUtils.isEmpty(dayDuote) || dt.donHang()) {
             return "";
         }
-        String textDayDuote =  dt.getDayDuote().concat(" ngày") ;
+        String textDayDuote =  dt.getDayQuote().concat(" ngày") ;
         String text =  "Thời gian bàn giao dự kiến (tính từ khi chốt maket)";
 
         String temp = """

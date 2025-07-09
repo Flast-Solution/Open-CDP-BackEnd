@@ -70,7 +70,7 @@ public class CustomerOrderDetail {
     private String discount;
 
     @Column(name = "day_quote")
-    private String dayDuote;
+    private String dayQuote;
 
     @Column(name = "customer_note")
     private String customerNote;
@@ -108,10 +108,9 @@ public class CustomerOrderDetail {
 
     public boolean donHang() {
         var statusRepo =  BeanUtil.getBean(CustomerOrderStatusRepository.class);
-        return this.status == statusRepo.findStartOrder().getId();
+        return this.status.equals(statusRepo.findStartOrder().getId());
     }
 
     @Transient
     private List<DetailItem> items;
-
 }
