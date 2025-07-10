@@ -13,7 +13,7 @@ import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import vn.flast.entities.WareHouseItem;
+import vn.flast.entities.warehouse.WareHouseItem;
 
 import java.util.Date;
 import java.util.List;

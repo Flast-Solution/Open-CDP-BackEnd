@@ -1,20 +1,11 @@
 package vn.flast.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import vn.flast.entities.SaleProduct;
-
+import vn.flast.utils.NumberUtils;
 import java.util.Date;
 
 @Table(name = "warehouse")
@@ -69,6 +60,11 @@ public class Warehouse {
     @Column(name = "in_time")
     private Date inTime;
 
-    @Transient
-    private SaleProduct product;
+    @PrePersist
+    public void beforeCreate() {
+        if(NumberUtils.isNull(fee)) {
+            fee = 0L;
+        }
+        total = quantity;
+    }
 }

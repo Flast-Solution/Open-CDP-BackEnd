@@ -4,30 +4,25 @@ package vn.flast.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.common.BaseController;
-import vn.flast.entities.WareHouseItem;
-import vn.flast.entities.WarehouseHistoryFilter;
+import vn.flast.entities.warehouse.WareHouseItem;
+import vn.flast.entities.warehouse.WarehouseHistoryFilter;
 import vn.flast.models.WareHouseHistory;
 import vn.flast.models.Warehouse;
 import vn.flast.pagination.Ipage;
-import vn.flast.repositories.ProductRepository;
 import vn.flast.repositories.ProductSkusRepository;
 import vn.flast.repositories.WareHouseHistoryRepository;
 import vn.flast.repositories.WareHouseStatusRepository;
 import vn.flast.repositories.WarehouseRepository;
 import vn.flast.repositories.WarehouseStockRepository;
-import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

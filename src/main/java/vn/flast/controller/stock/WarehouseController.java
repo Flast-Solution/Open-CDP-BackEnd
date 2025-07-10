@@ -1,6 +1,5 @@
 package vn.flast.controller.stock;
 
-
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -11,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
+import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.models.WareHouseStock;
-import vn.flast.models.Warehouse;
+import vn.flast.searchs.WarehouseFilter;
 import vn.flast.service.WarehouseService;
 import vn.flast.validator.ValidationErrorBuilder;
 
@@ -24,28 +24,28 @@ public class WarehouseController {
     private WarehouseService warehouseService;
 
     @PostMapping("/created")
-    public MyResponse<?> created(@Valid @RequestBody Warehouse input, Errors errors) {
+    public MyResponse<?> created(@Valid @RequestBody SaveStock saveStock, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var data = warehouseService.created(input);
+        var data = warehouseService.created(saveStock);
         return MyResponse.response(data, "Nhập thành công .!");
     }
 
     @PostMapping("/updated")
-    public MyResponse<?> updated(@Valid @RequestBody Warehouse input, Errors errors) {
+    public MyResponse<?> updated(@Valid @RequestBody SaveStock saveStock, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var data = warehouseService.updated(input);
+        var data = warehouseService.updated(saveStock);
         return MyResponse.response(data, "Cập nhật thành công .!");
     }
 
     @GetMapping("/fetch")
-    public MyResponse<?> fetch(@RequestParam Integer page) {
-        var data = warehouseService.fetch(page);
+    public MyResponse<?> fetch(WarehouseFilter filter) {
+        var data = warehouseService.fetch(filter);
         return MyResponse.response(data);
     }
 

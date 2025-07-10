@@ -1,22 +1,24 @@
 package vn.flast.service;
 
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.entities.SaleProduct;
+import vn.flast.controller.common.BaseController;
+import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.models.WareHouseStatus;
 import vn.flast.models.WareHouseStock;
 import vn.flast.models.Warehouse;
 import vn.flast.pagination.Ipage;
-import vn.flast.repositories.StockRepository;
 import vn.flast.repositories.WareHouseStatusRepository;
 import vn.flast.repositories.WarehouseRepository;
 import vn.flast.repositories.WarehouseStockRepository;
+import vn.flast.searchs.WarehouseFilter;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
+import vn.flast.utils.JsonUtils;
+import vn.flast.utils.NumberUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -24,16 +26,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class WarehouseService {
+public class WarehouseService extends BaseController {
 
     @PersistenceContext
     protected EntityManager entityManager;
 
     @Autowired
     private WarehouseRepository wareHouseRepository;
-
-    @Autowired
-    private StockRepository stockRepository;
 
     @Autowired
     private WareHouseStatusRepository wareHouseStatusRepository;
@@ -44,49 +43,49 @@ public class WarehouseService {
     @Autowired
     private ProductService productService;
 
-
-    public Warehouse created(Warehouse input){
+    public Warehouse created(SaveStock saveStock) {
+        var input = saveStock.model();
+        input.setUserName(getUserSso());
+        input.setSkuInfo(JsonUtils.toJson(saveStock.skuDetails()));
         return wareHouseRepository.save(input);
     }
 
-    public Warehouse updated(Warehouse input) {
+    public Warehouse updated(SaveStock saveStock) {
+        var input = saveStock.model();
         var warehouse = wareHouseRepository.findById(input.getId()).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, warehouse);
-        var data = wareHouseRepository.save(warehouse);
-        return data;
+        warehouse.setSkuInfo(JsonUtils.toJson(saveStock.skuDetails()));
+        return wareHouseRepository.save(warehouse);
     }
 
-    public Ipage<?> fetch(Integer page){
+    public Ipage<?> fetch(WarehouseFilter filter) {
         int LIMIT = 10;
-        int currentPage = page - 1;
-        var et = EntityQuery.create(entityManager, Warehouse.class);
-        et.setMaxResults(LIMIT).setFirstResult(LIMIT * currentPage);
-        var lists = et.list();
-        List<Long> idProducts = lists.stream().map(Warehouse::getProductId).collect(Collectors.toList());
-        List<SaleProduct> products = productService.findByListId(idProducts);
-        Map<Long, SaleProduct> productMap = products.stream()
-                .collect(Collectors.toMap(SaleProduct::getId, Function.identity()));
+        int currentPage = filter.page();
 
-        // 5️⃣ Gán Product vào Warehouse
-        lists.forEach(warehouse -> {
-            if (productMap.containsKey(warehouse.getProductId())) {
-                warehouse.setProduct(productMap.get(warehouse.getProductId()));
-            }
-        });
-        return  Ipage.generator(LIMIT, et.count(), currentPage, lists);
+        var et = EntityQuery.create(entityManager, Warehouse.class);
+        if(NumberUtils.isNotNull(filter.productId())) {
+            LIMIT = 100;
+            et.addDescendingOrderBy("id");
+        }
+
+        et.integerEqualsTo("productId", filter.productId())
+            .setMaxResults(LIMIT)
+            .setFirstResult(LIMIT * currentPage);
+        var lists = et.list();
+        return Ipage.generator(LIMIT, et.count(), currentPage, lists);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void delete(Integer id){
+    public void delete(Integer id) {
         var data = wareHouseRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         wareHouseRepository.delete(data);
     }
 
-    public WareHouseStatus createStatus(WareHouseStatus input){
+    public WareHouseStatus createStatus(WareHouseStatus input) {
         if(wareHouseStatusRepository.existsByName(input.getName())){
             return null;
         }
@@ -102,27 +101,23 @@ public class WarehouseService {
         return wareHouseStatusRepository.save(input);
     }
 
-    public Warehouse findById(Integer id){
-        var data = wareHouseRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+    public Warehouse findById(Integer id) {
+        return wareHouseRepository.findById(id).orElseThrow(
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
-        return data;
     }
 
     public Warehouse findByStockAndSku(Integer stockId, Long productId, Long skuId){
-        var data = wareHouseRepository.findProductSku(productId, skuId, stockId);
-        return data;
+        return wareHouseRepository.findProductSku(productId, skuId, stockId);
     }
-
-
 
     public Map<Integer, Warehouse> findByIds(List<Integer> ids) {
         List<Warehouse> warehouses = wareHouseRepository.findByIds(ids);
         return warehouses.stream().collect(Collectors.toMap(Warehouse::getId, Function.identity()));
     }
+
     public List<WareHouseStatus> fetchStatus(){
-        var data = wareHouseStatusRepository.findAll();
-        return data;
+        return wareHouseStatusRepository.findAll();
     }
 
     public void createStock(WareHouseStock input){
@@ -133,13 +128,12 @@ public class WarehouseService {
     }
 
     public List<WareHouseStock> fetchStock(){
-        var data = warehouseStockRepository.findAll();
-        return data;
+        return warehouseStockRepository.findAll();
     }
 
     public void updateStock(WareHouseStock input){
         var stock = warehouseStockRepository.findById(input.getId()).orElseThrow(
-                () -> new RuntimeException("record does not exist")
+            () -> new RuntimeException("record does not exist")
         );
         CopyProperty.CopyIgnoreNull(input, stock);
         warehouseStockRepository.save(stock);

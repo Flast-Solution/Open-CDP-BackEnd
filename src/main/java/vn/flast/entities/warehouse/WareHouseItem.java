@@ -1,14 +1,12 @@
-package vn.flast.entities;
+package vn.flast.entities.warehouse;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public class WareHouseItem {
-
     private Long productId;
     private Long providerId;
     private String productName;

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
-import vn.flast.entities.WarehouseHistoryFilter;
+import vn.flast.entities.warehouse.WarehouseHistoryFilter;
 import vn.flast.models.WareHouseHistory;
 import vn.flast.models.WareHouseStatus;
 import vn.flast.service.WarehouseHistoryService;
