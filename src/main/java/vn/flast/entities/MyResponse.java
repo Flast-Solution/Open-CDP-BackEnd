@@ -28,6 +28,12 @@ public class MyResponse<T> {
         return new MyResponse<>(dRes, "success");
     }
 
+    public static MyResponse<Object> response(Integer errorCode, String message, Object dRes) {
+        var response = new MyResponse<>(dRes, message);
+        response.setErrorCode(errorCode);
+        return response;
+    }
+
     public static MyResponse<Object> response(Object dRes, String message) {
         return new MyResponse<>(dRes, message);
     }

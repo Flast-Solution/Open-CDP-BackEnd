@@ -27,7 +27,7 @@ public class WarehouseController {
     public MyResponse<?> created(@Valid @RequestBody SaveStock saveStock, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
-            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+            return MyResponse.response(500, "Lỗi tham số đầu vào", newErrors);
         }
         var data = warehouseService.created(saveStock);
         return MyResponse.response(data, "Nhập thành công .!");
@@ -37,7 +37,7 @@ public class WarehouseController {
     public MyResponse<?> updated(@Valid @RequestBody SaveStock saveStock, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
-            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+            return MyResponse.response(500, "Lỗi tham số đầu vào", newErrors);
         }
         var data = warehouseService.updated(saveStock);
         return MyResponse.response(data, "Cập nhật thành công .!");
