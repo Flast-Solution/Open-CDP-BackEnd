@@ -15,20 +15,16 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import vn.flast.entities.ExportItem;
-import vn.flast.entities.SaleProduct;
 
 import java.util.Date;
 import java.util.List;
 
 @Table(name = "warehouse_export")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class WarehouseExport {
 
-
     public static final int TYPE_EXPORT_NOT_ORDER = 1;
-
     public static final int TYPE_EXPORT_ORDER = 0;
 
     @Id
@@ -88,5 +84,4 @@ public class WarehouseExport {
 
     @Transient
     Warehouse warehouse;
-
 }

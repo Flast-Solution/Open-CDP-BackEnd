@@ -11,10 +11,8 @@ import lombok.Setter;
 
 @Table(name = "warehouse_stock")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class WareHouseStock {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

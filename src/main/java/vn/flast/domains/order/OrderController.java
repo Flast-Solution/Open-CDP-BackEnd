@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import vn.flast.domains.payments.OrderPaymentInfo;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.CustomerOrder;
 import vn.flast.searchs.OrderFilter;
@@ -59,7 +58,6 @@ public class OrderController {
 
     @GetMapping("/fetch-by-process")
     public MyResponse<?> fetchByProcess(OrderFilter filter) {
-        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
         var orders = orderService.fetchListOrderStatus(filter);
         return MyResponse.response(orders);
     }
