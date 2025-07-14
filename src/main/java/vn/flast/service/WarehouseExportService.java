@@ -31,24 +31,19 @@ public class WarehouseExportService {
     protected EntityManager entityManager;
 
     private final WarehouseExportRepository warehouseExportRepository;
-
     private final WarehouseExportStatusRepository warehouseExportStatusRepository;
-
     private final WareHouseHistoryRepository warehouseHistoryRepository;
-
     private final WarehouseService warehouseService;
-
     private final BaseController baseController;
-
 
     public WarehouseExport create(ExportInput order){
         var warehouseExportOld = warehouseExportRepository.findByOrderId(order.getOrderId());
         if(warehouseExportOld != null) {
             return warehouseExportOld;
-        }
-        else {
+        } else {
             List<DetailItem> items = order.getDetails().stream()
-                    .flatMap(detail -> detail.getItems().stream()).toList();
+                .flatMap(detail -> detail.getItems().stream())
+                .toList();
             WarehouseExport warehouseExport = new WarehouseExport();
             warehouseExport.setOrderId(order.getOrderId());
             warehouseExport.setNote(order.getNote());
@@ -71,16 +66,18 @@ public class WarehouseExportService {
         warehouseExport.setNote(input.getNote());
         warehouseExport.setCreatedBy(new Date());
         warehouseExport.setType(WarehouseExport.TYPE_EXPORT_NOT_ORDER);
+
         ExportItem exportItem = new ExportItem();
         exportItem.setDetaiItems(input.getItems());
         exportItem.setStatus(input.getStatus());
         exportItem.setStt(1);
         var info = List.of(exportItem);
         warehouseExport.setItems(info);
+
         Integer statusConfirm = warehouseExportStatusRepository.findByType()
-                .orElseThrow(() -> new RuntimeException("Chưa có trạng thái duyệt xuất kho !"))
-                .getId();
-        if(input.getStatus() == statusConfirm){
+            .orElseThrow(() -> new RuntimeException("Chưa có trạng thái duyệt xuất kho !"))
+            .getId();
+        if(statusConfirm.equals(input.getStatus())) {
             exportItem.setStatusConfirm(WarehouseExportStatus.TYPE_CONFIRM);
             warehouseExport.setUserExport(baseController.getInfo().getId());
             for (DetailItem detailItem : input.getItems()) {
@@ -89,7 +86,6 @@ public class WarehouseExportService {
                     throw new RuntimeException("Số lượng trong kho không đủ để xuất!");
                 }
                 warehouse.setQuantity(warehouse.getQuantity() - detailItem.getQuantity());
-                warehouseService.updated(warehouse);
             }
             WareHouseHistory wareHouseHistory = new WareHouseHistory();
             wareHouseHistory.setCode("WH-" + System.currentTimeMillis());
@@ -100,24 +96,19 @@ public class WarehouseExportService {
         }
         warehouseExport.setInfo(JsonUtils.toJson(info));
         return warehouseExportRepository.save(warehouseExport);
-
     }
 
     public WarehouseExport update(WarehouseExport input){
         var warehouseExport = warehouseExportRepository.findById(input.getId()).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         warehouseExport.setNote(warehouseExport.getNote());
         List<ExportItem> items = input.getItems();
-        Integer statusConfirm = warehouseExportStatusRepository.findByType()
-                .orElseThrow(() -> new RuntimeException("Chưa có trạng thái duyệt xuất kho !"))
-                .getId();
-        exportProduct(items, statusConfirm);
         int maxStt = items.stream()
-                .filter(item -> item.getStt() != null)
-                .mapToInt(ExportItem::getStt)
-                .max()
-                .orElse(0);
+            .filter(item -> item.getStt() != null)
+            .mapToInt(ExportItem::getStt)
+            .max()
+            .orElse(0);
         for (ExportItem item : items) {
             if (item.getStt() == null) {
                 item.setStt(++maxStt);
@@ -125,26 +116,6 @@ public class WarehouseExportService {
         }
         warehouseExport.setInfo(JsonUtils.toJson(input.getItems()));
         return warehouseExportRepository.save(warehouseExport);
-    }
-
-    private void exportProduct(List<ExportItem> items, Integer statusConfirm){
-        var userName = baseController.getInfo();
-        boolean isAdminOrWarehouse = userName.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
-                        || auth.getAuthority().equals("ROLE_WAREHOUSE"));
-        for(ExportItem item : items){
-            if (item.getStatus().equals(statusConfirm) && item.getStatusConfirm() == WarehouseExportStatus.TYPE_NOT_CONFIRM && isAdminOrWarehouse) {
-                item.setStatusConfirm(WarehouseExportStatus.TYPE_CONFIRM);
-                for (DetailItem detailItem : item.getDetaiItems()) {
-                    var warehouse = warehouseService.findByStockAndSku(item.getWarehouseDeliveryId(), detailItem.getProductId(), detailItem.getSkuId());
-                    if (detailItem.getQuantity() > warehouse.getQuantity()) {
-                        throw new RuntimeException("Số lượng trong kho không đủ để xuất!");
-                    }
-                    warehouse.setQuantity(warehouse.getQuantity() - detailItem.getQuantity());
-                    warehouseService.updated(warehouse);
-                }
-            }
-        }
     }
 
     public Ipage<?> fetch(ExportFilter filter){
@@ -177,8 +148,7 @@ public class WarehouseExportService {
     }
 
     public List<WarehouseExportStatus> fetchStatus(){
-        var data = warehouseExportStatusRepository.findAll();
-        return data;
+        return warehouseExportStatusRepository.findAll();
     }
 
     public WarehouseExport findOrderId(Long orderId){

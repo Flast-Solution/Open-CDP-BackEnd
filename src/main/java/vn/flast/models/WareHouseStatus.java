@@ -11,8 +11,7 @@ import lombok.Setter;
 
 @Table(name = "warehouse_status")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class WareHouseStatus {
 
     public static int TYPE_CONFIRM = 1;

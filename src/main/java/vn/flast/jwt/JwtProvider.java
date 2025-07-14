@@ -31,8 +31,8 @@ public class JwtProvider {
         claims.put("ssoId", userPrincipal.getSsoId());
         claims.put("userId", String.valueOf( userPrincipal.getId()) );
         List<String> roles = userPrincipal.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toList());
         claims.put("roles", roles);
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
