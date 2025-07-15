@@ -48,9 +48,6 @@ public class Warehouse {
     @Column(name = "total")
     private Long total;
 
-    @Column(name = "location_id")
-    private Integer locationId;
-
     @Column(name = "sku_name")
     private String skuName;
 

@@ -56,19 +56,19 @@ public class WarehouseController {
     }
 
     @GetMapping("/fetch-stock")
-    public MyResponse<?> fetchStock(){
+    public MyResponse<?> fetchStock() {
         var data = warehouseService.fetchStock();
         return MyResponse.response(data);
     }
 
     @PostMapping("/created-stock")
-    public MyResponse<?> createdStock(@RequestBody WareHouseStock input){
+    public MyResponse<?> createdStock(@RequestBody WareHouseStock input) {
         warehouseService.createStock(input);
         return MyResponse.response("oke");
     }
 
     @PostMapping("/update-stock")
-    public MyResponse<?> updateStock(@RequestBody WareHouseStock input){
+    public MyResponse<?> updateStock(@RequestBody WareHouseStock input) {
         warehouseService.updateStock(input);
         return MyResponse.response("oke");
     }

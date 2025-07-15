@@ -18,7 +18,6 @@ import vn.flast.searchs.WarehouseFilter;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
-import vn.flast.utils.NumberUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -40,13 +39,15 @@ public class WarehouseService extends BaseController {
     @Autowired
     private WarehouseStockRepository warehouseStockRepository;
 
-    @Autowired
-    private ProductService productService;
-
     public Warehouse created(SaveStock saveStock) {
         var input = saveStock.model();
         input.setUserName(getUserSso());
-        input.setSkuInfo(JsonUtils.toJson(saveStock.skuDetails()));
+        input.setSkuInfo(JsonUtils.toJson(saveStock.mSkuDetails()));
+
+        WareHouseStock stock = warehouseStockRepository.findById(input.getStockId()).orElseThrow(
+            () -> new RuntimeException("Kho không tồn tại !")
+        );
+        input.setStockName(stock.getName());
         return wareHouseRepository.save(input);
     }
 
@@ -56,7 +57,12 @@ public class WarehouseService extends BaseController {
             () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, warehouse);
-        warehouse.setSkuInfo(JsonUtils.toJson(saveStock.skuDetails()));
+
+        WareHouseStock stock = warehouseStockRepository.findById(input.getStockId()).orElseThrow(
+            () -> new RuntimeException("Kho không tồn tại !")
+        );
+        warehouse.setStockName(stock.getName());
+        warehouse.setSkuInfo(JsonUtils.toJson(saveStock.mSkuDetails()));
         return wareHouseRepository.save(warehouse);
     }
 
@@ -69,15 +75,11 @@ public class WarehouseService extends BaseController {
     }
 
     public Ipage<?> fetch(WarehouseFilter filter) {
-        int LIMIT = 10;
+        int LIMIT = filter.limit();
         int currentPage = filter.page();
 
         var et = EntityQuery.create(entityManager, Warehouse.class);
-        if(NumberUtils.isNotNull(filter.productId())) {
-            LIMIT = 100;
-            et.addDescendingOrderBy("id");
-        }
-
+        et.addDescendingOrderBy("id");
         et.integerEqualsTo("productId", filter.productId())
             .setMaxResults(LIMIT)
             .setFirstResult(LIMIT * currentPage);
@@ -95,16 +97,7 @@ public class WarehouseService extends BaseController {
 
     public WareHouseStatus createStatus(WareHouseStatus input) {
         if(wareHouseStatusRepository.existsByName(input.getName())){
-            return null;
-        }
-        if(input.getType() == WareHouseStatus.TYPE_CONFIRM){
-            List<WareHouseStatus> statuses = wareHouseStatusRepository.findAll();
-            for(WareHouseStatus status : statuses){
-                if(status.getType() == WareHouseStatus.TYPE_CONFIRM){
-                    status.setType(WareHouseStatus.TYPE_NOT_CONFIRM);
-                    wareHouseStatusRepository.save(status);
-                }
-            }
+            throw new RuntimeException("Trạng thái kho đã tồn tại rồi !");
         }
         return wareHouseStatusRepository.save(input);
     }

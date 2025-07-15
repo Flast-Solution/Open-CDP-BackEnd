@@ -13,5 +13,4 @@ public interface WareHouseStatusRepository extends JpaRepository<WareHouseStatus
 
     @Query("From WareHouseStatus w WHERE w.type = 1")
     WareHouseStatus findByType();
-
 }
