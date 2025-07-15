@@ -89,7 +89,7 @@ public class WarehouseExportService {
                     throw new RuntimeException("Số lượng trong kho không đủ để xuất!");
                 }
                 warehouse.setQuantity(warehouse.getQuantity() - detailItem.getQuantity());
-                warehouseService.updated(warehouse);
+                warehouseService.updatedW(warehouse);
             }
             WareHouseHistory wareHouseHistory = new WareHouseHistory();
             wareHouseHistory.setCode("WH-" + System.currentTimeMillis());
@@ -141,7 +141,7 @@ public class WarehouseExportService {
                         throw new RuntimeException("Số lượng trong kho không đủ để xuất!");
                     }
                     warehouse.setQuantity(warehouse.getQuantity() - detailItem.getQuantity());
-                    warehouseService.updated(warehouse);
+                    warehouseService.updatedW(warehouse);
                 }
             }
         }
