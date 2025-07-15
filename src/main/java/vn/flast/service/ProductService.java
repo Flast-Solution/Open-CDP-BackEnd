@@ -190,7 +190,7 @@ public class ProductService {
         saleProduct.setSkus(skuService.listProductSkuAndDetail(entity.getId()));
         saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(entity.getId()));
         saleProduct.getSkus().forEach(
-            sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(entity.getId()))
+            sku -> sku.setListPriceRange(skusPriceRepository.findBySkuId(sku.getId()))
         );
         saleProduct.setImageLists(mediaService.list(Math.toIntExact(id), "Product")
             .stream()
@@ -229,7 +229,7 @@ public class ProductService {
             saleProduct.setSkus(skuService.listProductSkuAndDetail(product.getId()));
             saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(product.getId()));
             saleProduct.getSkus().forEach(
-                sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(product.getId()))
+                sku -> sku.setListPriceRange(skusPriceRepository.findBySkuId(sku.getId()))
             );
             saleProduct.setWarehouses(warehouseRepository.findByProductId(product.getId()));
             saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product")
@@ -250,7 +250,7 @@ public class ProductService {
             saleProduct.setSkus(skuService.listProductSkuAndDetail(product.getId()));
             saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(product.getId()));
             saleProduct.getSkus().forEach(
-                sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(product.getId()))
+                sku -> sku.setListPriceRange(skusPriceRepository.findBySkuId(sku.getId()))
             );
             saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product")
                 .stream()
@@ -269,12 +269,12 @@ public class ProductService {
     }
 
     public void saveSkuProduct(List<ProductSkus> input, Long productId){
-        var productSkuOld = productSkusRepository.findByProductId(productId);
+        var skuModels = productSkusRepository.findByProductId(productId);
         Set<Long> inputSkuIds = input.stream()
             .map(ProductSkus::getId)
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
-        List<Long> skusToDelete = productSkuOld.stream()
+        List<Long> skusToDelete = skuModels.stream()
             .map(ProductSkus::getId)
             .filter(id -> !inputSkuIds.contains(id))
             .collect(Collectors.toList());
@@ -287,7 +287,7 @@ public class ProductService {
             skus.setProductId(productId);
             ProductSkus savedSku = productSkusRepository.save(skus);
             /* Save Price Range */
-            skusPriceRepository.deleteByProductId(productId);
+            skusPriceRepository.deleteBySkuId(savedSku.getId());
             productSkus.getListPriceRange().forEach(priceRange -> {
                 ProductSkusPrice price = new ProductSkusPrice();
                 CopyProperty.CopyIgnoreNull(priceRange, price);
@@ -306,7 +306,7 @@ public class ProductService {
                 .filter(id -> !inputSkuDetailIds.contains(id))
                 .collect(Collectors.toList());
             if (!skusToDelete.isEmpty()) {
-                productSkusDetailsRepository.updateDelProductSkus(productId,skusDetailToDelete);
+                productSkusDetailsRepository.updateDelProductSkus(productId, skusDetailToDelete);
             }
             productSkus.getSku().forEach(sku -> {
                 ProductSkusDetails skusDetails = new ProductSkusDetails();

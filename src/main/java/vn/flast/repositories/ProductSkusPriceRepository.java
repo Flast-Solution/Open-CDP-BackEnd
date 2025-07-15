@@ -11,7 +11,10 @@ public interface ProductSkusPriceRepository extends JpaRepository<ProductSkusPri
     @Query("FROM ProductSkusPrice p WHERE p.productId = :productId")
     List<ProductSkusPrice> findByProduct(Long productId);
 
+    @Query("FROM ProductSkusPrice p WHERE p.skuId = :skuId")
+    List<ProductSkusPrice> findBySkuId(Long skuId);
+
     @Modifying
-    @Query("DELETE FROM ProductSkusPrice p WHERE p.productId = :productId")
-    void deleteByProductId(Long productId);
+    @Query("DELETE FROM ProductSkusPrice p WHERE p.skuId = :skuId")
+    void deleteBySkuId(Long skuId);
 }
