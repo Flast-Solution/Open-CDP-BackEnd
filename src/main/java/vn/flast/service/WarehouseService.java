@@ -67,7 +67,7 @@ public class WarehouseService extends BaseController {
     }
 
     public Ipage<?> fetch(WarehouseFilter filter) {
-        int LIMIT = 10;
+        int LIMIT = filter.limit();
         int currentPage = filter.page();
 
         var et = EntityQuery.create(entityManager, Warehouse.class);
