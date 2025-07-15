@@ -39,13 +39,15 @@ public class WarehouseService extends BaseController {
     @Autowired
     private WarehouseStockRepository warehouseStockRepository;
 
-    @Autowired
-    private ProductService productService;
-
     public Warehouse created(SaveStock saveStock) {
         var input = saveStock.model();
         input.setUserName(getUserSso());
         input.setSkuInfo(JsonUtils.toJson(saveStock.mSkuDetails()));
+
+        WareHouseStock stock = warehouseStockRepository.findById(input.getStockId()).orElseThrow(
+            () -> new RuntimeException("Kho không tồn tại !")
+        );
+        input.setStockName(stock.getName());
         return wareHouseRepository.save(input);
     }
 
@@ -55,6 +57,11 @@ public class WarehouseService extends BaseController {
             () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, warehouse);
+
+        WareHouseStock stock = warehouseStockRepository.findById(input.getStockId()).orElseThrow(
+            () -> new RuntimeException("Kho không tồn tại !")
+        );
+        warehouse.setStockName(stock.getName());
         warehouse.setSkuInfo(JsonUtils.toJson(saveStock.mSkuDetails()));
         return wareHouseRepository.save(warehouse);
     }
