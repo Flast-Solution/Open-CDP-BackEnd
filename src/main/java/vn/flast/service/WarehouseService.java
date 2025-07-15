@@ -66,6 +66,14 @@ public class WarehouseService extends BaseController {
         return wareHouseRepository.save(warehouse);
     }
 
+    public Warehouse updatedW(Warehouse input) {
+        var warehouse = wareHouseRepository.findById(input.getId()).orElseThrow(
+                () -> new RuntimeException("Bản ghi không tồn tại !")
+        );
+        CopyProperty.CopyIgnoreNull(input, warehouse);
+        return wareHouseRepository.save(warehouse);
+    }
+
     public Ipage<?> fetch(WarehouseFilter filter) {
         int LIMIT = filter.limit();
         int currentPage = filter.page();
