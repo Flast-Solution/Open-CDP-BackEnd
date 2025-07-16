@@ -9,19 +9,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.util.Date;
-import java.util.List;
 
 @Table(name = "transport")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class Transport {
 
     @Id
@@ -77,12 +73,4 @@ public class Transport {
 
     @Column(name = "status")
     private Integer status;
-
-    @Transient
-    private List<DetailItem> items;
-
-    @Transient
-    Warehouse warehouse;
-
-
 }

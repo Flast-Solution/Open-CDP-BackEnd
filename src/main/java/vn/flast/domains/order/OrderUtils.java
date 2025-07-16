@@ -3,7 +3,6 @@ package vn.flast.domains.order;
 import org.apache.commons.lang3.StringUtils;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
-import vn.flast.models.DetailItem;
 import vn.flast.utils.Common;
 import vn.flast.utils.JsonUtils;
 import vn.flast.utils.NumberUtils;
@@ -56,36 +55,5 @@ public class OrderUtils {
         order.setSubtotal(subTotal);
         order.setPriceOff(priceOff);
         order.setTotal(subTotal - priceOff + vat);
-    }
-
-    public static void calDetailPrice(CustomerOrderDetail detail) {
-        double subTotal;
-        if (detail.getQuantity() != null && detail.getQuantity() != 0) {
-            subTotal = detail.getPrice() * detail.getQuantity();
-        } else {
-            detail.getItems().forEach(OrderUtils::calItemPrice);
-            subTotal = detail.getItems().stream().mapToDouble(DetailItem::getTotal).sum();
-        }
-        double priceOff = 0;
-        if (StringUtils.isNotEmpty(detail.getDiscount())) {
-            OrderDiscount orderDiscount = JsonUtils.Json2Object(detail.getDiscount(), OrderDiscount.class);
-            priceOff = orderDiscount != null ? orderDiscount.getPriceOff(subTotal) : 0;
-        }
-        double feeAfterPromotion = subTotal - priceOff;
-        detail.setPriceOff(priceOff);
-        detail.setTotal(feeAfterPromotion);
-    }
-
-    public static void calItemPrice(DetailItem item) {
-        double subTotal = item.getPrice() * item.getQuantity();
-        double priceOff = 0;
-        if (StringUtils.isNotEmpty(item.getDiscount())) {
-            OrderDiscount orderDiscount = JsonUtils.Json2Object(item.getDiscount(), OrderDiscount.class);
-            priceOff = orderDiscount != null ? orderDiscount.getPriceOff(subTotal) : 0;
-        }
-
-        double feeAfterPromotion = subTotal - priceOff;
-        item.setPriceOff(priceOff);
-        item.setTotal(feeAfterPromotion);
     }
 }
