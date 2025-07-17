@@ -15,7 +15,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import vn.flast.entities.ExportItem;
-
 import java.util.Date;
 import java.util.List;
 
@@ -23,9 +22,6 @@ import java.util.List;
 @Entity
 @Getter @Setter
 public class WarehouseExport {
-
-    public static final int TYPE_EXPORT_NOT_ORDER = 1;
-    public static final int TYPE_EXPORT_ORDER = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,4 +1,4 @@
-package vn.flast.controller.plastform;
+package vn.flast.controller.social;
 
 
 import org.springframework.http.HttpStatus;

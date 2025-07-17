@@ -27,8 +27,7 @@ public class OrderController {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Input invalid .!");
         }
-        var order = orderService.create(entity);
-        return MyResponse.response(order);
+        return MyResponse.response("");
     }
 
     @GetMapping("/view")
@@ -60,5 +59,17 @@ public class OrderController {
     public MyResponse<?> fetchByProcess(OrderFilter filter) {
         var orders = orderService.fetchListOrderStatus(filter);
         return MyResponse.response(orders);
+    }
+
+    @PostMapping("/update-status-order")
+    public MyResponse<?> updateStatusOrder(@RequestParam Long orderId, @RequestParam Integer statusId){
+        var order = orderService.updateStatusOrder(orderId, statusId);
+        return MyResponse.response(order);
+    }
+
+    @PostMapping("/cancel-co-hoi")
+    public MyResponse<?> cancelCoHoi(@RequestParam Long orderId, @RequestParam Boolean detail){
+        orderService.cancelCoHoi(orderId, detail);
+        return MyResponse.response("oke");
     }
 }

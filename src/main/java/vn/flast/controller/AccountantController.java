@@ -1,6 +1,5 @@
 package vn.flast.controller;
 
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,6 @@ import vn.flast.domains.payments.OrderPaymentInfo;
 import vn.flast.domains.payments.PayService;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.payment.PaymentFilter;
-import vn.flast.entities.ReceivableFilter;
 import vn.flast.service.AccountantService;
 
 @Log4j2
@@ -39,11 +37,5 @@ public class AccountantController {
     public MyResponse<?> createPayment(OrderPaymentInfo info){
         payService.create(info);
         return MyResponse.response("oke");
-    }
-
-    @GetMapping("/fetch-receivable")
-    public MyResponse<?> fetchReceivable(ReceivableFilter filter){
-        var data = orderService.fetchReceivable(filter);
-        return MyResponse.response(data);
     }
 }

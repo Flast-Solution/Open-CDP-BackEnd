@@ -11,7 +11,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,9 +18,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import vn.flast.repositories.CustomerOrderStatusRepository;
 import vn.flast.utils.BeanUtil;
 import vn.flast.utils.NumberUtils;
-
 import java.util.Date;
-import java.util.List;
 
 @Table(name = "customer_order_detail")
 @Entity
@@ -110,7 +107,4 @@ public class CustomerOrderDetail {
         var statusRepo =  BeanUtil.getBean(CustomerOrderStatusRepository.class);
         return this.status.equals(statusRepo.findStartOrder().getId());
     }
-
-    @Transient
-    private List<DetailItem> items;
 }
