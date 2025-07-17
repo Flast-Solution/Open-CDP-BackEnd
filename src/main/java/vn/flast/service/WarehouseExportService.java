@@ -59,7 +59,8 @@ public class WarehouseExportService {
         }
     }
 
-    public WarehouseExport createExportNotOrder(ExportNotOrdrerInput input){
+    public WarehouseExport createExportNotOrder(ExportNotOrdrerInput input) {
+
         WarehouseExport warehouseExport = new WarehouseExport();
         warehouseExport.setWarehouseDeliveryId(input.getWarehouseDeliveryId());
         warehouseExport.setWarehouseReceivingId(input.getWarehouseReceivingId());
@@ -86,7 +87,7 @@ public class WarehouseExportService {
                     throw new RuntimeException("Số lượng trong kho không đủ để xuất!");
                 }
                 warehouse.setQuantity(warehouse.getQuantity() - detailItem.getQuantity());
-                warehouseService.updatedW(warehouse);
+                warehouseService.updated(warehouse);
             }
             WareHouseHistory wareHouseHistory = new WareHouseHistory();
             wareHouseHistory.setCode("WH-" + System.currentTimeMillis());
@@ -118,25 +119,7 @@ public class WarehouseExportService {
         warehouseExport.setInfo(JsonUtils.toJson(input.getItems()));
         return warehouseExportRepository.save(warehouseExport);
     }
-    private void exportProduct(List<ExportItem> items, Integer statusConfirm){
-        var userName = baseController.getInfo();
-        boolean isAdminOrWarehouse = userName.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")
-                        || auth.getAuthority().equals("ROLE_WAREHOUSE"));
-        for(ExportItem item : items){
-            if (item.getStatus().equals(statusConfirm) && item.getStatusConfirm() == WarehouseExportStatus.TYPE_NOT_CONFIRM && isAdminOrWarehouse) {
-                item.setStatusConfirm(WarehouseExportStatus.TYPE_CONFIRM);
-                for (DetailItem detailItem : item.getDetaiItems()) {
-                    var warehouse = warehouseService.findByStockAndSku(item.getWarehouseDeliveryId(), detailItem.getProductId(), detailItem.getSkuId());
-                    if (detailItem.getQuantity() > warehouse.getQuantity()) {
-                        throw new RuntimeException("Số lượng trong kho không đủ để xuất!");
-                    }
-                    warehouse.setQuantity(warehouse.getQuantity() - detailItem.getQuantity());
-                    warehouseService.updatedW(warehouse);
-                }
-            }
-        }
-    }
+
     public Ipage<?> fetch(ExportFilter filter){
         var et = EntityQuery.create(entityManager, WarehouseExport.class);
         et.longEqualsTo("orderId", filter.getOrderId());

@@ -54,16 +54,20 @@ public class WarehouseService extends BaseController {
     public Warehouse updated(SaveStock saveStock) {
         var input = saveStock.model();
         var warehouse = wareHouseRepository.findById(input.getId()).orElseThrow(
-            () -> new RuntimeException("Bản ghi không tồn tại !")
+                () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, warehouse);
 
         WareHouseStock stock = warehouseStockRepository.findById(input.getStockId()).orElseThrow(
-            () -> new RuntimeException("Kho không tồn tại !")
+                () -> new RuntimeException("Kho không tồn tại !")
         );
         warehouse.setStockName(stock.getName());
         warehouse.setSkuInfo(JsonUtils.toJson(saveStock.mSkuDetails()));
         return wareHouseRepository.save(warehouse);
+    }
+
+    public Warehouse updated(Warehouse model) {
+        return wareHouseRepository.save(model);
     }
 
     public Ipage<?> fetch(WarehouseFilter filter) {
