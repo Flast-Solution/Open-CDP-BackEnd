@@ -637,7 +637,6 @@ INSERT INTO `customer_personal` VALUES
 (13,'newCustomer',NULL,'1638','other',1,NULL,NULL,'Vũ Thành Trung',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'trungthanhadg@gmail.com',NULL,'0345223731',NULL,NULL,NULL,NULL,'2025-03-24 14:15:17','2025-03-24 14:15:17',NULL,0),
 (14,'newCustomer',NULL,NULL,'name',NULL,NULL,NULL,'blue',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'gh767678@gmail.com',NULL,'0987654567',NULL,NULL,NULL,NULL,'2025-03-25 16:40:35','2025-03-25 16:40:35',NULL,0),
 (15,'newCustomer',NULL,NULL,'other',NULL,NULL,NULL,'Vũ Thành Trung',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,'0323225213',NULL,NULL,NULL,NULL,'2025-03-26 01:32:43','2025-03-26 01:32:43',NULL,0),
-(16,'newCustomer',NULL,NULL,'other',NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,'',NULL,NULL,NULL,NULL,'2025-04-15 16:25:15','2025-04-15 16:25:15',NULL,0),
 (20,'newCustomer',NULL,NULL,'other',NULL,NULL,NULL,'Nguyễn Phương Anh',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0342345345',NULL,NULL,NULL,NULL,'2025-06-12 15:27:39','2025-06-12 15:27:39',NULL,0);
 /*!40000 ALTER TABLE `customer_personal` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -14052,11 +14051,11 @@ CREATE TABLE `warehouse_stock` (
 LOCK TABLES `warehouse_stock` WRITE;
 /*!40000 ALTER TABLE `warehouse_stock` DISABLE KEYS */;
 INSERT INTO `warehouse_stock` VALUES
-(1,'Trung Hòa','100m2','0345223731','Trung Hòa, Cầu Giấy, Hà Nội',1),
-(4,'Trung Hòa 3','100m2','0345223732','Trung Hòa, Cầu Giấy, Hà Nội',1),
-(5,'Nam Từ Liêm','200m','0963484761','Nam Từ Liêm Hà Nội 2',NULL),
-(6,'Nam Từ Liêm 4','300m','0963484766','Nam Từ Liêm Hà Nội4',NULL),
-(7,'Nam Từ Liêm 5','300m','0963484764','Nam Từ Liêm Hà Nội 5',NULL);
+(1,'Kho Trung Hòa','100m2','0345223731','Trung Hòa, Cầu Giấy, Hà Nội',1),
+(4,'Kho Trung Hòa 3','100m2','0345223732','Trung Hòa, Cầu Giấy, Hà Nội',1),
+(5,'kho Nam Từ Liêm','200m','0963484761','Nam Từ Liêm Hà Nội 2',NULL),
+(6,'kho Nam Từ Liêm 4','300m','0963484766','Nam Từ Liêm Hà Nội4',NULL),
+(7,'kho Nam Từ Liêm5','300m','0963484764','Nam Từ Liêm Hà Nội 5',NULL);
 /*!40000 ALTER TABLE `warehouse_stock` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -14073,4 +14072,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-07-17 11:16:17
+-- Dump completed on 2025-07-17 16:34:20

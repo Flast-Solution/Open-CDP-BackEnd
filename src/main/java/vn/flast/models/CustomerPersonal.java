@@ -15,13 +15,11 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.util.Date;
 
 @Table(name = "customer_personal")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class CustomerPersonal {
 
     public static final Integer KH_MOI = 1;
