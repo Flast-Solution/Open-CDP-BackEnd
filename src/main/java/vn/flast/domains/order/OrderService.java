@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.common.BaseController;
@@ -75,6 +76,7 @@ public class OrderService  implements Publisher, Serializable {
     private CustomerOrderNoteRepository orderNoteRepository;
 
     @Autowired
+    @Lazy
     private PayService payService;
 
     @Transactional(rollbackFor = Exception.class)

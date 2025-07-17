@@ -2,9 +2,9 @@ package vn.flast.domains.payments;
 
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.controller.common.BaseController;
 import vn.flast.domains.order.OrderService;
 import vn.flast.domains.order.OrderUtils;
 import vn.flast.entities.payment.OrderPayment;
@@ -28,6 +28,7 @@ import java.util.Optional;
 public class PayService {
 
     @Autowired
+    @Lazy
     private OrderService orderService;
 
     @Autowired
@@ -44,9 +45,6 @@ public class PayService {
 
     @Autowired
     private EntityManager entityManager;
-
-    @Autowired
-    private BaseController baseController;
 
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderPayment manualMethod(OrderPaymentInfo info) {
@@ -117,26 +115,25 @@ public class PayService {
         et.addDescendingOrderBy("id");
         et.setMaxResults(filter.getLimit()).setFirstResult(filter.getLimit() * filter.page());
         var listsOrder = et.list();
-        var listOrderPay = listsOrder.stream().map(order -> {
+        return listsOrder.stream().map(order -> {
             OrderPayment op = new OrderPayment();
             CopyProperty.CopyIgnoreNull(order, op);
             List<CustomerOrderPayment> payments = listByOrderId(order.getId());
             op.setPayments(payments);
             return op;
         }).toList();
-        return listOrderPay;
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void confirmPayment(CustomerOrderPayment input){
         var model = paymentRepository.findById(input.getId()).orElseThrow(
-                () -> new ResourceNotFoundException("Not found AccountPayOrder")
+            () -> new ResourceNotFoundException("Not found AccountPayOrder")
         );
-        if (model.getIsConfirm() == OrderUtils.PAYMENT_IS_CONFIRM) {
+        if (model.getIsConfirm().equals(OrderUtils.PAYMENT_IS_CONFIRM)) {
             return;
         }
         var order = Optional.ofNullable(orderService.findByCode(model.getCode())).orElseThrow(
-                () -> new RuntimeException("Not found CustomerOrder")
+            () -> new RuntimeException("Not found CustomerOrder")
         );
         if (order.getTotal() <= 0) {
             throw new RuntimeException("Chưa thể confirm khi chưa chốt giá của đơn");
@@ -149,12 +146,11 @@ public class PayService {
         if(order.getPaidTime() == null) {
             order.setPaidTime(new Date());
         }
-        List<Long> orderIds = List.of(order.getId()); // Chuẩn hơn và dễ mở rộng
+        List<Long> orderIds = List.of(order.getId());
         detailRepository.fetchDetailOrdersId(orderIds).forEach(detail -> {
             detail.setStatus(statusStartOrder);
             detailRepository.save(detail);
         });
         orderRepository.save(order);
     }
-
 }
