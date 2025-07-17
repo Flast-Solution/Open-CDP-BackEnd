@@ -1,5 +1,6 @@
 package vn.flast.utils;
 
+import java.beans.FeatureDescriptor;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -15,9 +16,9 @@ public class CopyProperty {
 	public static String[] getNullPropertyNames(Object source) {
 		final BeanWrapper src = new BeanWrapperImpl(source);
 		return Arrays.stream(src.getPropertyDescriptors())
-				.map(pd -> pd.getName())
-				.filter(name -> src.getPropertyValue(name) == null)
-				.toArray(String[]::new);
+			.map(FeatureDescriptor::getName)
+			.filter(name -> src.getPropertyValue(name) == null)
+			.toArray(String[]::new);
 	}
 
 	public static void CopyNormal(Object src, Object target) {
@@ -39,5 +40,4 @@ public class CopyProperty {
 			return target;
 		}).collect(Collectors.toList());
 	}
-
 }

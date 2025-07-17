@@ -26,8 +26,7 @@ public record OrderInput(
     Integer shipping,
     List<OrderDetail> details,
     String note,
-    String address,
-    Long dataId
+    String address
 ) {
 
     public void transformOrder(CustomerOrder order) {
@@ -58,8 +57,7 @@ public record OrderInput(
         List<CustomerOrderDetail> detailList = new ArrayList<>();
         int i = 1;
         for(OrderDetail detailInput : details) {
-            CustomerOrderDetail detail = new CustomerOrderDetail();
-            CopyProperty.CopyIgnoreNull(detailInput, detail);
+            CustomerOrderDetail detail = createOrderDetailFromInput(detailInput);
             detail.setCustomerOrderId(order.getId());
             if(Objects.nonNull(detail.getCode())){
                 detail.setCode(order.getCode().concat("-" + i));
@@ -75,16 +73,13 @@ public record OrderInput(
         return detailList;
     }
 
-    public CustomerPersonal transformCustomer() {
-        if (Objects.isNull(customer.getMobile())) {
-            throw new RuntimeException("Phone number cannot be left blank!");
-        }
-        var repository = BeanUtil.getBean(CustomerPersonalRepository.class);
-        var model = repository.findByPhone(customer.getMobile());
-        if(Objects.isNull(model)) {
-            model = new CustomerPersonal();
-        }
-        CopyProperty.CopyIgnoreNull(customer, model);
-        return repository.save(model);
+    public CustomerOrderDetail createOrderDetailFromInput(OrderDetail detailInput) {
+        CustomerOrderDetail detail = new CustomerOrderDetail();
+        CopyProperty.CopyIgnoreNull(detailInput, detail, "skuInfo");
+        detail.setSkuInfo(JsonUtils.toJson(detailInput.getSkuDetails()));
+        detail.setName(detailInput.getOrderName());
+        detail.setTotal(detailInput.getTotalPrice());
+        detail.setPriceOff(detailInput.getDiscountAmount());
+        return detail;
     }
 }

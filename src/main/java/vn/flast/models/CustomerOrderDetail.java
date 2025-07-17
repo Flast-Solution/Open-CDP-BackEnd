@@ -63,9 +63,6 @@ public class CustomerOrderDetail {
     @Column(name = "total")
     private Double total;
 
-    @Column(name = "discount")
-    private String discount;
-
     @Column(name = "day_quote")
     private String dayQuote;
 

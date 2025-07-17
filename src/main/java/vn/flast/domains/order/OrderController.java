@@ -27,32 +27,32 @@ public class OrderController {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Input invalid .!");
         }
-        var order = orderService.saveOpportunity(entity);
+        CustomerOrder order = orderService.saveOpportunity(entity);
         return MyResponse.response(order);
     }
 
     @GetMapping("/view")
     public MyResponse<?> view(@RequestParam Long id) {
-        var order = orderService.view(id);
+        CustomerOrder order = orderService.view(id);
         return MyResponse.response(order);
     }
 
     @GetMapping("/find-by-code")
     public MyResponse<?> findByCode(@RequestParam String code) {
-        var order = orderService.findByCode(code);
+        CustomerOrder order = orderService.findByCode(code);
         return MyResponse.response(order);
     }
 
     @GetMapping("/fetch")
     public MyResponse<?> list(OrderFilter filter) {
         OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
-        var order = orderService.fetchList(updatedFilter);
-        return MyResponse.response(order);
+        var orders = orderService.fetchList(updatedFilter);
+        return MyResponse.response(orders);
     }
 
     @PostMapping("/complete")
     public MyResponse<?> complete(@RequestParam Long id) {
-        var order = orderService.completeOrder(id);
+        CustomerOrder order = orderService.completeOrder(id);
         return MyResponse.response(order);
     }
 
@@ -64,7 +64,7 @@ public class OrderController {
 
     @PostMapping("/update-status-order")
     public MyResponse<?> updateStatusOrder(@RequestParam Long orderId, @RequestParam Integer statusId){
-        var order = orderService.updateStatusOrder(orderId, statusId);
+        CustomerOrder order = orderService.updateStatusOrder(orderId, statusId);
         return MyResponse.response(order);
     }
 
