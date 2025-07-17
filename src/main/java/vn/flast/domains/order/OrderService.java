@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.common.BaseController;
+import vn.flast.domains.payments.PayService;
 import vn.flast.entities.order.OrderCare;
 import vn.flast.entities.order.OrderComment;
 import vn.flast.entities.order.OrderResponse;
@@ -14,23 +15,21 @@ import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderNote;
 import vn.flast.models.CustomerOrderStatus;
+import vn.flast.models.Data;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
 import vn.flast.orchestration.Message;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.Publisher;
 import vn.flast.pagination.Ipage;
-import vn.flast.repositories.ConfigRepository;
 import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderNoteRepository;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.CustomerOrderStatusRepository;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataRepository;
-import vn.flast.repositories.ProductRepository;
-import vn.flast.repositories.ProductSkusDetailsRepository;
-import vn.flast.repositories.UserRepository;
 import vn.flast.searchs.OrderFilter;
+import vn.flast.service.DataService;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
@@ -76,16 +75,53 @@ public class OrderService  implements Publisher, Serializable {
     private CustomerOrderNoteRepository orderNoteRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private PayService payService;
 
-    @Autowired
-    private ProductSkusDetailsRepository productSkusDetailsRepository;
+    @Transactional(rollbackFor = Exception.class)
+    public CustomerOrder saveOpportunity(OrderInput input) {
 
-    @Autowired
-    private ProductRepository productRepository;
+        var order = new CustomerOrder();
+        order.setCode(OrderUtils.createOrderCode());
+        order.setUserCreateUsername(Common.getSsoId());
+        order.setUserCreateId(Common.getUserId());
+        input.transformOrder(order);
 
-    @Autowired
-    private ConfigRepository configRepository;
+        if(NumberUtils.isNotNull(order.getId())) {
+            var entity = orderRepository.findById(order.getId()).orElseThrow(
+                () -> new ResourceNotFoundException("Not Found Order .!")
+            );
+            CopyProperty.CopyIgnoreNull(entity, order);
+        } else {
+            Data data = dataRepository.findFirstByPhone(input.customer().getMobile()) .orElseGet(() -> {
+                Data model = new Data();
+                model.setCustomerMobile(order.getCustomerMobilePhone());
+                model.setSource(DataService.DATA_SOURCE.DIRECT.getSource());
+                model.setCustomerName(order.getCustomerReceiverName());
+                model.setStaff(Common.getSsoId());
+                model.setSaleId(Common.getUserId());
+                model.setStatus(DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
+                return dataRepository.save(model);
+            });
+            order.setDataId(data.getId());
+            order.setSource(data.getSource());
+            order.setPaid(0.0);
+        }
+        if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
+            order.setStatus(statusOrderRepository.findStartOrder().getId());
+        }
+        var listDetails = input.transformOrderDetail(order, order.getStatus());
+        order.setDetails(listDetails);
+        detailRepository.saveAll(listDetails);
+
+        OrderUtils.calculatorPrice(order);
+        orderRepository.save(order);
+        this.sendMessageOnOrderChange(order);
+        if (Objects.nonNull(input.paymentInfo()) && Boolean.TRUE.equals(input.paymentInfo().status())) {
+            order.setPaid(0.0);
+            payService.manualMethod(input.paymentInfo());
+        }
+        return order;
+    }
 
     public Ipage<?>fetchList(OrderFilter filter) {
         var sale = baseController.getInfo();
@@ -128,10 +164,12 @@ public class OrderService  implements Publisher, Serializable {
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
         sqlBuilder.addIntegerEquals("c.user_create_id", userCreateId);
         sqlBuilder.addStringEquals("c.type", CustomerOrder.TYPE_CO_HOI);
+
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -7);
         Date dayBeforeYesterday = calendar.getTime();
         sqlBuilder.addDateLessThan("c.created_at", dayBeforeYesterday);
+
         sqlBuilder.like("c.customer_name", filter.customerName());
         sqlBuilder.addIntegerEquals("c.customer_id", filter.customerId());
         sqlBuilder.like("c.customer_mobile", filter.customerPhone());
@@ -204,14 +242,17 @@ public class OrderService  implements Publisher, Serializable {
 
         int LIMIT = filter.limit();
         int OFFSET = filter.page() * LIMIT;
+
         final String totalSQL = " FROM `customer_order` c left join `customer_order_note` n on c.code = n.order_code ";
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
         sqlBuilder.addIntegerEquals("c.user_create_id", userCreateId);
         sqlBuilder.addStringEquals("c.type", CustomerOrder.TYPE_CO_HOI);
+
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -7);
         Date dayBeforeYesterday = calendar.getTime();
         sqlBuilder.addDateLessThan("c.created_at", dayBeforeYesterday);
+
         sqlBuilder.like("c.customer_name", filter.customerName());
         sqlBuilder.addIntegerEquals("c.customer_id", filter.customerId());
         sqlBuilder.like("c.customer_mobile", filter.customerPhone());

@@ -2,18 +2,16 @@ package vn.flast.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
+import vn.flast.config.ConfigUtil;
 import vn.flast.controller.common.BaseController;
 import vn.flast.dao.DataOwnerDao;
-import vn.flast.models.DataComplaint;
 import vn.flast.models.DataOwner;
 import vn.flast.models.User;
 import vn.flast.orchestration.EventDelegate;
@@ -40,10 +38,6 @@ import vn.flast.utils.GlobalUtil;
 import vn.flast.utils.NumberUtils;
 import vn.flast.utils.SqlBuilder;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +53,7 @@ public class DataService extends Subscriber implements Publisher {
     public static String UPLOAD_PATH =  "/uploads/data-media/";
 
     public static String folderUpload() {
-        String fd = System.getProperty("user.dir") + UPLOAD_PATH + GlobalUtil.getFolderUpload(GlobalUtil.dateToInt())  + "/";
+        String fd = ConfigUtil.getRootPath() + UPLOAD_PATH + GlobalUtil.getFolderUpload(GlobalUtil.dateToInt())  + "/";
         return Common.makeFolder(fd);
     }
 
@@ -105,11 +99,12 @@ public class DataService extends Subscriber implements Publisher {
         ListIterator<MessageInterface> iterator = subscriberMessages.listIterator();
         while(iterator.hasNext()){
             var message = iterator.next();
-            log.info("Message Topic -> "+ message.getTopic() + " : " + message.getPayload());
+            log.info("Message Topic -> {} : {}", message.getTopic(), message.getPayload());
             iterator.remove();
         }
     }
 
+    @Getter
     public enum DATA_STATUS {
 
         CREATE_DATA(0),
@@ -120,13 +115,8 @@ public class DataService extends Subscriber implements Publisher {
         THANH_CO_HOI(7);
 
         private final int statusCode;
-
         DATA_STATUS(int levelCode) {
             this.statusCode = levelCode;
-        }
-
-        public int getStatusCode() {
-            return this.statusCode;
         }
 
         public String getString() {
@@ -134,6 +124,7 @@ public class DataService extends Subscriber implements Publisher {
         }
     }
 
+    @Getter
     public enum DATA_SOURCE {
         WEB(0),
         FACEBOOK(1),
@@ -151,9 +142,6 @@ public class DataService extends Subscriber implements Publisher {
         private final int source;
         DATA_SOURCE(int source) {
             this.source = source;
-        }
-        public int getSource() {
-            return this.source;
         }
     }
 
@@ -187,7 +175,6 @@ public class DataService extends Subscriber implements Publisher {
         entityManager.remove(data);
     }
 
-
     @Transactional
     public void Update(Data input) {
         var data = dataRepository.findById(input.getId()).orElseThrow(
@@ -211,28 +198,27 @@ public class DataService extends Subscriber implements Publisher {
             .addDescendingOrderBy("inTime")
             .setMaxResults(LIMIT)
             .list();
-
         return new Ipage<>(LIMIT, et.count(), filter.page(), lists);
     }
 
     public Ipage<Data> getListDataFromCustomerService(DataFilter filter) {
+
         var user = baseController.getInfo();
         var LIMIT = filter.getLimit();
         var offset = filter.page() * LIMIT;
+
         EntityQuery<Data> et = EntityQuery.create(entityManager, Data.class);
         et.between("inTime", filter.getFrom(), filter.getTo());
         et.integerEqualsTo("source", filter.getSource());
-        if (user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")) || user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_SALE_MANAGER"))) {
+        if (user.getAuthorities().stream().anyMatch(auth
+            -> auth.getAuthority().equals("ROLE_ADMIN")) || user.getAuthorities().stream().anyMatch(auth
+            -> auth.getAuthority().equals("ROLE_SALE_MANAGER"))
+        ) {
             et.integerEqualsTo("saleId", filter.getSaleId());
-        }
-        else {
+        } else {
             et.integerEqualsTo("saleId", user.getId());
         }
-        if (filter.getFromDepartment() == null) {
-            et.integerEqualsTo("fromDepartment", filter.getFromDepartment());
-        }
+
         List<Data> lists = et.stringEqualsTo("customerMobile", filter.getCustomerMobile())
             .stringEqualsTo("customerEmail", filter.getCustomerEmail())
             .integerEqualsTo("status", filter.getStatus())
@@ -242,8 +228,6 @@ public class DataService extends Subscriber implements Publisher {
             .list();
         return new Ipage<>(LIMIT,et.count(), filter.page(), lists);
     }
-
-
 
     public Ipage<Data> leadOfWork(DataFilter filter) {
         int LimitInWork = 20;
@@ -264,6 +248,7 @@ public class DataService extends Subscriber implements Publisher {
     public Ipage<?> leadOfOrder(DataFilter filter) {
         int LIMIT = 20;
         int OFFSET = ( filter.page() - 1 ) * LIMIT;
+
         final String totalSQL = "FROM `data` d left join `customer_order` c on d.id = c.data_id ";
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
         sqlBuilder.addStringEquals("c.code", filter.getOrderCode());
@@ -333,57 +318,35 @@ public class DataService extends Subscriber implements Publisher {
     }
 
     public Data findByPhone(String phone){
-        var data = dataRepository.findFirstByPhone(phone).orElseThrow(
-                () -> new RuntimeException("This phone number does not exist in the system.")
+        return dataRepository.findFirstByPhone(phone).orElseThrow(
+            () -> new RuntimeException("This phone number does not exist in the system.")
         );
-        return data;
-    }
-
-    public DataMedia uploadFile(MultipartFile multipartFile, Integer sessionId, Integer dataId) throws NoSuchAlgorithmException, IOException {
-        var folderUpload = folderUpload();
-        String fileName = multipartFile.getOriginalFilename();
-        assert fileName != null : "File name not extract .!";
-        String fileMd5 = GlobalUtil.setFileName(fileName + GlobalUtil.dateToInt())  + "." +  GlobalUtil.pathNameFile(fileName);
-
-        String filePath = folderUpload + fileMd5;
-        InputStream fileStream = multipartFile.getInputStream();
-
-        File targetFile = new File(filePath);
-        FileUtils.copyInputStreamToFile(fileStream, targetFile);
-
-        DataMedia model = new DataMedia();
-        model.setSessionId(sessionId.longValue());
-        model.setDataId(dataId);
-        model.setFile(filePath.replace(System.getProperty("user.dir"), ""));
-        dataMediaRepository.save(model);
-        return model;
     }
 
     public void updateDataMedias(Integer dataId, Integer sessionId) {
         final String sql = "UPDATE data_media SET data_id = :dataId WHERE data_id = 0 AND session_id = :sessionId";
         entityManager.createNativeQuery(sql)
-                .setParameter("dataId", dataId)
-                .setParameter("sessionId", sessionId)
-                .executeUpdate();
+            .setParameter("dataId", dataId)
+            .setParameter("sessionId", sessionId)
+            .executeUpdate();
     }
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public void reAssignLeadManual(int leadId, int saleId) {
         var iodata = dataRepository.findById((long) leadId).orElseThrow(
-                () -> new RuntimeException("Lead does not exist")
+            () -> new RuntimeException("Lead does not exist")
         );
         var sale = userRepository.findById(saleId).orElseThrow(
-                () -> new RuntimeException("user does not exist")
+            () -> new RuntimeException("user does not exist")
         );
         iodata.setSaleId(sale.getId());
-//        Integer leaderId = userGroupDao.findLeaderIdBySaleId(sale.getId());
-//        iodata.setGroupSaleId(leaderId);
         iodata.setAssignTo(sale.getSsoId());
+
         DataOwner owner = dataOwnerDao.findByPhone(iodata.getCustomerMobile());
         DataOwner dataOwner = owner != null ? owner : new DataOwner();
         dataOwner.setCustomerMobile(iodata.getCustomerMobile());
         dataOwner.assignDepartmentMql();
-        dataOwner.setSaleId(Long.valueOf(sale.getId().longValue()));
+        dataOwner.setSaleId(sale.getId().longValue());
         dataOwner.setSaleName(sale.getSsoId());
         dataOwner.setInTime(new Date());
         if(owner == null) {
@@ -416,12 +379,12 @@ public class DataService extends Subscriber implements Publisher {
         DataOwner dataOwner = dataOwnerDao.findByPhone(data.getCustomerMobile());
         if(dataOwner == null) {
             User sale = userRepository.findById(data.getSaleId()).orElseThrow(
-                    () -> new RuntimeException("user does not exist")
+                () -> new RuntimeException("user does not exist")
             );
             dataOwner = new DataOwner();
             dataOwner.setCustomerMobile(data.getCustomerMobile());
             dataOwner.assignDepartmentMql();
-            dataOwner.setSaleId(Long.valueOf(sale.getId().longValue()));
+            dataOwner.setSaleId(sale.getId().longValue());
             dataOwner.setSaleName(sale.getSsoId());
             dataOwner.setInTime(new Date());
             dataOwnerRepository.save(dataOwner);
@@ -436,9 +399,9 @@ public class DataService extends Subscriber implements Publisher {
     }
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
-    public void updateStatusCohoi(Long dataId){
+    public void updateStatusCoHoi(Long dataId){
         var data = dataRepository.findById(dataId).orElseThrow(
-                () -> new RuntimeException("Lead does not exist")
+            () -> new RuntimeException("Lead does not exist")
         );
         data.setStatus(DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
         dataRepository.save(data);

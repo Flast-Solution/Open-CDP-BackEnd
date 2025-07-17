@@ -133,19 +133,6 @@ public class DataController extends BaseController {
         return MyResponse.response(isUpdate ? "OK" : "FALSE");
     }
 
-    @PostMapping("/uploads-file")
-    public MyResponse<?> multiFileUpload(
-            @RequestParam Integer sessionId,
-            @RequestParam(defaultValue = "0") Integer dataId,
-            @RequestParam(value = "file") MultipartFile multipartFile
-    ) throws Exception {
-        if (multipartFile.isEmpty()) {
-            MyResponse.response(400, "Upload file failed");
-        }
-        var response = dataService.uploadFile(multipartFile, sessionId, dataId);
-        return MyResponse.response(response);
-    }
-
     @GetMapping("/not-taken-care")
     public MyResponse<?> findNotTakenCare(NoOrderFilter filter){
         var data = dataCareService.fetchLeadNoCare(filter);

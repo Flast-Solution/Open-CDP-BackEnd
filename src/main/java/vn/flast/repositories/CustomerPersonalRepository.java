@@ -8,5 +8,4 @@ public interface CustomerPersonalRepository extends JpaRepository<CustomerPerson
 
     @Query("FROM CustomerPersonal c WHERE c.mobile = :phone")
     CustomerPersonal findByPhone(String phone);
-
 }

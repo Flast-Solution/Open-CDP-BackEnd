@@ -1,34 +1,41 @@
 package vn.flast.domains.order;
 
-import lombok.With;
 import vn.flast.domains.payments.OrderPaymentInfo;
+import vn.flast.entities.order.OrderDetail;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerPersonal;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.utils.BeanUtil;
 import vn.flast.utils.Common;
+import vn.flast.utils.CopyProperty;
 import vn.flast.utils.JsonUtils;
 import vn.flast.utils.NumberUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public record OrderInput(
     Long id,
-    @With CustomerPersonal customer,
+    CustomerPersonal customer,
     OrderDiscount discount,
-    @With OrderPaymentInfo paymentInfo,
+    OrderPaymentInfo paymentInfo,
     Integer vat,
     Integer shipping,
-    List<CustomerOrderDetail> details,
+    List<OrderDetail> details,
     String note,
     String address,
     Long dataId
 ) {
+
     public void transformOrder(CustomerOrder order) {
         if(Common.CollectionIsEmpty(details)) {
             throw new RuntimeException("Order detail is required .!");
+        }
+        if(Objects.isNull(customer)) {
+            throw new RuntimeException("Customer is required .!");
         }
         order.setId(id);
         order.setCustomerId(customer.getId());
@@ -47,12 +54,37 @@ public record OrderInput(
         order.setType(isPaid ? CustomerOrder.TYPE_ORDER: CustomerOrder.TYPE_CO_HOI);
     }
 
-    public CustomerPersonal transformCustomer(CustomerPersonal customer) {
-        if (customer.getMobile() == null) {
+    public List<CustomerOrderDetail> transformOrderDetail(CustomerOrder order, int status) {
+        List<CustomerOrderDetail> detailList = new ArrayList<>();
+        int i = 1;
+        for(OrderDetail detailInput : details) {
+            CustomerOrderDetail detail = new CustomerOrderDetail();
+            CopyProperty.CopyIgnoreNull(detailInput, detail);
+            detail.setCustomerOrderId(order.getId());
+            if(Objects.nonNull(detail.getCode())){
+                detail.setCode(order.getCode().concat("-" + i));
+                detail.setCreatedAt(new Date());
+            }
+            if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
+                detail.setStatus(status);
+            }
+            OrderUtils.calDetailPrice(detail, detailInput);
+            detailList.add(detail);
+            i++;
+        }
+        return detailList;
+    }
+
+    public CustomerPersonal transformCustomer() {
+        if (Objects.isNull(customer.getMobile())) {
             throw new RuntimeException("Phone number cannot be left blank!");
         }
-        var customerRepo = BeanUtil.getBean(CustomerPersonalRepository.class);
-        var customerOld = customerRepo.findByPhone(customer.getMobile());
-        return (customerOld != null) ? customerOld : customerRepo.save(customer);
+        var repository = BeanUtil.getBean(CustomerPersonalRepository.class);
+        var model = repository.findByPhone(customer.getMobile());
+        if(Objects.isNull(model)) {
+            model = new CustomerPersonal();
+        }
+        CopyProperty.CopyIgnoreNull(customer, model);
+        return repository.save(model);
     }
 }

@@ -1,6 +1,7 @@
 package vn.flast.domains.order;
 
 import org.apache.commons.lang3.StringUtils;
+import vn.flast.entities.order.OrderDetail;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.utils.Common;
@@ -36,6 +37,15 @@ public class OrderUtils {
         String subYear = year.substring(year.length() - 2);
         String end = day + month + subYear + lastThereDigits;
         return "O" + getAlphaNumericString(1) + getAlphaNumericString(2) + end;
+    }
+
+    public static void calDetailPrice(CustomerOrderDetail detail, OrderDetail input) {
+        double subTotal;
+        subTotal = detail.getPrice() * detail.getQuantity();
+        double priceOff = input.getDiscountAmount();
+        double feeAfterPromotion = subTotal - priceOff;
+        detail.setPriceOff(priceOff);
+        detail.setTotal(feeAfterPromotion);
     }
 
     public static void calculatorPrice(CustomerOrder order) {

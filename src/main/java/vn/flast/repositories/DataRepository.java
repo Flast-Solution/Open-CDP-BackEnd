@@ -16,6 +16,4 @@ public interface DataRepository extends JpaRepository<Data, Long> {
     List<Data> fetchDataIds(@Param("ids") List<Long> ids);
 
     Boolean existsByCustomerMobile(String phone);
-
-
 }

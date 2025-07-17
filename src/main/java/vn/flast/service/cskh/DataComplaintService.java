@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import vn.flast.controller.common.BaseController;
 import vn.flast.entities.ComplaintFilter;
 import vn.flast.models.DataComplaint;
-import vn.flast.models.UserKpi;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataComplaintRepository;

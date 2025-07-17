@@ -27,7 +27,8 @@ public class OrderController {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Input invalid .!");
         }
-        return MyResponse.response("");
+        var order = orderService.saveOpportunity(entity);
+        return MyResponse.response(order);
     }
 
     @GetMapping("/view")

@@ -63,12 +63,14 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
         info.lichSuTuongTac = dataDao.lastInteracted(phone);
         var listChuaHt = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_CO_HOI);
         List<CustomerOrderWithoutDetails> donChuaht = CopyProperty.copyListIgnoreNull(
-                listChuaHt, CustomerOrderWithoutDetails::new
+            listChuaHt,
+            CustomerOrderWithoutDetails::new
         );
         info.donChuaHoanThanh = donChuaht;
         var listDonHoanThanh = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_ORDER);
         List<CustomerOrderWithoutDetails> donHoanThanh = CopyProperty.copyListIgnoreNull(
-                listDonHoanThanh, CustomerOrderWithoutDetails::new
+            listDonHoanThanh,
+            CustomerOrderWithoutDetails::new
         );
         info.dataCares = dataCareService.findByCustomerId(cId);
         info.baDonGanNhat = donHoanThanh;
@@ -82,18 +84,17 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
             return null;
         }
         return userRepository.findById(dataOwner.getSaleId().intValue()).orElseThrow(
-                () -> new RuntimeException("user does not exist")
+            () -> new RuntimeException("user does not exist")
         );
     }
 
-    public CustomerPersonal findByPhone(String phone){
-        var customer = customerRepository.findByPhone(phone);
-        return customer;
+    public CustomerPersonal findByPhone(String phone) {
+        return customerRepository.findByPhone(phone);
     }
 
     public CustomerPersonal createCustomer(Data data) {
         CustomerPersonal model = new CustomerPersonal();
-        model.setSourceId(Long.valueOf(data.getSource().longValue()));
+        model.setSourceId(data.getSource().longValue());
         model.setEmail(data.getCustomerEmail());
         model.setName(data.getCustomerName());
         model.setSaleId(data.getSaleId());
@@ -125,9 +126,11 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
         sqlBuilder.addStringEquals("c.code", filter.getCode());
         sqlBuilder.addNotNUL("e.id");
         sqlBuilder.addDesc("e.id");
+
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
         Long count = sqlBuilder.countOrSumQuery(countQuery);
+
         var nativeQuery = entityManager.createNativeQuery("SELECT e.* " + finalQuery , CustomerEnterprise.class);
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
@@ -136,15 +139,11 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
         return Ipage.generator(LIMIT, count, filter.page(), listData);
     }
 
-    public List<?> getCustomerLevel(){
-        final String sqlTotallevel = """
-                SELECT COUNT(c.id) AS 'total', c.level AS level FROM `customer_personal` c  WHERE c.`status` = 1 GROUP BY c.level
-                """;
-        var nativeQuery = entityManager.createNativeQuery(sqlTotallevel, CustomerLever.REPORT_CUSTOMER_LEVEL);
-        List<CustomerLever> iList = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerLever.class);
-        return iList;
-
+    public List<?> getCustomerLevel() {
+        final String sqlTotalLevel = """
+           SELECT COUNT(c.id) AS 'total', c.level AS level FROM `customer_personal` c  WHERE c.`status` = 1 GROUP BY c.level
+        """;
+        var nativeQuery = entityManager.createNativeQuery(sqlTotalLevel, CustomerLever.REPORT_CUSTOMER_LEVEL);
+        return EntityQuery.getListOfNativeQuery(nativeQuery, CustomerLever.class);
     }
-
-
 }
