@@ -5,8 +5,6 @@ import vn.flast.entities.order.OrderDetail;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerPersonal;
-import vn.flast.repositories.CustomerPersonalRepository;
-import vn.flast.utils.BeanUtil;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.JsonUtils;
@@ -80,6 +78,7 @@ public record OrderInput(
         detail.setName(detailInput.getOrderName());
         detail.setTotal(detailInput.getTotalPrice());
         detail.setPriceOff(detailInput.getDiscountAmount());
+        detail.setSkuId(Long.valueOf(detailInput.getSkuDetailCode()));
         return detail;
     }
 }
