@@ -36,7 +36,7 @@ public class SkuService {
             .map(ProductSkus::getId)
             .collect(Collectors.toList());
 
-        Map<Long, List<ProductSkusDetails>> detailMap = productSkusDetailsRepository.findByListId(skuIds).stream()
+        Map<Long, List<ProductSkusDetails>> detailMap = productSkusDetailsRepository.findBySkusId(skuIds).stream()
             .collect(Collectors.groupingBy(ProductSkusDetails::getSkuId));
 
         Map<Long, List<ProductSkusPrice>> priceRangeMap = skusPriceRepository.findByListSkuId(skuIds).stream()

@@ -174,9 +174,6 @@ public class ProductService {
         saleProduct.setListProperties(productAttributedRepository.findByProduct(entity.getId()));
         saleProduct.setSkus(skuService.listProductSkuAndDetail(entity.getId()));
         saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(entity.getId()));
-        saleProduct.getSkus().forEach(
-            sku -> sku.setListPriceRange(skusPriceRepository.findByProduct(entity.getId()))
-        );
         return saleProduct;
     }
 
@@ -187,11 +184,8 @@ public class ProductService {
         SaleProduct saleProduct = new SaleProduct();
         CopyProperty.CopyIgnoreNull(entity, saleProduct);
         saleProduct.setListProperties(productAttributedRepository.findByProduct(entity.getId()));
-        saleProduct.setSkus(skuService.listProductSkuAndDetail(entity.getId()));
+        saleProduct.setSkus(skuService.listProductSkuAndDetail(saleProduct.getId()));
         saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(entity.getId()));
-        saleProduct.getSkus().forEach(
-            sku -> sku.setListPriceRange(skusPriceRepository.findBySkuId(sku.getId()))
-        );
         saleProduct.setImageLists(mediaService.list(Math.toIntExact(id), "Product")
             .stream()
             .map(Media::getFileName).collect(Collectors.toList()));
@@ -248,9 +242,6 @@ public class ProductService {
             saleProduct.setListProperties(productAttributedRepository.findByProduct(product.getId()));
             saleProduct.setSkus(skuService.listProductSkuAndDetail(product.getId()));
             saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(product.getId()));
-            saleProduct.getSkus().forEach( sku
-                -> sku.setListPriceRange(skusPriceRepository.findBySkuId(sku.getId()))
-            );
             saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product")
                 .stream()
                 .map(Media::getFileName).collect(Collectors.toList()));
