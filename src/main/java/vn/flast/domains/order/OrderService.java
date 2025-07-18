@@ -43,7 +43,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.TimeZone;
 
 @Service("orderService")
 @Log4j2
@@ -94,29 +93,25 @@ public class OrderService  implements Publisher, Serializable {
             );
             CopyProperty.CopyIgnoreNull(entity, order);
         } else {
-            Data data = dataRepository.findFirstByPhone(input.customer().getMobile()) .orElseGet(() -> {
-                Data model = new Data();
-                model.setCustomerMobile(order.getCustomerMobilePhone());
-                model.setSource(DataService.DATA_SOURCE.DIRECT.getSource());
-                model.setCustomerName(order.getCustomerReceiverName());
-                model.setStaff(Common.getSsoId());
-                model.setSaleId(Common.getUserId());
-                model.setStatus(DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
-                return dataRepository.save(model);
-            });
+            Data data = dataRepository.findFirstByPhone(input.customer().getMobile()).orElseThrow(
+                () -> new ResourceNotFoundException("Lead Not Found .!")
+            );
+            data.setStatus(DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
+            dataRepository.save(data);
+
             order.setDataId(data.getId());
             order.setSource(data.getSource());
             order.setPaid(0.0);
         }
-        if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
-            order.setStatus(statusOrderRepository.findStartOrder().getId());
-        }
+        order.setStatus(statusOrderRepository.findStartOrder().getId());
         var listDetails = input.transformOrderDetail(order, order.getStatus());
         order.setDetails(listDetails);
-        detailRepository.saveAll(listDetails);
-
         OrderUtils.calculatorPrice(order);
         orderRepository.save(order);
+
+        listDetails.forEach(detail -> detail.setCustomerOrderId(order.getId()));
+        detailRepository.saveAll(listDetails);
+
         this.sendMessageOnOrderChange(order);
         if (Objects.nonNull(input.paymentInfo()) && Boolean.TRUE.equals(input.paymentInfo().status())) {
             order.setPaid(0.0);
@@ -452,7 +447,7 @@ public class OrderService  implements Publisher, Serializable {
     @Transactional
     public OrderResponse findById(Long id) {
         var order = orderRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Order not found .!")
+            () -> new ResourceNotFoundException("Order not found .!")
         );
         log.info(order.getCustomerId());
         return withOrderDetail(order);
@@ -470,24 +465,6 @@ public class OrderService  implements Publisher, Serializable {
         }
     }
 
-    public static String createOrderCode(String customerMobilePhone, String source) {
-        if (customerMobilePhone == null) {
-            return null;
-        }
-        String lastThereDigits = customerMobilePhone.substring(customerMobilePhone.length() - 3);
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-        int day = calendar.get(Calendar.DATE);
-        /* month +1 the month for current month */
-        int month = calendar.get(Calendar.MONTH) + 1;
-        String year = String.valueOf(calendar.get(Calendar.YEAR));
-        String subYear = year.substring(year.length() - 2);
-        String endCode = day + month + subYear + lastThereDigits;
-        return source
-            + Common.getAlphaNumericString(1, false)
-            + Common.getAlphaNumericString(2, true)
-            + endCode;
-    }
-
     @Transactional
     public void cancelCoHoi(Long orderId, Boolean isDetail){
         Integer statusCancel = statusOrderRepository.findCancelOrder().getId();
@@ -501,21 +478,6 @@ public class OrderService  implements Publisher, Serializable {
                 () -> new RuntimeException("error no record exists")
             );
             order.setStatus(statusCancel);
-        }
-    }
-
-    public static long calTotal(CustomerOrder order) {
-        try {
-            Double subtotal = order.getSubtotal();
-            int shippingCost = NumberUtils.numberWithDefaultZero(order.getShippingCost());
-            long priceOff = NumberUtils.numberWithDefaultZero(order.getPriceOff().intValue());
-            int feeSaleOther = NumberUtils.numberWithDefaultZero(order.getFeeSaleOther());
-            int vatPrice = order.calVat();
-            long total = (long) (subtotal + shippingCost + feeSaleOther + vatPrice);
-            return (long) (total - priceOff - order.calCastBack());
-        } catch (Exception ex) {
-            log.info("Tính chi phí đơn hàng lỗi: {}", ex.getMessage());
-            return 0;
         }
     }
 

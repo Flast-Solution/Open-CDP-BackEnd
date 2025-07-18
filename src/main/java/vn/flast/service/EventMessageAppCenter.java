@@ -1,6 +1,12 @@
-package vn.flast.orchestration;
+package vn.flast.service;
 
 import jakarta.annotation.PostConstruct;
+import vn.flast.orchestration.EventDelegate;
+import vn.flast.orchestration.EventTopic;
+import vn.flast.orchestration.MessageInterface;
+import vn.flast.orchestration.PubSubService;
+import vn.flast.orchestration.Publisher;
+import vn.flast.orchestration.Subscriber;
 import vn.flast.utils.ActionThread;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Service("eventCenter")
-public class EventCenter extends ActionThread implements EventDelegate {
+@Service("eventMessageAppCenter")
+public class EventMessageAppCenter extends ActionThread implements EventDelegate {
 
     private PubSubService pubSubService;
 
@@ -31,7 +37,7 @@ public class EventCenter extends ActionThread implements EventDelegate {
     private Subscriber dataSubscriber;
 
     @Autowired
-    @Qualifier("customerService")
+    @Qualifier("customerPersonalService")
     private Subscriber customerSubscriber;
 
     private final List<Subscriber> subscriberList  = new ArrayList<>();

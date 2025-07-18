@@ -57,13 +57,11 @@ public record OrderInput(
         for(OrderDetail detailInput : details) {
             CustomerOrderDetail detail = createOrderDetailFromInput(detailInput);
             detail.setCustomerOrderId(order.getId());
-            if(Objects.nonNull(detail.getCode())){
+            if(Objects.nonNull(order.getCode())){
                 detail.setCode(order.getCode().concat("-" + i));
                 detail.setCreatedAt(new Date());
             }
-            if(order.getType().equals(CustomerOrder.TYPE_ORDER)){
-                detail.setStatus(status);
-            }
+            detail.setStatus(status);
             OrderUtils.calDetailPrice(detail, detailInput);
             detailList.add(detail);
             i++;

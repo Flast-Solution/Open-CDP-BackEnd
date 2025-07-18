@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import vn.flast.controller.common.BaseController;
 import vn.flast.entities.lead.LeadCareFilter;
 import vn.flast.entities.lead.NoOrderFilter;
@@ -48,29 +47,31 @@ public class DataController extends BaseController {
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @PostMapping(value = "/create")
-    public MyResponse<?> create(@Valid @RequestParam(defaultValue = "0") Integer sessionId, @RequestBody Data iodata, Errors errors) {
+    public MyResponse<?> create(
+        @Valid
+        @RequestParam(defaultValue = "0") Integer sessionId,
+        @RequestBody Data iodata,
+        Errors errors
+    ) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var userName =getInfo();
+        var userName = getInfo();
         iodata.setStaff(getUsername());
-        boolean isAdminOrManager = userName.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_SALE")
-                        || auth.getAuthority().equals("ROLE_SALE_MANAGER"));
+        boolean isAdminOrManager = userName.getAuthorities().stream().anyMatch(auth
+            -> auth.getAuthority().equals("ROLE_SALE") || auth.getAuthority().equals("ROLE_SALE_MANAGER")
+        );
         if(dataRepository.existsByCustomerMobile(iodata.getCustomerMobile())){
             iodata.setFromDepartment(Data.FROM_DEPARTMENT.FROM_RQL.value());
-        }
-        else if(isAdminOrManager) {
+        } else if(isAdminOrManager) {
             iodata.setFromDepartment(Data.FROM_DEPARTMENT.FROM_SALE.value());
-        }
-        else {
+        } else {
             iodata.setFromDepartment(Data.FROM_DEPARTMENT.FROM_DATA.value());
         }
         iodata.setStatus(DataService.DATA_STATUS.CREATE_DATA.getStatusCode());
         dataService.saveData(iodata);
-        int dataId = Optional.ofNullable(iodata.getId())
-            .map(Long::intValue).orElse(0);
+        int dataId = Optional.ofNullable(iodata.getId()).map(Long::intValue).orElse(0);
         if(dataId != 0) {
             dataService.createAndUpdateDataMedias(iodata.getFileUrls(), sessionId, dataId);
         }

@@ -18,14 +18,14 @@ public class CustomerController {
     private CustomerPersonalRepository customerRepository;
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerPersonalService customerPersonalService;
 
     @Autowired
     private CustomerServiceGlobal cusService;
 
     @GetMapping("/find")
     public MyResponse<?> find(CustomerFilter filter) {
-        var customers = customerService.find(filter);
+        var customers = customerPersonalService.find(filter);
         return MyResponse.response(customers);
     }
 

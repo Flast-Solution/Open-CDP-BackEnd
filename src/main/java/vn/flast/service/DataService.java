@@ -5,17 +5,16 @@ import jakarta.persistence.PersistenceContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.config.ConfigUtil;
 import vn.flast.controller.common.BaseController;
-import vn.flast.dao.DataOwnerDao;
 import vn.flast.models.DataOwner;
 import vn.flast.models.User;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
+import vn.flast.orchestration.Message;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.PubSubService;
 import vn.flast.orchestration.Publisher;
@@ -29,13 +28,11 @@ import vn.flast.models.DataWork;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.DataMediaRepository;
 import vn.flast.repositories.DataRepository;
-import vn.flast.service.customer.CustomerServiceGlobal;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.DateUtils;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.GlobalUtil;
-import vn.flast.utils.NumberUtils;
 import vn.flast.utils.SqlBuilder;
 
 import java.util.ArrayList;
@@ -61,10 +58,8 @@ public class DataService extends Subscriber implements Publisher {
     private final DataRepository dataRepository;
     private final DataWorkService dataWorkService;
     private final UserRepository userRepository;
-    private final DataOwnerDao dataOwnerDao;
     private final DataOwnerRepository dataOwnerRepository;
-    private final CustomerServiceGlobal customerService;
-    private final BaseController baseController; // This is now final
+    private final BaseController baseController;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -97,7 +92,7 @@ public class DataService extends Subscriber implements Publisher {
     @Override
     public void executeMessage() {
         ListIterator<MessageInterface> iterator = subscriberMessages.listIterator();
-        while(iterator.hasNext()){
+        while(iterator.hasNext()) {
             var message = iterator.next();
             log.info("Message Topic -> {} : {}", message.getTopic(), message.getPayload());
             iterator.remove();
@@ -124,27 +119,6 @@ public class DataService extends Subscriber implements Publisher {
         }
     }
 
-    @Getter
-    public enum DATA_SOURCE {
-        WEB(0),
-        FACEBOOK(1),
-        ZALO(2),
-        HOTLINE(3),
-        DIRECT(4),
-        EMAIL(5),
-        MKT0D(6),
-        GIOITHIEU(7),
-        CSKH(8),
-        WHATSAPP(11),
-        PARTNER(9),
-        SHOPEE(10),
-        TIKTOK(11);
-        private final int source;
-        DATA_SOURCE(int source) {
-            this.source = source;
-        }
-    }
-
     public void createAndUpdateDataMedias(List<String> urls, int sessionId, int dataId) {
         if(!urls.isEmpty()) {
             urls.forEach(url -> dataMediaRepository.save(new DataMedia(dataId, (long) sessionId, url)));
@@ -154,16 +128,22 @@ public class DataService extends Subscriber implements Publisher {
         }
     }
 
-    public void saveData(Data data) {
-        dataRepository.save(data);
+    public void saveData(Data model) {
+        dataRepository.save(model);
+        updateOwner(model);
+        sendMessageOnOrderChange(model);
+    }
+
+    public void sendMessageOnOrderChange(Data model) {
+        this.publish(Message.create(EventTopic.DATA_CHANGE, model.clone()));
     }
 
     public Boolean delete(Long id) {
-        Data dd = this.findById(id);
-        if(dd != null) {
-            this.remove(dd);
+        Data model = this.findById(id);
+        if(Objects.nonNull(model)) {
+            this.remove(model);
         }
-        return dd != null;
+        return model != null;
     }
 
     @Transactional
@@ -341,60 +321,22 @@ public class DataService extends Subscriber implements Publisher {
         );
         iodata.setSaleId(sale.getId());
         iodata.setAssignTo(sale.getSsoId());
-
-        DataOwner owner = dataOwnerDao.findByPhone(iodata.getCustomerMobile());
-        DataOwner dataOwner = owner != null ? owner : new DataOwner();
-        dataOwner.setCustomerMobile(iodata.getCustomerMobile());
-        dataOwner.assignDepartmentMql();
-        dataOwner.setSaleId(sale.getId().longValue());
-        dataOwner.setSaleName(sale.getSsoId());
-        dataOwner.setInTime(new Date());
-        if(owner == null) {
-            dataOwnerRepository.save(dataOwner);
-        }
-        onCreatedUpdateData(iodata, "update");
+        updateOwner(iodata);
     }
 
-    public void onCreatedUpdateData(Data data, String mode) {
-        if("update".equals(mode) && data.getSource().equals(DATA_SOURCE.WEB.getSource())) {
-            createOwnerFromWeb(data);
-            return;
-        }
-        var customer = customerService.findByPhone(data.getCustomerMobile());
-        if(Objects.nonNull(customer)) {
-            if(StringUtils.isNotEmpty((data.getCustomerEmail()))) {
-                customer.setEmail(data.getCustomerEmail());
-            }
-            customer.setSaleId(Optional.ofNullable(data.getSaleId()).orElse(0));
-        } else {
-            customerService.createCustomer(data);
-        }
-    }
-
-    public void createOwnerFromWeb (Data data) {
-        var customer = customerService.findByPhone(data.getCustomerMobile());
-        if(customer == null) {
-            customer = customerService.createCustomer(data);
-        }
-        DataOwner dataOwner = dataOwnerDao.findByPhone(data.getCustomerMobile());
-        if(dataOwner == null) {
+    public void updateOwner (Data data) {
+        DataOwner dataOwner = dataOwnerRepository.findByMobile(data.getCustomerMobile());
+        if(Objects.isNull(dataOwner)) {
             User sale = userRepository.findById(data.getSaleId()).orElseThrow(
                 () -> new RuntimeException("user does not exist")
             );
             dataOwner = new DataOwner();
             dataOwner.setCustomerMobile(data.getCustomerMobile());
             dataOwner.assignDepartmentMql();
-            dataOwner.setSaleId(sale.getId().longValue());
+            dataOwner.setSaleId(sale.getId());
             dataOwner.setSaleName(sale.getSsoId());
             dataOwner.setInTime(new Date());
             dataOwnerRepository.save(dataOwner);
-        }
-        if(StringUtils.isNotEmpty((data.getCustomerEmail()))) {
-            customer.setEmail(data.getCustomerEmail());
-        }
-        if(NumberUtils.gteZero(customer.getSaleId())) {
-            customer.setSaleId(Math.toIntExact(dataOwner.getSaleId()));
-            customerService.save(customer);
         }
     }
 

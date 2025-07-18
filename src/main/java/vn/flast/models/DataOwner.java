@@ -1,6 +1,5 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,13 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Date;
 
 @Table(name = "data_owner")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class DataOwner {
 
     @Id
@@ -27,7 +24,7 @@ public class DataOwner {
     private String customerMobile;
 
     @Column(name = "sale_id")
-    private Long saleId;
+    private Integer saleId;
 
     @Column(name = "department_id")
     private Integer departmentId;

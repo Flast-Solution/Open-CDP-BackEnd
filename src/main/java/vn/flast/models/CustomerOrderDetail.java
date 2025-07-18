@@ -15,8 +15,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import vn.flast.repositories.CustomerOrderStatusRepository;
-import vn.flast.utils.BeanUtil;
 import vn.flast.utils.NumberUtils;
 import java.util.Date;
 
@@ -52,7 +50,7 @@ public class CustomerOrderDetail {
     private String skuInfo;
 
     @Column(name = "price")
-    private Long price;
+    private Double price;
 
     @Column(name = "quantity")
     private Integer quantity = 0;
@@ -68,12 +66,6 @@ public class CustomerOrderDetail {
 
     @Column(name = "customer_note")
     private String customerNote;
-
-    @Column(name = "ship_status")
-    private Integer shipStatus;
-
-    @Column(name = "ship_done_at")
-    private Date shipDoneAt;
 
     @Column(name = "status")
     private Integer status;
@@ -98,10 +90,5 @@ public class CustomerOrderDetail {
         if(NumberUtils.isNull(status)) {
             status = 0;
         }
-    }
-
-    public boolean donHang() {
-        var statusRepo =  BeanUtil.getBean(CustomerOrderStatusRepository.class);
-        return this.status.equals(statusRepo.findStartOrder().getId());
     }
 }

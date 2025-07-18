@@ -25,7 +25,7 @@ import java.util.List;
 @Table(name = "data")
 @Entity
 @Getter @Setter
-public class Data {
+public class Data implements Cloneable {
 
     public enum FROM_DEPARTMENT {
         FROM_DATA(0) {
@@ -153,8 +153,6 @@ public class Data {
     List<DataMedia> listFileUploads = new ArrayList<>();
 
 
-
-
     public static String UPLOAD_PATH = "/uploads/data/";
 
     @Transient
@@ -178,7 +176,6 @@ public class Data {
     }
 
     public enum AfterSaleCall {
-
         CHUA_LIEN_HE("Chưa liên hệ"),
         KHONG_HAI_LONG("Không hài lòng"),
         HAI_LONG("Hài lòng"),
@@ -190,6 +187,15 @@ public class Data {
         }
         AfterSaleCall(String value) {
             this.value = value;
+        }
+    }
+
+    @Override
+    public Data clone() {
+        try {
+            return (Data) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
         }
     }
 }
