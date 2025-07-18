@@ -70,21 +70,21 @@ public class CustomerPersonalService extends Subscriber {
     }
 
     private void createCustomerOnData(Data data) {
-        var customer = customerPersonalRepository.findByPhone(data.getCustomerMobile());
+        CustomerPersonal customer = customerPersonalRepository.findByPhone(data.getCustomerMobile());
         if(Objects.nonNull(customer)) {
             var owner = dataOwnerRepository.findByMobile(data.getCustomerMobile());
             customer.setSaleId(owner.getSaleId());
             customerPersonalRepository.save(customer);
-            return;
+        } else {
+            customer = new CustomerPersonal();
+            customer.setSaleId(data.getSaleId());
+            customer.setMobile(data.getCustomerMobile());
+            customer.setName(data.getCustomerName());
+            customer.setFacebookId(data.getCustomerFacebook());
+            customer.setSourceId(data.getServiceId());
+            customer.setEmail(data.getCustomerEmail());
+            customerPersonalRepository.save(customer);
         }
-        customer = new CustomerPersonal();
-        customer.setSaleId(data.getSaleId());
-        customer.setMobile(data.getCustomerMobile());
-        customer.setName(data.getCustomerName());
-        customer.setFacebookId(data.getCustomerFacebook());
-        customer.setSourceId(data.getServiceId());
-        customer.setEmail(data.getCustomerEmail());
-        customerPersonalRepository.save(customer);
     }
 
     public void increaseNumOfOrder(Long id) {
