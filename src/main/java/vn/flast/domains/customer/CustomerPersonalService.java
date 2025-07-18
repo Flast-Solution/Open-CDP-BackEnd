@@ -72,8 +72,8 @@ public class CustomerPersonalService extends Subscriber {
     private void createCustomerOnData(Data data) {
         CustomerPersonal customer = customerPersonalRepository.findByPhone(data.getCustomerMobile());
         if(Objects.nonNull(customer)) {
-            var owner = dataOwnerRepository.findByMobile(data.getCustomerMobile());
-            customer.setSaleId(owner.getSaleId());
+            var dataOwner = dataOwnerRepository.findByMobile(data.getCustomerMobile());
+            customer.setSaleId(dataOwner.getSaleId());
             customerPersonalRepository.save(customer);
         } else {
             customer = new CustomerPersonal();
