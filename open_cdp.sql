@@ -17,6 +17,37 @@
 /*M!100616 SET @OLD_NOTE_VERBOSITY=@@NOTE_VERBOSITY, NOTE_VERBOSITY=0 */;
 
 --
+-- Table structure for table `ai_context`
+--
+
+DROP TABLE IF EXISTS `ai_context`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ai_context` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `bId` int DEFAULT NULL,
+  `pId` int DEFAULT NULL,
+  `content` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created` datetime DEFAULT NULL,
+  `updated` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ai_context`
+--
+
+LOCK TABLES `ai_context` WRITE;
+/*!40000 ALTER TABLE `ai_context` DISABLE KEYS */;
+INSERT INTO `ai_context` VALUES
+(1,NULL,NULL,'### Tờ Rơi\n- **Các kiểu gia công đã bao gồm mà không tính phí**: Xén thành phẩm  \n- **Kích thước A4**: 210 x 297 mm  \n- **Loại giấy**: Coucher  \n### Lưu ý\n### Không in khi nội dung mờ\n','Tờ rơi','2025-06-09 00:28:27','2025-06-09 00:28:27'),
+(2,NULL,NULL,'### Tờ Rơi\n- **Các kiểu gia công đã bao gồm mà không tính phí**: Xén thành phẩm  \n- **Kích thước A4**: 210 x 297 mm  \n- **Loại giấy**: Coucher  \n### Lưu ý\n### Không in khi nội dung mờ\n','Tờ rơi2','2025-06-09 22:28:20','2025-06-09 22:28:20');
+/*!40000 ALTER TABLE `ai_context` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `attributed`
 --
 
@@ -236,37 +267,6 @@ INSERT INTO `config` VALUES
 UNLOCK TABLES;
 
 --
--- Table structure for table `context`
---
-
-DROP TABLE IF EXISTS `context`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `context` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `bId` int DEFAULT NULL,
-  `pId` int DEFAULT NULL,
-  `content` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-  `created` datetime DEFAULT NULL,
-  `updated` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `context`
---
-
-LOCK TABLES `context` WRITE;
-/*!40000 ALTER TABLE `context` DISABLE KEYS */;
-INSERT INTO `context` VALUES
-(1,NULL,NULL,'### Tờ Rơi\n- **Các kiểu gia công đã bao gồm mà không tính phí**: Xén thành phẩm  \n- **Kích thước A4**: 210 x 297 mm  \n- **Loại giấy**: Coucher  \n### Lưu ý\n### Không in khi nội dung mờ\n','Tờ rơi','2025-06-09 00:28:27','2025-06-09 00:28:27'),
-(2,NULL,NULL,'### Tờ Rơi\n- **Các kiểu gia công đã bao gồm mà không tính phí**: Xén thành phẩm  \n- **Kích thước A4**: 210 x 297 mm  \n- **Loại giấy**: Coucher  \n### Lưu ý\n### Không in khi nội dung mờ\n','Tờ rơi2','2025-06-09 22:28:20','2025-06-09 22:28:20');
-/*!40000 ALTER TABLE `context` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `customer_address`
 --
 
@@ -396,7 +396,7 @@ CREATE TABLE `customer_order` (
   KEY `phone_idx` (`customer_mobile_phone`),
   KEY `data_id_idx` (`data_id`),
   KEY `customer_id_idx` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33989 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33995 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -406,15 +406,9 @@ CREATE TABLE `customer_order` (
 LOCK TABLES `customer_order` WRITE;
 /*!40000 ALTER TABLE `customer_order` DISABLE KEYS */;
 INSERT INTO `customer_order` VALUES
-(33973,15,1,NULL,NULL,NULL,'OYOO1025XQC',NULL,8,'hung5',NULL,NULL,NULL,NULL,'0963484761','hungbd@gmail.cọm',NULL,60000000,0,NULL,NULL,NULL,NULL,NULL,NULL,60000000,0,NULL,20000000,NULL,NULL,0,NULL,NULL,'2025-05-05 09:40:04','2025-06-11 21:28:47',NULL,1638,'thanhtrung',NULL,1,'order','2025-05-05 09:40:28',0,2),
-(33974,15,1,NULL,NULL,NULL,'OGDA1125JJA',NULL,8,'hung5',NULL,NULL,NULL,NULL,'0963484761','hungbd@gmail.cọm',NULL,60000000,0,NULL,NULL,NULL,NULL,NULL,NULL,60000000,0,NULL,60000000,NULL,NULL,1,NULL,NULL,'2025-05-14 02:59:14','2025-06-12 07:06:12',NULL,1638,'thanhtrung',NULL,1,'order','2025-05-14 02:59:14',0,2),
-(33975,15,1,NULL,NULL,NULL,'OYTO1125TEM',NULL,8,'hung5',NULL,NULL,NULL,NULL,'0963484761','hungbd@gmail.cọm','check 123',400000,0,NULL,NULL,NULL,NULL,NULL,NULL,400000,0,NULL,0,NULL,NULL,0,NULL,NULL,'2025-05-06 10:12:34','2025-05-20 15:36:33',NULL,1638,'thanhtrung',NULL,0,'cohoi','2025-05-20 15:36:33',0,2),
-(33976,15,1,NULL,NULL,NULL,'OSEA1325ODL',NULL,8,'hung5',NULL,NULL,NULL,NULL,'0963484761','hungbd@gmail.cọm',NULL,75000000,0,NULL,NULL,NULL,NULL,NULL,NULL,75000000,0,NULL,2000000,NULL,NULL,0,NULL,NULL,'2025-05-08 02:51:50','2025-06-11 22:29:15',NULL,1638,'thanhtrung',NULL,1,'order','2025-05-08 02:51:50',0,2),
-(33977,15,1,NULL,NULL,NULL,'OGYQ1625ZVV',NULL,8,'hung5',NULL,NULL,NULL,NULL,'0963484761','hungbd@gmail.cọm',NULL,6000000,0,NULL,NULL,NULL,NULL,NULL,NULL,6000000,0,NULL,0,NULL,NULL,0,NULL,NULL,'2025-05-01 16:13:51','2025-05-11 16:15:12',NULL,1638,'thanhtrung',NULL,0,'cohoi','2025-05-11 16:13:51',0,2),
-(33978,19,6,NULL,NULL,NULL,'OORD1925ELC',NULL,13,'Vũ Thành Trung','thanh toán trước',NULL,NULL,NULL,'0345223731','trungthanhadg@gmail.com','thanh toán trước',4000000,0,NULL,NULL,NULL,NULL,NULL,NULL,4000000,0,NULL,4000000,NULL,NULL,1,NULL,NULL,'2025-05-14 02:59:59','2025-06-21 21:32:34',NULL,67,'longhuu',NULL,2,'order','2025-05-14 02:59:59',0,2),
-(33981,25,1,NULL,NULL,NULL,'OOKM2425XQF',NULL,9,'hung5',NULL,NULL,NULL,NULL,'0963484768','hungbd271276@gmail.com',NULL,12000000,0,NULL,NULL,NULL,NULL,NULL,NULL,12000000,0,NULL,6000000,NULL,NULL,0,NULL,NULL,'2025-05-19 16:05:03','2025-06-21 21:32:33',NULL,67,'longhuu',NULL,2,'order','2025-05-19 16:05:03',0,2),
-(33984,29,4,NULL,NULL,NULL,'ODDE1825CPH',NULL,20,'Nguyễn Phương Anh',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,0,NULL,NULL,'2025-06-12 15:27:39','2025-06-12 10:33:34',NULL,1643,'saleai',NULL,0,'cohoi','2025-06-12 15:27:39',0,2),
-(33988,29,4,NULL,NULL,NULL,'OZEC1825WXJ',NULL,20,'Nguyễn Phương Anh','hà nội',NULL,NULL,NULL,NULL,NULL,NULL,400000,0,NULL,NULL,NULL,NULL,NULL,NULL,400000,0,NULL,0,NULL,NULL,0,NULL,NULL,'2025-06-12 16:02:46','2025-06-12 16:02:46',NULL,1643,'saleai',NULL,0,'cohoi','2025-06-12 16:02:46',0,2);
+(33992,32,5,NULL,NULL,NULL,'OGST2525PUX',NULL,22,'Hà NAm',NULL,NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,1100000,0,NULL,NULL,NULL,NULL,NULL,NULL,1100000,0,NULL,0,NULL,NULL,0,NULL,NULL,'2025-07-18 08:14:46','2025-07-18 08:14:46',NULL,2,'admin',NULL,1,'cohoi','2025-07-18 08:14:46',0,2),
+(33993,33,5,NULL,NULL,NULL,'OLVW2525KLC',NULL,22,'Hà NAm',NULL,NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,1100000,0,NULL,NULL,NULL,NULL,NULL,NULL,1100000,0,NULL,0,NULL,NULL,0,NULL,NULL,'2025-07-18 09:06:15','2025-07-18 09:06:15',NULL,2,'admin',NULL,1,'cohoi','2025-07-18 09:06:15',0,2),
+(33994,33,5,NULL,NULL,NULL,'OXRH2525WHN',NULL,22,'Hà NAm',NULL,NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,1600000,0,NULL,NULL,NULL,NULL,NULL,NULL,1600000,0,NULL,0,NULL,NULL,0,NULL,NULL,'2025-07-18 09:07:21','2025-07-18 09:07:21',NULL,2,'admin',NULL,1,'cohoi','2025-07-18 09:07:21',0,2);
 /*!40000 ALTER TABLE `customer_order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -432,14 +426,13 @@ CREATE TABLE `customer_order_detail` (
   `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `product_id` int DEFAULT NULL,
   `product_name` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
+  `warranty_period` varchar(200) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `sku_id` int DEFAULT '0',
   `sku_info` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
   `price` int DEFAULT '0',
   `quantity` int NOT NULL DEFAULT '0',
   `price_off` int DEFAULT '0',
   `total` int DEFAULT '0',
-  `ship_status` int DEFAULT '0',
-  `ship_done_at` timestamp NULL DEFAULT NULL,
   `status` int DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -447,7 +440,7 @@ CREATE TABLE `customer_order_detail` (
   `day_quote` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `customer_order_id` (`customer_order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34032 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34040 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -457,15 +450,10 @@ CREATE TABLE `customer_order_detail` (
 LOCK TABLES `customer_order_detail` WRITE;
 /*!40000 ALTER TABLE `customer_order_detail` DISABLE KEYS */;
 INSERT INTO `customer_order_detail` VALUES
-(34016,'OYOO1025XQC-1',33973,NULL,NULL,'N/A',NULL,NULL,NULL,0,0,60000000,NULL,NULL,NULL,'2025-05-05 09:40:28','2025-05-05 09:40:28',NULL,NULL),
-(34017,'OGDA1125JJA-1',33974,NULL,NULL,'N/A',NULL,NULL,NULL,0,0,60000000,NULL,NULL,NULL,'2025-05-14 02:59:14','2025-05-14 02:59:14',NULL,NULL),
-(34018,'OYTO1125TEM-1',33975,NULL,NULL,'N/A',NULL,NULL,NULL,0,0,400000,NULL,NULL,NULL,'2025-05-20 15:36:33','2025-05-20 15:36:33',NULL,NULL),
-(34019,'OSEA1325ODL-1',33976,NULL,NULL,', ',NULL,NULL,NULL,0,0,75000000,NULL,NULL,NULL,'2025-05-08 02:51:50','2025-05-08 02:51:50',NULL,NULL),
-(34020,'OGYQ1625ZVV-1',33977,NULL,NULL,'',NULL,NULL,NULL,0,0,6000000,NULL,NULL,0,'2025-05-11 16:13:51','2025-05-11 16:13:51',NULL,NULL),
-(34021,'OORD1925ELC-1',33978,NULL,NULL,'',NULL,NULL,NULL,0,0,4000000,NULL,NULL,0,'2025-05-14 02:59:59','2025-05-14 02:59:59',NULL,NULL),
-(34024,'OOKM2425XQF-1',33981,NULL,NULL,'N/A',NULL,NULL,NULL,0,0,12000000,NULL,NULL,NULL,'2025-05-19 16:05:03','2025-05-19 16:05:03',NULL,NULL),
-(34027,'ODDE1825CPH-1',33984,NULL,NULL,NULL,NULL,NULL,NULL,0,0,400000,NULL,NULL,0,'2025-06-12 15:27:39','2025-06-12 15:27:39',NULL,NULL),
-(34031,'OZEC1825WXJ-1',33988,NULL,NULL,NULL,NULL,NULL,NULL,0,0,400000,NULL,NULL,0,'2025-06-12 16:02:46','2025-06-12 16:02:46',NULL,NULL);
+(34036,'OGST2525PUX-1',33992,'Bán lẻ',776,'Hộp carton lạnh',NULL,10209,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10395,\"text\":\"Hai cánh mở giữa\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10399,\"text\":\"Giấy Op/Ford\"}]}]',55000,20,0,1100000,1,'2025-07-18 08:14:46','2025-07-18 08:14:46',NULL,NULL),
+(34037,'OLVW2525KLC-1',33993,'Bán lẻ',776,'Hộp carton lạnh',NULL,10209,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10395,\"text\":\"Hai cánh mở giữa\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10399,\"text\":\"Giấy Op/Ford\"}]}]',55000,20,0,1100000,1,'2025-07-18 09:06:15','2025-07-18 09:06:15',NULL,NULL),
+(34038,'OXRH2525WHN-1',33994,'Bán lẻ',776,'Hộp carton lạnh',NULL,10209,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10395,\"text\":\"Hai cánh mở giữa\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10399,\"text\":\"Giấy Op/Ford\"}]}]',55000,20,0,1100000,1,'2025-07-18 09:07:21','2025-07-18 09:07:21',NULL,NULL),
+(34039,'OXRH2525WHN-2',33994,'Sản xuất',774,'Hộp Mềm',NULL,10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',5000,100,0,500000,1,'2025-07-18 09:07:21','2025-07-18 09:07:21',NULL,NULL);
 /*!40000 ALTER TABLE `customer_order_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -620,7 +608,7 @@ CREATE TABLE `customer_personal` (
   KEY `mobile_index` (`mobile`),
   KEY `saleId_index` (`sale_id`),
   KEY `token_idx` (`token_confirm`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -630,14 +618,7 @@ CREATE TABLE `customer_personal` (
 LOCK TABLES `customer_personal` WRITE;
 /*!40000 ALTER TABLE `customer_personal` DISABLE KEYS */;
 INSERT INTO `customer_personal` VALUES
-(7,'customer','03902930390392',NULL,'other',3,NULL,NULL,'Hà NAm',NULL,NULL,NULL,'Hà Nội',NULL,NULL,NULL,'long.huu.100@gmail.com',NULL,'0936295123',NULL,NULL,NULL,'1989-11-07 06:32:22','2024-11-19 06:32:22','2025-02-11 16:42:56',NULL,0),
-(8,'newCustomer',NULL,'1638','other',6,NULL,NULL,'hung5',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'hungbd@gmail.cọm',NULL,'0963484761',NULL,NULL,NULL,NULL,'2025-02-10 17:16:18','2025-02-18 16:07:26',NULL,0),
-(9,'newCustomer',NULL,'1638','other',6,NULL,NULL,'hung5',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'hungbd271276@gmail.com',NULL,'0963484768',NULL,NULL,NULL,NULL,'2025-02-10 17:16:18','2025-03-24 14:12:01',NULL,0),
-(12,'newCustomer',NULL,NULL,'other',1,NULL,NULL,'hung6',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'hungbd@gmail.cọm',NULL,'0963484764',NULL,NULL,NULL,NULL,'2025-03-22 03:43:48','2025-03-25 10:17:03',NULL,0),
-(13,'newCustomer',NULL,'1638','other',1,NULL,NULL,'Vũ Thành Trung',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'trungthanhadg@gmail.com',NULL,'0345223731',NULL,NULL,NULL,NULL,'2025-03-24 14:15:17','2025-03-24 14:15:17',NULL,0),
-(14,'newCustomer',NULL,NULL,'name',NULL,NULL,NULL,'blue',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'gh767678@gmail.com',NULL,'0987654567',NULL,NULL,NULL,NULL,'2025-03-25 16:40:35','2025-03-25 16:40:35',NULL,0),
-(15,'newCustomer',NULL,NULL,'other',NULL,NULL,NULL,'Vũ Thành Trung',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'',NULL,'0323225213',NULL,NULL,NULL,NULL,'2025-03-26 01:32:43','2025-03-26 01:32:43',NULL,0),
-(20,'newCustomer',NULL,NULL,'other',NULL,NULL,NULL,'Nguyễn Phương Anh',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0342345345',NULL,NULL,NULL,NULL,'2025-06-12 15:27:39','2025-06-12 15:27:39',NULL,0);
+(22,'newCustomer',NULL,'2','other',1,NULL,NULL,'Hà NAm',NULL,NULL,NULL,'Hà Nội',NULL,NULL,NULL,'manvtk32@gmail.com',NULL,'0974260540',NULL,NULL,NULL,NULL,'2025-07-18 08:14:46','2025-07-18 08:14:46',NULL,0);
 /*!40000 ALTER TABLE `customer_personal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -660,7 +641,6 @@ CREATE TABLE `data` (
   `customer_email` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT '',
   `customer_facebook` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT '',
   `tags` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  `category_id` int DEFAULT '0',
   `sale_id` int DEFAULT '0',
   `note` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
   `assign_to` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT '',
@@ -670,6 +650,7 @@ CREATE TABLE `data` (
   `from_department` tinyint(1) DEFAULT NULL,
   `is_order` tinyint DEFAULT '0',
   `product_id` int DEFAULT NULL,
+  `product_name` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `pre_sale_call` int DEFAULT NULL,
   `after_sale_call` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`,`in_time`),
@@ -678,7 +659,7 @@ CREATE TABLE `data` (
   KEY `status_index` (`status`),
   KEY `department_index` (`from_department`),
   KEY `customer_mobile_idx` (`customer_mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci
 /*!50100 PARTITION BY RANGE (unix_timestamp(`in_time`))
 (PARTITION p2020 VALUES LESS THAN (1609347599) ENGINE = InnoDB,
  PARTITION quimot2021 VALUES LESS THAN (1617209999) ENGINE = InnoDB,
@@ -697,32 +678,8 @@ CREATE TABLE `data` (
 LOCK TABLES `data` WRITE;
 /*!40000 ALTER TABLE `data` DISABLE KEYS */;
 INSERT INTO `data` VALUES
-(1,1,'L1','Thành Trung','Hà Nội',0,'Bùi Đức Hùng','0963484768','hungbd271276@gmail.com','hùng',NULL,NULL,1638,'test<div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-14)</p><div class=\'content-note\'>test</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-03-18)</p><div class=\'content-note\'>test<div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-14)</p><div class=\'content-note\'>test</div></div></div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-03-18)</p><div class=\'content-note\'>test</div></div>','thanhtrung','2025-01-14 09:12:36','2025-05-19 16:04:39',7,0,NULL,NULL,1,NULL),
-(2,1,'L1','Thành Trung','Hà Nội',0,'Bùi Đức Hùng','0963484768','hungbd271276@gmail.com','hùng',NULL,NULL,1638,'test<div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>test</div></div>','thanhtrung','2025-01-14 09:14:42','2025-03-24 14:12:42',0,0,NULL,NULL,1,NULL),
-(3,2,NULL,'Thành Trung','Hà Nội',1,'Vũ Thành Trung','0345223731','trungthanhadg@gmail.com','huùhdhudfuhfd',NULL,NULL,1638,'test','thanhtrung','2025-02-07 15:41:20','2025-04-25 08:33:04',0,0,NULL,NULL,1,NULL),
-(4,5,NULL,'Hữu Long','Quảng Ninh',6,'hung2','0963484761','hungbd@gmail.cọm','huùhdhudfuhfd',NULL,NULL,1638,'tétt 2<div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2</div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2<div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2</div></div></div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2<div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2</div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2<div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2</div></div></div></div></div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-19)</p><div class=\'content-note\'>check</div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-19)</p><div class=\'content-note\'>cheasasd</div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-19)</p><div class=\'content-note\'>tétt 2<div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2</div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2<div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2</div></div></div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2<div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2</div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2<div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-18)</p><div class=\'content-note\'>tétt 2</div></div></div></div></div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-19)</p><div class=\'content-note\'>check</div></div><div class=\'i-note\'><p class=\'note-edit\'>thanhtrung (2025-02-19)</p><div class=\'content-note\'>cheasasd</div></div></div></div>','thanhtrung','2025-02-08 15:42:33','2025-03-11 16:16:48',7,0,NULL,NULL,1,NULL),
-(5,5,NULL,'Thành Trung','Hà Nội',3,'jhdhjhjfd','0963484761','hungbd@gmail.cọm','hunghihi',NULL,NULL,1638,'hâhh<div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-11)</p><div class=\'content-note\'>hâhh<div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div></div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-11)</p><div class=\'content-note\'>hâhh<div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-11)</p><div class=\'content-note\'>hâhh<div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>hâhh</div></div></div></div></div></div>',NULL,'2025-02-08 15:51:37','2025-03-25 01:46:57',0,0,NULL,NULL,NULL,NULL),
-(6,2,NULL,'Thành Trung','Hà Nội',7,'hung2','0963484761','jhdfjhdf@gmail.cọm','hunghihi',NULL,NULL,1638,'<div class=\'i-note\'>\r\n<p class=\'note-edit\'>longhuu (2025-02-13)</p>\r\n<div class=\'content-note\'>test số 1</div>\r\n</div><\r\ndiv class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-13)</p>\r\n<div class=\'content-note\'>test số 2</div>\r\n</div>',NULL,'2025-02-08 15:53:07','2025-05-06 10:06:40',7,0,NULL,NULL,NULL,NULL),
-(7,4,NULL,'Hữu Long',NULL,3,'hung5','0963484761','hungbd@gmail.cọm','hunghihi',NULL,NULL,NULL,'test 2',NULL,'2025-02-08 16:05:01','2025-02-08 16:05:01',0,0,NULL,NULL,NULL,NULL),
-(8,2,NULL,'Hữu Long',NULL,3,'hung5','0963484761','jhdfjhdf@gmail.cọm','huùhdhudfuhfd',NULL,NULL,67,'test 2','longhuu','2025-02-08 16:09:18','2025-02-11 03:42:26',0,0,NULL,NULL,NULL,NULL),
-(9,2,NULL,'Hữu Long','Hưng Yên',3,'hung5','0963484761','jhdfjhdf@gmail.cọm','huùhdhudfuhfd',NULL,NULL,67,'test 2<div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>test 2</div></div><div class=\'i-note\'><p class=\'note-edit\'>longhuu (2025-02-10)</p><div class=\'content-note\'>test 2</div></div>','longhuu','2025-02-08 16:10:50','2025-02-19 10:58:41',0,0,NULL,NULL,NULL,NULL),
-(10,5,NULL,'Hữu Long','Hà Nội',2,'jhdhjhjfd','0963484761','hungbd@gmail.cọm','hunghihi',NULL,NULL,67,'','longhuu','2025-02-08 16:19:40','2025-03-17 16:42:05',0,0,NULL,NULL,NULL,NULL),
-(11,2,NULL,'Thành Trung','Hưng Yên',6,'hung5','0963484761','hungbd@gmail.cọm','huùhdhudfuhfd',NULL,NULL,67,'','longhuu','2025-02-09 08:28:37','2025-03-18 02:56:34',0,0,NULL,NULL,NULL,NULL),
-(12,2,NULL,'Hữu Long',NULL,6,'hung5','0936295123','hungbd@gmail.cọm','huùhdhudfuhfd',NULL,NULL,67,'','longhuu','2025-02-17 09:48:46','2025-02-19 16:02:12',0,0,NULL,NULL,NULL,NULL),
-(13,2,NULL,'Thành Trung','Hà Nội',6,'hung5','0963484761','hungbd@gmail.cọm','huùhdhudfuhfd',NULL,NULL,1638,'','longhuu','2025-02-17 09:48:46','2025-03-14 16:18:05',7,0,NULL,NULL,NULL,NULL),
-(14,1,NULL,'Hữu Long','Bắc Ninh',2,'duc hung bui','0963484761','hungbd@gmail.cọm','hunghihi',NULL,NULL,NULL,NULL,NULL,'2025-02-19 10:55:28','2025-02-19 10:55:28',0,0,NULL,NULL,NULL,NULL),
-(15,1,NULL,'Hữu Long','Vĩnh Phúc',1,'hello 7','0963484761','hungbd@gmail.cọm','huùhdhudfuhfd',NULL,NULL,NULL,NULL,NULL,'2025-02-19 11:00:56','2025-02-19 11:00:56',0,0,NULL,NULL,NULL,NULL),
-(16,1,NULL,'Thành Trung','Hải Phòng',1,'Ms Hạnh','0906969018','nmchau1711@gmail.com','https://www.facebook.com/',NULL,NULL,NULL,NULL,NULL,'2025-03-18 02:40:35','2025-03-18 02:40:35',0,1,NULL,NULL,NULL,NULL),
-(17,1,NULL,'Hữu Long','Hà Nội',7,'Ms Hạnh','0906969018','nmchau1711@gmail.com','https://www.facebook.com/',NULL,NULL,NULL,NULL,NULL,'2025-03-18 02:43:24','2025-03-18 02:43:24',0,2,NULL,NULL,NULL,NULL),
-(18,2,NULL,'Hữu Long','Vĩnh Phúc',7,'Thành Trung','03222222','trungthanh@gmail.com','https://www.facebook.com/',NULL,NULL,NULL,NULL,NULL,'2025-03-18 02:44:30','2025-03-18 02:44:30',0,0,NULL,NULL,NULL,NULL),
-(19,2,NULL,'Hữu Long','Thái Bình',6,'Ms Hạnh','0345223731','trungthanhadg@gmail.com','hunghihi',NULL,NULL,NULL,NULL,NULL,'2025-03-18 02:44:57','2025-03-18 02:44:57',0,2,NULL,NULL,NULL,NULL),
-(20,NULL,NULL,'longhuu',NULL,4,'hung6','0963484764',NULL,NULL,NULL,NULL,67,NULL,NULL,'2025-03-22 03:43:48','2025-04-14 17:18:04',7,0,NULL,NULL,NULL,NULL),
-(21,NULL,NULL,'longhuu',NULL,4,'blue','0987654567',NULL,NULL,NULL,NULL,67,NULL,NULL,'2025-03-25 16:40:35','2025-04-14 17:18:05',7,0,NULL,NULL,NULL,NULL),
-(22,NULL,NULL,'longhuu',NULL,4,'Vũ Thành Trung','0323225213',NULL,NULL,NULL,NULL,67,NULL,NULL,'2025-03-26 01:32:43','2025-04-14 17:18:06',7,0,NULL,NULL,NULL,NULL),
-(23,NULL,NULL,'longhuu',NULL,4,'','',NULL,NULL,NULL,NULL,67,NULL,NULL,'2025-04-15 16:25:15','2025-04-15 16:25:15',7,NULL,NULL,NULL,NULL,NULL),
-(24,1,NULL,'Hữu Long','Hà Nội',1,'Ms Hạnh','0963484768','nmchau1711@gmail.com','https://www.facebook.com/',NULL,NULL,67,NULL,NULL,'2025-05-18 01:55:14','2025-05-18 02:16:56',0,2,NULL,NULL,NULL,NULL),
-(25,1,NULL,'Hữu Long','Hà Nội',1,'Ms Hạnh','0963484768','nmchau1711@gmail.com','https://www.facebook.com/',NULL,NULL,1638,NULL,NULL,'2025-05-18 02:17:16','2025-05-18 02:16:56',0,2,NULL,NULL,NULL,NULL),
-(29,NULL,NULL,'saleai',NULL,4,'Nguyễn Phương Anh','0342345345',NULL,NULL,NULL,NULL,1643,NULL,NULL,'2025-06-12 15:27:39','2025-06-12 15:27:39',7,NULL,NULL,NULL,NULL,NULL);
+(32,1,NULL,'Administrator','Hà Nội',5,'Hà NAm','0974260540','manvtk32@gmail.com',NULL,NULL,2,NULL,'admin','2025-07-18 08:14:46','2025-07-18 08:14:46',7,0,NULL,776,'Hộp carton lạnh',NULL,NULL),
+(33,1,NULL,'Administrator','Hà Nội',5,'Hà NAm','0974260540','manvtk32@gmail.com',NULL,NULL,2,NULL,'admin','2025-07-18 09:06:15','2025-07-18 09:06:15',7,2,NULL,776,'Hộp carton lạnh',NULL,NULL);
 /*!40000 ALTER TABLE `data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -758,12 +715,6 @@ CREATE TABLE `data_care` (
 
 LOCK TABLES `data_care` WRITE;
 /*!40000 ALTER TABLE `data_care` DISABLE KEYS */;
-INSERT INTO `data_care` VALUES
-(1,9,'N/A','longhuu','fdfđfdf',2,'Chờ duyệt','tétdgbdssbdsđs',0,'lead','2025-02-11 16:43:00','2025-02-11 16:43:00'),
-(2,9,'N/A','longhuu','fdfđfdf',1,'Không chia sẻ','test',0,'lead','2025-02-11 16:59:55','2025-02-11 16:59:55'),
-(3,9,'N/A','longhuu','fdfđfdf',1,'Không chia sẻ','test',0,'lead','2025-02-11 17:00:50','2025-02-11 17:00:50'),
-(4,8,'longhuu','longhuu','fdfđfdf',4,'Chi phí cao ','test 2',0,'lead','2025-02-14 16:10:31','2025-02-14 16:10:31'),
-(5,13,'thanhtrung','longhuu','test',3,'Tư vấn lại',NULL,0,'lead','2025-04-25 08:33:04','2025-04-25 08:33:04');
 /*!40000 ALTER TABLE `data_care` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -836,40 +787,6 @@ CREATE TABLE `data_media` (
 
 LOCK TABLES `data_media` WRITE;
 /*!40000 ALTER TABLE `data_media` DISABLE KEYS */;
-INSERT INTO `data_media` VALUES
-(1,0,1739028759,'/uploads/data-media/848811/d0a4779ffafe57198739306b8063ed2a.png',NULL),
-(2,0,1739029083,'/uploads/data-media/848811/42ad35d2672e9c8fcf2d46566e81293c.png',NULL),
-(3,3,1739029172,'/uploads/data-media/848811/0c01fdb957195790474553c9f0dc6fd0.png',NULL),
-(4,4,1739029347,'/uploads/data-media/848811/736ed7fa5e53f5767aafe120063d2261.png',NULL),
-(5,5,1739029892,'/uploads/data-media/848811/f095c484b7720a7c91e07fb7ec14ce9f.png',NULL),
-(6,6,1739029956,'/uploads/data-media/848811/6d318deb304e04f43f810c4b6815b2e6.png',NULL),
-(7,7,1739030671,'/uploads/data-media/848811/e8b605bb8d7a1a9b4b6a7167d0cc2bf1.png',NULL),
-(8,8,1739030954,'/uploads/data-media/848811/50044bf5dc6a86e48f406cdbebe23ade.png',NULL),
-(9,10,1739031575,'/uploads/data-media/848811/d7454fd626c24fee523057d2cca5075e.png',NULL),
-(10,0,1739031666,'/uploads/data-media/848811/e4549bc6bf3767c19bc4152548a910b2.png',NULL),
-(11,0,1739031873,'/uploads/data-media/848811/64e82e4b192b7b425c8b11a2fbf72b01.png',NULL),
-(12,0,1739031919,'/uploads/data-media/848811/d19d38d0ab4babb6c1b308f0f2faf4c1.png',NULL),
-(13,11,1739089712,'/uploads/data-media/848811/16aeea5f9a571439bddf21aadd9c5cea.png',NULL),
-(14,0,123,'/uploads/data-media/848811/81c8cb0a603079f2d8b013f9707d6f0b.sql',NULL),
-(20594,0,123,'/uploads/data-media/c9192aff9c99160014ed76d9a01ed6dc.sql',NULL),
-(20595,0,1739550539,'/uploads/data-media/848811/9b9f55bbf6066486148f2627f8bfe873.png',NULL),
-(20596,0,1739550549,'/uploads/data-media/848811/e78f668866cdf303aca6118bc8cd22aa.png',NULL),
-(20597,0,1739960205,'/uploads/data-media/848811/0f79c3d09da978b82cfcddab4dd41a34.png',NULL),
-(20598,0,1739960324,'/uploads/data-media/848811/09733184bf355a05b9d9b6c299169716.png',NULL),
-(20599,0,1739960495,'/uploads/data-media/848811/6a9b758bb9adfb46be39ee7764d9aa62.png',NULL),
-(20600,0,1739961221,'/uploads/data-media/848811/dabc7eeef5702494eae047d8b8dfcc79.png',NULL),
-(20601,0,1739961333,'/uploads/data-media/848811/7229ab67e2b2508be6f5727eaef3050f.png',NULL),
-(20602,0,1739961425,'/uploads/data-media/848811/002736d556291199fef1e1ae8bb6271e.png',NULL),
-(20603,0,1739961789,'/uploads/data-media/848811/a82944790259111bae7f783c7b1e5d0f.png',NULL),
-(20604,0,1739961996,'/uploads/data-media/848811/b7557d2d2f7fa501b6f4c1893e1949fe.png',NULL),
-(20605,0,1739962234,'/uploads/data-media/848811/6822c9b5b3354d4a279c2ceddb33f287.png',NULL),
-(20606,0,1739962266,'/uploads/data-media/848811/9cb5442ad510afd8008a4049c5e02eda.png',NULL),
-(20607,0,1739962306,'/uploads/data-media/848811/2aa9dc062982e8b7b14a07fe0d42ffb6.png',NULL),
-(20608,0,1739962418,'/uploads/data-media/848811/b6c7cb86f67cc164e0c2bc8c3f36ced2.png',NULL),
-(20609,14,1739962478,'/uploads/data-media/848811/7f7fa2c3ddc83e4222548060c75ca1b1.png',NULL),
-(20610,15,1739962850,'/uploads/data-media/848811/cb72b098d2e30b06135bfb6e983bb6ea.png',NULL),
-(20611,19,1742265894,'/uploads/data-media/849992/997cf6bddc02b07ae5561700c76e37bc.jpg',NULL),
-(20612,1,1742306842,'/uploads/data-media/849992/b90a61d4723a5253d4a11fd2f2f06a41.png',NULL);
 /*!40000 ALTER TABLE `data_media` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -889,7 +806,7 @@ CREATE TABLE `data_owner` (
   `in_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `data_owner_mobile` (`customer_mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=40614 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=40617 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -899,10 +816,7 @@ CREATE TABLE `data_owner` (
 LOCK TABLES `data_owner` WRITE;
 /*!40000 ALTER TABLE `data_owner` DISABLE KEYS */;
 INSERT INTO `data_owner` VALUES
-(40610,'0963484761',1638,2,'thanhtrung','2025-02-19 16:06:21'),
-(40611,'0963484768',1638,2,'thanhtrung','2025-04-05 09:20:24'),
-(40612,'0345223731',1638,2,'thanhtrung','2025-03-24 14:15:17'),
-(40613,'0936295123',67,2,'huulong','2025-03-24 14:15:17');
+(40616,'0974260540',2,0,'admin','2025-07-18 08:14:46');
 /*!40000 ALTER TABLE `data_owner` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1012,13 +926,13 @@ CREATE TABLE `product` (
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
 INSERT INTO `product` VALUES
-(749,'FLJAJBCK',1,NULL,NULL,'Logo',NULL,10008,'20',NULL,NULL,NULL,NULL,NULL,'/uploads/product-media/848811/18e1bbe27d4c18ca26235199af2971ba.jpg',NULL,1,NULL,'2025-03-25 14:20:52'),
-(769,'FLJANWCH',1,NULL,NULL,'Hộp Mềm',NULL,10008,'20',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,'2025-03-06 07:41:14'),
-(770,'FLJAORXZ',1,NULL,NULL,'Áo Phông',NULL,10008,'20',NULL,NULL,NULL,NULL,NULL,'/uploads/product-media/848811/0ef255b2a7047723a05453bcd894ad9f.png',NULL,1,'2025-02-20 16:37:45','2025-02-20 16:41:27'),
+(749,'FLJAJBCK',1,NULL,NULL,'Logo',NULL,10008,'Ấn phẩm',NULL,NULL,NULL,NULL,NULL,'/uploads/product-media/848811/18e1bbe27d4c18ca26235199af2971ba.jpg',NULL,1,NULL,'2025-07-18 09:23:15'),
+(769,'FLJANWCH',1,NULL,NULL,'Hộp Mềm',NULL,10008,'Hộp',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,'2025-07-18 09:23:15'),
+(770,'FLJAORXZ',1,NULL,NULL,'Áo Phông',NULL,10008,'Bộ',NULL,NULL,NULL,NULL,NULL,'/uploads/product-media/848811/0ef255b2a7047723a05453bcd894ad9f.png',NULL,1,'2025-02-20 16:37:45','2025-07-18 09:23:15'),
 (771,'FLJANEMR',1,NULL,NULL,'Hộp cứng',NULL,10008,'SET',NULL,NULL,NULL,NULL,NULL,'/uploads/product-media/848811/12f30a541a8fbcb184ff87158dfc533e.png',NULL,1,'2025-02-18 10:51:50','2025-02-18 10:51:50'),
 (772,'MRJAHOMD',10014,NULL,NULL,'MRPO Duy Tân',NULL,10009,'Phòng',NULL,NULL,NULL,NULL,NULL,'/uploads/product-media/848811/387beefe7efdb28de54f458b570ad2f1.jpg',NULL,1,NULL,'2025-03-08 09:52:45'),
 (773,'FLJAXZGI',1,NULL,NULL,'Hộp yến sào Nam Bắc',NULL,10008,'Hộp',NULL,NULL,NULL,NULL,NULL,'/uploads/product-media/848811/085ccf8878b52af5a034188df2cab79c.jpg',NULL,1,NULL,'2025-03-21 08:53:45'),
-(774,'FLJAVXHD',1,NULL,NULL,'Hộp Mềm',NULL,10008,'20',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2025-03-06 07:42:33','2025-03-06 07:42:33'),
+(774,'FLJAVXHD',1,NULL,NULL,'Hộp Mềm',NULL,10008,'Hộp',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2025-03-06 07:42:33','2025-07-18 09:22:23'),
 (775,'FLJAIJLP',1,NULL,NULL,'Sách giáo khoa toán 1',NULL,10008,'Quyển',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2025-05-07 15:39:27','2025-05-07 15:39:27'),
 (776,'FLLYYEECPM',1,NULL,NULL,'Hộp carton lạnh',NULL,10008,'Hộp',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,'2025-07-15 08:54:19'),
 (777,'FLJAPFLK',1,NULL,NULL,'Bánh Chocopie',NULL,10008,'Hộp',NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL,'2025-06-13 13:46:45');
@@ -14072,4 +13986,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-07-17 16:34:20
+-- Dump completed on 2025-07-18 18:15:05
