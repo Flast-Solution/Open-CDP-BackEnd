@@ -5,12 +5,18 @@ import jakarta.persistence.PersistenceContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.config.ConfigUtil;
 import vn.flast.controller.BaseController;
+import vn.flast.domains.customer.CustomerPersonalService;
+import vn.flast.exception.ResourceNotFoundException;
+import vn.flast.models.CustomerPersonal;
 import vn.flast.models.DataOwner;
+import vn.flast.models.Product;
 import vn.flast.models.User;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
@@ -20,6 +26,7 @@ import vn.flast.orchestration.PubSubService;
 import vn.flast.orchestration.Publisher;
 import vn.flast.orchestration.Subscriber;
 import vn.flast.repositories.DataOwnerRepository;
+import vn.flast.repositories.ProductRepository;
 import vn.flast.repositories.UserRepository;
 import vn.flast.searchs.DataFilter;
 import vn.flast.models.Data;
@@ -28,11 +35,13 @@ import vn.flast.models.DataWork;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.DataMediaRepository;
 import vn.flast.repositories.DataRepository;
+import vn.flast.utils.BuilderParams;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.DateUtils;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.GlobalUtil;
+import vn.flast.utils.NumberUtils;
 import vn.flast.utils.SqlBuilder;
 
 import java.util.ArrayList;
@@ -60,6 +69,11 @@ public class DataService extends Subscriber implements Publisher {
     private final UserRepository userRepository;
     private final DataOwnerRepository dataOwnerRepository;
     private final BaseController baseController;
+    private final ProductRepository productRepository;
+
+    @Autowired
+    @Lazy
+    private CustomerPersonalService customerPersonalService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -128,14 +142,27 @@ public class DataService extends Subscriber implements Publisher {
         }
     }
 
-    public Data saveData(Data model) {
+    public BuilderParams saveData(Data model) {
+        if(NumberUtils.isNull(model.getProductId())) {
+            throw new RuntimeException("Sản phẩm chưa được cấu hình trên hệ thống ");
+        }
+        Product product = productRepository.findById(model.getProductId()).orElseThrow(
+            () -> new ResourceNotFoundException("Sản phẩm Not Found !")
+        );
+
         DataOwner dataOwner = updateOwner(model);
         model.setSaleId(dataOwner.getSaleId());
         model.setAssignTo(dataOwner.getSaleName());
+        model.setServiceId(product.getServiceId());
 
         Data entity = dataRepository.save(model);
+        CustomerPersonal customerPersonal = customerPersonalService.createCustomerFromData(entity);
         sendMessageOnOrderChange(entity);
-        return entity;
+
+        return BuilderParams.create()
+            .addParam("dataId", entity.getId())
+            .addParam("data", entity)
+            .addParam("mCustomer", customerPersonal);
     }
 
     private void sendMessageOnOrderChange(Data model) {
@@ -333,7 +360,7 @@ public class DataService extends Subscriber implements Publisher {
             );
             dataOwner = new DataOwner();
             dataOwner.setCustomerMobile(data.getCustomerMobile());
-            dataOwner.assignDepartmentMql();
+            dataOwner.setDepartmentId(dataOwner.getDepartmentId());
             dataOwner.setSaleId(sale.getId());
             dataOwner.setSaleName(sale.getSsoId());
             dataOwner.setInTime(new Date());

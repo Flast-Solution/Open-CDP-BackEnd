@@ -43,6 +43,9 @@ public class CustomerOrderDetail {
     @Column(name = "product_name")
     private String productName;
 
+    @Column(name = "warranty_period")
+    private String warrantyPeriod;
+
     @Column(name = "sku_id")
     private Long skuId;
 

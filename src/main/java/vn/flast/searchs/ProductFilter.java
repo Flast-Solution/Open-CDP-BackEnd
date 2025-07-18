@@ -1,6 +1,7 @@
 package vn.flast.searchs;
 
 import vn.flast.utils.NumberUtils;
+import java.util.List;
 
 public record ProductFilter(
     String name,
@@ -9,7 +10,8 @@ public record ProductFilter(
     Integer status,
     String code,
     Integer providerId,
-    Integer serviceId
+    Integer serviceId,
+    List<String> ids
 ) {
     @Override
     public Integer page() {

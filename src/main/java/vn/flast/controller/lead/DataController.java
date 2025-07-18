@@ -57,6 +57,7 @@ public class DataController extends BaseController {
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
         UserPrinciple userPrinciple = getInfo();
+        iodata.setSaleId(getUserId());
         iodata.setStaff(getUsername());
         boolean isAdminOrManager = userPrinciple.getAuthorities().stream().anyMatch(auth
             -> auth.getAuthority().equals("ROLE_SALE") || auth.getAuthority().equals("ROLE_SALE_MANAGER")
@@ -71,8 +72,9 @@ public class DataController extends BaseController {
         iodata.setStatus(DataService.DATA_STATUS.CREATE_DATA.getStatusCode());
         var entity = dataService.saveData(iodata);
 
-        dataService.createAndUpdateDataMedias(iodata.getFileUrls(), sessionId, entity.getId());
-        return MyResponse.response(iodata);
+        Long dataId = (Long) entity.getParams().get("dataId");
+        dataService.createAndUpdateDataMedias(iodata.getFileUrls(), sessionId, dataId);
+        return MyResponse.response(entity.getParams());
     }
 
     @GetMapping(value = "/lists")

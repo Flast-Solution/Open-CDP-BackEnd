@@ -11,8 +11,7 @@ import lombok.Setter;
 
 @Table(name = "product_category")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class ProductCategory {
 
     @Id
@@ -25,5 +24,4 @@ public class ProductCategory {
 
     @Column(name = "category_id")
     private Long categoryId;
-
 }

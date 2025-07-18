@@ -34,11 +34,4 @@ public class DataOwner {
 
     @Column(name = "in_time")
     private Date inTime;
-
-    private static final Integer ASSIGN_SQL = 1;
-    private static final Integer ASSIGN_MQL = 2;
-
-    public void assignDepartmentMql() {
-        this.departmentId = ASSIGN_MQL;
-    }
 }

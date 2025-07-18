@@ -11,12 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.flast.dao.UserProfileDao;
 import vn.flast.entities.user.ChangPass;
 import vn.flast.entities.user.ChangeInfo;
-import vn.flast.models.DataCare;
-import vn.flast.models.DataMedia;
 import vn.flast.models.Media;
 import vn.flast.models.User;
 import vn.flast.models.UserGroup;
-import vn.flast.pagination.Ipage;
 import vn.flast.repositories.MediaRepository;
 import vn.flast.repositories.UserRepository;
 import vn.flast.utils.Common;
@@ -29,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,6 +37,7 @@ public class UserService {
         String fd = System.getProperty("user.dir") + UPLOAD_PATH + GlobalUtil.getFolderUpload(GlobalUtil.dateToInt())  + "/";
         return Common.makeFolder(fd);
     }
+
     @Autowired
     private UserRepository userRepository;
 
@@ -53,13 +50,12 @@ public class UserService {
     @Autowired
     private MediaRepository mediaRepository;
 
-
     @PersistenceContext
     protected EntityManager entityManager;
 
     public User findById(int id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Không tồn tại user này")
+            () -> new RuntimeException("Không tồn tại user này")
         );
     }
 
@@ -74,11 +70,10 @@ public class UserService {
         userProfileDao.updateLinkProfile(user.permissions, user.getId());
     }
 
-
     @Transactional
     public void updateUser(User user) {
         User entity = userRepository.findById(user.getId()).orElseThrow(
-                () -> new RuntimeException("Không tìm thấy bản ghi")
+            () -> new RuntimeException("Không tìm thấy bản ghi")
         );
         if (entity != null) {
             entity.setSsoId(user.getSsoId());
@@ -88,34 +83,23 @@ public class UserService {
             entity.setFullName(user.getFullName());
             entity.setEmail(user.getEmail());
             entity.setUserProfiles(user.getUserProfiles());
-//            dao.updateUser(user);
             userProfileDao.updateLinkProfile(user.permissions, user.getId());
         }
     }
-
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-
-
-
     public void deleteById(int id) {
         userRepository.deleteById(id);
     }
-
 
     public boolean isAdmin(int uId) {
         var user = this.findById(uId);
         return checkRuleAdmin(user);
     }
-//
-//    public boolean isPercharging(int uId) {
-//        var user = this.findById(uId);
-//        return user.checkRule(User.RULE_PERCHARING);
-//    }
-//
+
     private boolean checkRuleAdmin(User user) {
         if(user == null){
             return false;
@@ -128,12 +112,10 @@ public class UserService {
         return user.ruleSaleManager();
     }
 
-
     public boolean isCustomerService(int id) {
         var user = this.findById(id);
         return user.ruleCskh();
     }
-
 
     public boolean isSaleMember(User user) {
         return user.checkRule(User.RULE_SALE_MENBER);
@@ -141,16 +123,15 @@ public class UserService {
 
     public void changePass(ChangPass changPass) {
         User user = userRepository.findById(changPass.getUId()).orElseThrow(
-                () -> new RuntimeException("Không tồn tại ban ghi này")
+            () -> new RuntimeException("Không tồn tại ban ghi này")
         );
         user.setPassword(passwordEncoder.encode(changPass.getNewPass()));
         updateUser(user);
     }
 
-
     public void changeInfo(ChangeInfo changeInfo) {
         User userFetch = userRepository.findById(changeInfo.getId()).orElseThrow(
-                () -> new RuntimeException("Không tồn tại ban ghi này")
+            () -> new RuntimeException("Không tồn tại ban ghi này")
         );
         CopyProperty.CopyIgnoreNull(changeInfo, userFetch);
         updateUser(userFetch);
@@ -161,16 +142,14 @@ public class UserService {
         return et.integerEqualsTo("leaderId", leaderId).uniqueResult();
     }
 
-
-    public List<User> findBySale(){
+    public List<User> findBySale() {
         String initQuery = "FROM user u LEFT JOIN user_link_profile p ON u.id = p.user_id";
-        SqlBuilder sqlCondiBuilder = SqlBuilder.init(initQuery);
-        sqlCondiBuilder.addIntegerEquals("u.status", 1);
-        sqlCondiBuilder.addIn("p.user_profile_id", List.of("5","13"));
-        String finalQuery = sqlCondiBuilder.builder();
-        var ccvs = entityManager.createNativeQuery("SELECT u.* " + finalQuery, User.class);
-        var dataCcvs = EntityQuery.getListOfNativeQuery(ccvs, User.class);
-        return dataCcvs;
+        SqlBuilder sqlBuilder = SqlBuilder.init(initQuery);
+        sqlBuilder.addIntegerEquals("u.status", 1);
+        sqlBuilder.addIn("p.user_profile_id", List.of("5","13"));
+        String finalQuery = sqlBuilder.builder();
+        var users = entityManager.createNativeQuery("SELECT u.* " + finalQuery, User.class);
+        return EntityQuery.getListOfNativeQuery(users, User.class);
     }
 
     public Media uploadFile(MultipartFile multipartFile, Long sessionId, Integer userId) throws NoSuchAlgorithmException, IOException {
@@ -189,6 +168,4 @@ public class UserService {
         mediaRepository.save(model);
         return model;
     }
-
-
 }

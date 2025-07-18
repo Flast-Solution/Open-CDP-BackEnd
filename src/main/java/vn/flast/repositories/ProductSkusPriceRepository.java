@@ -3,6 +3,7 @@ package vn.flast.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import vn.flast.models.ProductSkusDetails;
 import vn.flast.models.ProductSkusPrice;
 import java.util.List;
 
@@ -13,6 +14,9 @@ public interface ProductSkusPriceRepository extends JpaRepository<ProductSkusPri
 
     @Query("FROM ProductSkusPrice p WHERE p.skuId = :skuId")
     List<ProductSkusPrice> findBySkuId(Long skuId);
+
+    @Query("FROM ProductSkusPrice p WHERE p.skuId IN (:skuId)")
+    List<ProductSkusPrice> findByListSkuId(List<Long> skuId);
 
     @Modifying
     @Query("DELETE FROM ProductSkusPrice p WHERE p.skuId = :skuId")

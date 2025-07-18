@@ -57,7 +57,7 @@ public record OrderInput(
         for(OrderDetail detailInput : details) {
             CustomerOrderDetail detail = createOrderDetailFromInput(detailInput);
             detail.setCustomerOrderId(order.getId());
-            if(Objects.nonNull(order.getCode())){
+            if(Objects.nonNull(order.getCode())) {
                 detail.setCode(order.getCode().concat("-" + i));
                 detail.setCreatedAt(new Date());
             }
@@ -72,6 +72,10 @@ public record OrderInput(
     public CustomerOrderDetail createOrderDetailFromInput(OrderDetail detailInput) {
         CustomerOrderDetail detail = new CustomerOrderDetail();
         CopyProperty.CopyIgnoreNull(detailInput, detail, "skuInfo");
+        if(NumberUtils.isNotNull(detailInput.getDetailId())) {
+            detail.setId(detailInput.getDetailId());
+        }
+        detail.setWarrantyPeriod(detailInput.getWarrantyPeriod());
         detail.setSkuInfo(JsonUtils.toJson(detailInput.getSkuDetails()));
         detail.setName(detailInput.getOrderName());
         detail.setTotal(detailInput.getTotalPrice());

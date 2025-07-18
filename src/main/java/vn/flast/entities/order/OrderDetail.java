@@ -11,7 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter @Setter
 public class OrderDetail {
+
     private String key;
+    private Long detailId;
     private Long productId;
     private String productName;
     private String orderName;

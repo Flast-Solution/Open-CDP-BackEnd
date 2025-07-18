@@ -10,13 +10,10 @@ import java.util.List;
 
 public interface ProductSkusRepository extends JpaRepository<ProductSkus, Long> {
 
-
     @Query("FROM ProductSkus p WHERE p.productId = :id AND p.del = 0")
     List<ProductSkus> findByProductId(Long id);
 
     @Modifying
     @Query("UPDATE ProductSkus p SET p.del = 1 WHERE p.productId = :productId AND p.id IN :ids")
     void updateDelProductSkus(@Param("productId") Long productId, @Param("ids") List<Long> ids);
-
-
 }

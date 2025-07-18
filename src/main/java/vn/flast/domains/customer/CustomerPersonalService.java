@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.flast.models.CustomerPersonal;
 import vn.flast.models.Data;
-import vn.flast.orchestration.EventTopic;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.PubSubService;
 import vn.flast.orchestration.Subscriber;
@@ -62,14 +61,11 @@ public class CustomerPersonalService extends Subscriber {
         while(iterator.hasNext()) {
             var message = iterator.next();
             log.info("Message Topic -> {} : {}", message.getTopic(), message.getPayload());
-            if(EventTopic.DATA_CHANGE.equals(message.getTopic()) && message.getPayload() instanceof Data) {
-                createCustomerOnData((Data) message.getPayload());
-            }
             iterator.remove();
         }
     }
 
-    private void createCustomerOnData(Data data) {
+    public CustomerPersonal createCustomerFromData(Data data) {
         CustomerPersonal customer = customerPersonalRepository.findByPhone(data.getCustomerMobile());
         if(Objects.nonNull(customer)) {
             var dataOwner = dataOwnerRepository.findByMobile(data.getCustomerMobile());
@@ -83,8 +79,10 @@ public class CustomerPersonalService extends Subscriber {
             customer.setFacebookId(data.getCustomerFacebook());
             customer.setSourceId(data.getServiceId());
             customer.setEmail(data.getCustomerEmail());
+            customer.setAddress(data.getProvinceName());
             customerPersonalRepository.save(customer);
         }
+        return customer;
     }
 
     public void increaseNumOfOrder(Long id) {

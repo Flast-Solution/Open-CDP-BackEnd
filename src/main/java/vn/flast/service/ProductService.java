@@ -198,7 +198,7 @@ public class ProductService {
         return saleProduct;
     }
 
-    public Ipage<?> fetch(ProductFilter filter){
+    public Ipage<?> fetch(ProductFilter filter) {
 
         int LIMIT = filter.limit();
         int PAGE = filter.page();
@@ -206,6 +206,10 @@ public class ProductService {
 
         final String totalSQL = "FROM `product` p ";
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+        if(Objects.nonNull(filter.ids())) {
+            sqlBuilder.addIn("p.id", filter.ids());
+        }
+
         sqlBuilder.addIntegerEquals("p.status", filter.status());
         sqlBuilder.addIntegerEquals("p.service_id", filter.serviceId());
         sqlBuilder.addStringEquals("p.code", filter.code());
@@ -228,13 +232,8 @@ public class ProductService {
             saleProduct.setListProperties(productAttributedRepository.findByProduct(product.getId()));
             saleProduct.setSkus(skuService.listProductSkuAndDetail(product.getId()));
             saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(product.getId()));
-            saleProduct.getSkus().forEach(
-                sku -> sku.setListPriceRange(skusPriceRepository.findBySkuId(sku.getId()))
-            );
             saleProduct.setWarehouses(warehouseRepository.findByProductId(product.getId()));
-            saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product")
-                .stream()
-                .map(Media::getFileName).collect(Collectors.toList()));
+            saleProduct.setImageLists(new ArrayList<>());
             return saleProduct;
         }).toList();
         return Ipage.generator(LIMIT, count, PAGE, listSaleProduct);
@@ -249,8 +248,8 @@ public class ProductService {
             saleProduct.setListProperties(productAttributedRepository.findByProduct(product.getId()));
             saleProduct.setSkus(skuService.listProductSkuAndDetail(product.getId()));
             saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(product.getId()));
-            saleProduct.getSkus().forEach(
-                sku -> sku.setListPriceRange(skusPriceRepository.findBySkuId(sku.getId()))
+            saleProduct.getSkus().forEach( sku
+                -> sku.setListPriceRange(skusPriceRepository.findBySkuId(sku.getId()))
             );
             saleProduct.setImageLists(mediaService.list(Math.toIntExact(product.getId()), "Product")
                 .stream()

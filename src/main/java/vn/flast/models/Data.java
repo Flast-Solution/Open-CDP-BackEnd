@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import vn.flast.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -88,6 +87,9 @@ public class Data implements Cloneable {
     @Column(name = "product_id")
     private Long productId;
 
+    @Column(name = "product_name")
+    private String productName;
+
     @Column(name = "customer_name")
     private String customerName;
 
@@ -102,9 +104,6 @@ public class Data implements Cloneable {
 
     @Column(name = "tags")
     private String tags;
-
-    @Column(name = "category_id")
-    private Long categoryId;
 
     @Column(name = "sale_id")
     private Integer saleId;
@@ -151,16 +150,8 @@ public class Data implements Cloneable {
     @Transient
     List<DataMedia> listFileUploads = new ArrayList<>();
 
-
-    public static String UPLOAD_PATH = "/uploads/data/";
-
     @Transient
     private List<String> fileUrls = new ArrayList<>();
-
-    public String createFolderUpload() {
-        var pathProject = DateUtils.getMonthYearCode();
-        return System.getProperty("user.dir") + UPLOAD_PATH + pathProject;
-    }
 
     public enum PreSaleCall {
         CHUA_LIEN_HE(0),

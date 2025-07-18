@@ -91,6 +91,7 @@ public class OrderService  implements Publisher, Serializable {
             var entity = orderRepository.findById(order.getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Not Found Order .!")
             );
+            detailRepository.deleteByOrderId(order.getId());
             CopyProperty.CopyIgnoreNull(entity, order);
         } else {
             Data data = dataRepository.findFirstByPhone(input.customer().getMobile()).orElseThrow(
@@ -430,9 +431,11 @@ public class OrderService  implements Publisher, Serializable {
     public OrderResponse withOrderDetail(CustomerOrder order) {
         Hibernate.initialize(order.getDetails());
         var orderRep = new OrderResponse();
-        CopyProperty.CopyNormal(order.clone(), orderRep);
+        CopyProperty.CopyNormal(order.cloneNoDetail(), orderRep);
         orderRep.setDetails(new ArrayList<>(order.getDetails()));
-        orderRep.setCustomer(customerRepository.findById(orderRep.getCustomerId()).orElse(null));
+        orderRep.setCustomer(customerRepository.findById(orderRep.getCustomerId()).orElseThrow(
+            () -> new RuntimeException("Customer not found !")
+        ));
         return orderRep;
     }
 
