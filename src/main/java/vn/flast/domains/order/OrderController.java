@@ -14,7 +14,6 @@ import vn.flast.entities.order.OrderDetail;
 import vn.flast.entities.order.OrderResponse;
 import vn.flast.entities.warehouse.SkuDetails;
 import vn.flast.models.CustomerOrder;
-import vn.flast.models.Product;
 import vn.flast.repositories.ProductRepository;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.utils.BuilderParams;
