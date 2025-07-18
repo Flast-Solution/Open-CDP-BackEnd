@@ -1,4 +1,4 @@
-package vn.flast.controller.common;
+package vn.flast.controller;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

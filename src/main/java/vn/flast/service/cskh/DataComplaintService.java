@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.flast.controller.common.BaseController;
+import vn.flast.controller.BaseController;
 import vn.flast.entities.ComplaintFilter;
 import vn.flast.models.DataComplaint;
 import vn.flast.pagination.Ipage;

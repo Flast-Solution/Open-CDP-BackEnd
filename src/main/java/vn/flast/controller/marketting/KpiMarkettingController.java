@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import vn.flast.controller.common.BaseController;
+import vn.flast.controller.BaseController;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.SaleKpiProperty;
 import vn.flast.models.UserKpi;

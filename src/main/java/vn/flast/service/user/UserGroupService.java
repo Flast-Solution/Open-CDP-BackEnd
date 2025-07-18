@@ -2,7 +2,7 @@ package vn.flast.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.flast.controller.common.BaseController;
+import vn.flast.controller.BaseController;
 import vn.flast.models.UserGroup;
 import vn.flast.repositories.UserGroupRepository;
 import vn.flast.utils.JsonUtils;

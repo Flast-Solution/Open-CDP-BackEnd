@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.config.ConfigUtil;
-import vn.flast.controller.common.BaseController;
+import vn.flast.controller.BaseController;
 import vn.flast.models.DataOwner;
 import vn.flast.models.User;
 import vn.flast.orchestration.EventDelegate;
@@ -119,7 +119,7 @@ public class DataService extends Subscriber implements Publisher {
         }
     }
 
-    public void createAndUpdateDataMedias(List<String> urls, int sessionId, int dataId) {
+    public void createAndUpdateDataMedias(List<String> urls, int sessionId, Long dataId) {
         if(!urls.isEmpty()) {
             urls.forEach(url -> dataMediaRepository.save(new DataMedia(dataId, (long) sessionId, url)));
         }
@@ -128,13 +128,17 @@ public class DataService extends Subscriber implements Publisher {
         }
     }
 
-    public void saveData(Data model) {
-        dataRepository.save(model);
-        updateOwner(model);
-        sendMessageOnOrderChange(model);
+    public Data saveData(Data model) {
+        DataOwner dataOwner = updateOwner(model);
+        model.setSaleId(dataOwner.getSaleId());
+        model.setAssignTo(dataOwner.getSaleName());
+
+        Data entity = dataRepository.save(model);
+        sendMessageOnOrderChange(entity);
+        return entity;
     }
 
-    public void sendMessageOnOrderChange(Data model) {
+    private void sendMessageOnOrderChange(Data model) {
         this.publish(Message.create(EventTopic.DATA_CHANGE, model.clone()));
     }
 
@@ -283,9 +287,9 @@ public class DataService extends Subscriber implements Publisher {
             Date from = DateUtils.atStartOfDay(currentDate);
             Date to = DateUtils.atEndOfDay(currentDate);
             et.between("inTime", from, to);
-            return;
+        } else {
+            et.between("inTime", filter.getFrom(), filter.getTo());
         }
-        et.between("inTime", filter.getFrom(), filter.getTo());
     }
 
     public Data findById(Long id) {
@@ -297,13 +301,7 @@ public class DataService extends Subscriber implements Publisher {
         return data;
     }
 
-    public Data findByPhone(String phone){
-        return dataRepository.findFirstByPhone(phone).orElseThrow(
-            () -> new RuntimeException("This phone number does not exist in the system.")
-        );
-    }
-
-    public void updateDataMedias(Integer dataId, Integer sessionId) {
+    public void updateDataMedias(Long dataId, Integer sessionId) {
         final String sql = "UPDATE data_media SET data_id = :dataId WHERE data_id = 0 AND session_id = :sessionId";
         entityManager.createNativeQuery(sql)
             .setParameter("dataId", dataId)
@@ -321,10 +319,13 @@ public class DataService extends Subscriber implements Publisher {
         );
         iodata.setSaleId(sale.getId());
         iodata.setAssignTo(sale.getSsoId());
-        updateOwner(iodata);
+
+        DataOwner dataOwner = updateOwner(iodata);
+        dataOwner.setSaleId(sale.getId());
+        dataOwner.setSaleName(sale.getSsoId());
     }
 
-    public void updateOwner (Data data) {
+    public DataOwner updateOwner(Data data) {
         DataOwner dataOwner = dataOwnerRepository.findByMobile(data.getCustomerMobile());
         if(Objects.isNull(dataOwner)) {
             User sale = userRepository.findById(data.getSaleId()).orElseThrow(
@@ -338,6 +339,7 @@ public class DataService extends Subscriber implements Publisher {
             dataOwner.setInTime(new Date());
             dataOwnerRepository.save(dataOwner);
         }
+        return dataOwner;
     }
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)

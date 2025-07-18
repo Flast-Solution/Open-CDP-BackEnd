@@ -5,7 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.flast.controller.common.BaseController;
+import vn.flast.controller.BaseController;
 import vn.flast.entities.lead.CskhLeadData;
 import vn.flast.entities.lead.LeadCareFilter;
 import vn.flast.entities.lead.NoOrderFilter;

@@ -1,11 +1,10 @@
 package vn.flast.components;
 
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import vn.flast.controller.common.BaseController;
+import vn.flast.controller.BaseController;
 import vn.flast.models.User;
 import vn.flast.service.user.UserService;
 import vn.flast.utils.JsonUtils;

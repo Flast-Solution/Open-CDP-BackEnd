@@ -5,7 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.controller.common.BaseController;
+import vn.flast.controller.BaseController;
 import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.models.WareHouseStatus;
 import vn.flast.models.WareHouseStock;

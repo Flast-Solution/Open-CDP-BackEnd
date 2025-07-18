@@ -1,6 +1,5 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,12 +10,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Transient;
 
 @Table(name = "data_media")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public class DataMedia {
 
@@ -26,7 +23,7 @@ public class DataMedia {
     private Long id;
 
     @Column(name = "data_id")
-    private Integer dataId;
+    private Long dataId;
 
     @Column(name = "session_id")
     private Long sessionId;
@@ -34,18 +31,13 @@ public class DataMedia {
     @Column(name = "file")
     private String file;
 
-
     public DataMedia(
-            @NotNull(message = "dataId is can't be null") Integer dataId,
-            @NotNull(message = "sessionId is can't be null") Long sessionId,
-            @NotNull(message = "file is can't be null") String file
+        @NotNull(message = "dataId is can't be null") Long dataId,
+        @NotNull(message = "sessionId is can't be null") Long sessionId,
+        @NotNull(message = "file is can't be null") String file
     ) {
         this.dataId = dataId;
         this.sessionId = sessionId;
         this.file = file;
     }
-
-    public static String UPLOAD_PATH =  "/uploads/data-media/";
-
-
 }

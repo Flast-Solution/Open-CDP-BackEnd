@@ -6,7 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.controller.common.BaseController;
+import vn.flast.controller.BaseController;
 import vn.flast.entities.warehouse.WareHouseItem;
 import vn.flast.entities.warehouse.WarehouseHistoryFilter;
 import vn.flast.models.WareHouseHistory;
