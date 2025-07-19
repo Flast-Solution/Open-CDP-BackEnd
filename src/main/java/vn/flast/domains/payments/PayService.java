@@ -16,6 +16,7 @@ import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderPaymentRepository;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.CustomerOrderStatusRepository;
+import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.NumberUtils;
@@ -48,7 +49,7 @@ public class PayService {
 
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderPayment manualMethod(OrderPaymentInfo info) {
-        var orderResponse = orderService.view(info.id());
+        var orderResponse = orderService.view(info.orderId());
         var model = new CustomerOrderPayment();
         info.transformPayment(model);
         Double paid = orderResponse.getPaid();
@@ -56,37 +57,36 @@ public class PayService {
             throw new RuntimeException("Paid not valid .!");
         }
         model.setCode(orderResponse.getCode());
-        model.setConfirmTime(new Date());
+        model.setConfirmTime(info.date());
         model.setIsConfirm(OrderUtils.PAYMENT_IS_CONFIRM);
-        model.setSsoId("1");
+        model.setSsoId(Common.getSsoId());
+        model.setContent(info.content());
         paymentRepository.save(model);
+
         orderResponse.setType(CustomerOrder.TYPE_ORDER);
         orderResponse.setPaid(paid + model.getAmount());
         boolean isPaid = NumberUtils.gteZero(orderResponse.getPaid());
         orderResponse.setType(isPaid ? CustomerOrder.TYPE_ORDER: CustomerOrder.TYPE_CO_HOI);
-        Integer statusStartOrder = statusOrderRepository.findStartOrder().getId();
         orderResponse.setCreatedAt(new Date());
-        orderResponse.setStatus(statusStartOrder);
         if(orderResponse.getPaid() >= orderResponse.getTotal()) {
             orderResponse.setPaymentStatus(OrderUtils.PAYMENT_STATUS_DONE);
         }
         CustomerOrder order = new CustomerOrder();
         CopyProperty.CopyIgnoreNull(orderResponse, order);
+        boolean reCalculatorOrder = false;
+        if(NumberUtils.isNotNull(info.vat())) {
+            order.setVat(info.vat());
+            reCalculatorOrder = true;
+        }
+        if(NumberUtils.isNotNull(info.shippingCost())) {
+            order.setShippingCost(info.shippingCost());
+            reCalculatorOrder = true;
+        }
+        if(reCalculatorOrder) {
+            OrderUtils.calculatorPrice(order);
+        }
         orderRepository.save(order);
         return model;
-    }
-
-    public void create(OrderPaymentInfo info){
-        var model = new CustomerOrderPayment();
-        info.transformPayment(model);
-        var order = orderService.view(info.id());
-        Double paid = order.getPaid();
-        if( (order.getTotal() - paid) < model.getAmount()) {
-            throw new RuntimeException("Paid not valid .!");
-        }
-        model.setCode(order.getCode());
-        model.setIsConfirm(OrderUtils.PAYMENT_IS_NOT_CONFIRM);
-        paymentRepository.save(model);
     }
 
     @Transactional(rollbackFor = Exception.class)

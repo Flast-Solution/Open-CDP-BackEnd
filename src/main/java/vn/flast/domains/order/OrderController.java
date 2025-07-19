@@ -66,7 +66,9 @@ public class OrderController {
                 detail.setDiscountAmount(0.0);
                 detail.setDiscountRate(0);
             }
-            detail.setTotalPrice(orderDetail.getTotal());
+
+            Double totalPrice = orderDetail.getQuantity() * orderDetail.getPrice();
+            detail.setTotalPrice(totalPrice);
 
             detail.setWarrantyPeriod(orderDetail.getWarrantyPeriod());
             detail.setQuantity(orderDetail.getQuantity());

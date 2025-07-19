@@ -40,8 +40,7 @@ public class OrderUtils {
     }
 
     public static void calDetailPrice(CustomerOrderDetail detail, OrderDetail input) {
-        double subTotal;
-        subTotal = detail.getPrice() * detail.getQuantity();
+        double subTotal = detail.getPrice() * detail.getQuantity();
         double priceOff = input.getDiscountAmount();
         double feeAfterPromotion = subTotal - priceOff;
         detail.setPriceOff(priceOff);
@@ -64,6 +63,11 @@ public class OrderUtils {
         double vat = NumberUtils.calculatorPercent(feeAfterPromotion, order.getVat());
         order.setSubtotal(subTotal);
         order.setPriceOff(priceOff);
-        order.setTotal(subTotal - priceOff + vat);
+
+        int shipCost = 0;
+        if(NumberUtils.isNotNull(order.getShippingCost())) {
+            shipCost = order.getShippingCost();
+        }
+        order.setTotal(subTotal + shipCost - priceOff + vat);
     }
 }

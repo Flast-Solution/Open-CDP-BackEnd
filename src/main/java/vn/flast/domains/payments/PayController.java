@@ -1,16 +1,15 @@
 package vn.flast.domains.payments;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.payment.PaymentFilter;
 import vn.flast.exception.InvalidParamsException;
 import vn.flast.models.CustomerOrderPayment;
+import vn.flast.utils.JsonUtils;
 
+@Slf4j
 @RestController
 @RequestMapping("/pay")
 public class PayController {
@@ -19,12 +18,13 @@ public class PayController {
     private PayService payService;
 
     @PostMapping("/manual")
-    public MyResponse<?> direct(OrderPaymentInfo paymentInfo) {
+    public MyResponse<?> direct(@RequestBody OrderPaymentInfo paymentInfo) {
+        log.info("Pay: {}", JsonUtils.toJson(paymentInfo));
         if(!paymentInfo.validate()) {
             throw new InvalidParamsException("Invalid Params Pay .!");
         }
         var data = payService.manualMethod(paymentInfo);
-        return MyResponse.response(data);
+        return MyResponse.response(data, "Cập nhật thanh toán đơn hàng thành công !");
     }
 
     @PostMapping("/delete")
@@ -46,9 +46,8 @@ public class PayController {
     }
 
     @PostMapping("/confirm-payment")
-    public MyResponse<?> confirmPayment(CustomerOrderPayment input){
+    public MyResponse<?> confirmPayment(@RequestBody CustomerOrderPayment input){
         payService.confirmPayment(input);
         return MyResponse.response("oke");
     }
-
 }

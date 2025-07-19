@@ -141,10 +141,6 @@ public class OrderService  implements Publisher, Serializable {
         listDetails.forEach(detail -> detail.setCustomerOrderId(order.getId()));
 
         this.sendMessageOnOrderChange(order);
-        if (Objects.nonNull(input.paymentInfo()) && Boolean.TRUE.equals(input.paymentInfo().status())) {
-            order.setPaid(0.0);
-            payService.manualMethod(input.paymentInfo());
-        }
         return order;
     }
 
