@@ -11,9 +11,11 @@ import vn.flast.controller.BaseController;
 import vn.flast.domains.payments.PayService;
 import vn.flast.entities.order.OrderCare;
 import vn.flast.entities.order.OrderComment;
+import vn.flast.entities.order.OrderDetail;
 import vn.flast.entities.order.OrderResponse;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
+import vn.flast.models.CustomerOrderDetail;
 import vn.flast.models.CustomerOrderNote;
 import vn.flast.models.CustomerOrderStatus;
 import vn.flast.models.Data;
@@ -41,8 +43,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service("orderService")
 @Log4j2
@@ -87,10 +92,27 @@ public class OrderService  implements Publisher, Serializable {
         order.setUserCreateId(Common.getUserId());
         input.transformOrder(order);
 
+        List<Long> removedIds = new ArrayList<>();
         if(NumberUtils.isNotNull(order.getId())) {
             var entity = orderRepository.findById(order.getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Not Found Order .!")
             );
+            if(Common.CollectionIsEmpty(input.details())) {
+                throw new RuntimeException("Lỗi sửa chưa cập nhật đơn ! ");
+            }
+            List<Long> detailInputIds = input.details().stream()
+                .map(OrderDetail::getDetailId)
+                .filter(NumberUtils::isNotNull).toList();
+            List<Long> detailIds = entity.getDetails().stream().map(CustomerOrderDetail::getId).toList();
+
+            removedIds = detailIds.stream().filter(id -> !detailInputIds.contains(id)).toList();
+            Iterator<CustomerOrderDetail> iterator = entity.getDetails().iterator();
+            while (iterator.hasNext()) {
+                CustomerOrderDetail detail = iterator.next();
+                if (removedIds.contains(detail.getId())) {
+                    iterator.remove();
+                }
+            }
             CopyProperty.CopyIgnoreNull(entity, order);
         } else {
             Data data = dataRepository.findFirstByPhone(input.customer().getMobile()).orElseThrow(
@@ -104,7 +126,12 @@ public class OrderService  implements Publisher, Serializable {
             order.setPaid(0.0);
         }
         order.setStatus(statusOrderRepository.findStartOrder().getId());
+
         var listDetails = input.transformOrderDetail(order, order.getStatus());
+        if (!removedIds.isEmpty()) {
+            Set<Long> removedIdSet = new HashSet<>(removedIds);
+            listDetails.removeIf(detail -> removedIdSet.contains(detail.getId()));
+        }
         order.setDetails(listDetails);
         OrderUtils.calculatorPrice(order);
 

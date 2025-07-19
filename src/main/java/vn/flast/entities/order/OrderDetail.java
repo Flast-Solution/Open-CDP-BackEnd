@@ -13,6 +13,7 @@ import java.util.List;
 public class OrderDetail {
 
     private String key;
+    private String note;
     private Long detailId;
     private Long productId;
     private String productName;

@@ -60,7 +60,7 @@ public class CustomerOrderDetail {
     private String dayQuote;
 
     @Column(name = "customer_note")
-    private String customerNote;
+    private String note;
 
     @Column(name = "status")
     private Integer status;
