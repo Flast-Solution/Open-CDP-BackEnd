@@ -78,14 +78,4 @@ public class Common {
         }
         return fd;
     }
-
-    public static int vatPrice(long price) {
-        double bd = price * 0.1;
-        return (int) bd;
-    }
-
-    public static int vat8Price(long price) {
-        double bd = price * 0.08;
-        return (int) bd;
-    }
 }

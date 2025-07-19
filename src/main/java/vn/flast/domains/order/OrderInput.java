@@ -10,10 +10,7 @@ import vn.flast.utils.CopyProperty;
 import vn.flast.utils.JsonUtils;
 import vn.flast.utils.NumberUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public record OrderInput(
     Long id,
@@ -53,9 +50,27 @@ public record OrderInput(
 
     public List<CustomerOrderDetail> transformOrderDetail(CustomerOrder order, int status) {
         List<CustomerOrderDetail> detailList = new ArrayList<>();
+        List<CustomerOrderDetail> detailInOrder = Common.CollectionIsEmpty(order.getDetails())
+            ? new ArrayList<>()
+            : (List<CustomerOrderDetail>) order.getDetails();
         int i = 1;
         for(OrderDetail detailInput : details) {
             CustomerOrderDetail detail = createOrderDetailFromInput(detailInput);
+            if(NumberUtils.isNotNull(detailInput.getDetailId())) {
+                Optional<CustomerOrderDetail> matchedDetail = detailInOrder.stream()
+                .filter(item -> Objects.equals(item.getId(), detailInput.getDetailId()))
+                .findFirst();
+                if (matchedDetail.isEmpty()) {
+                    continue;
+                }
+                CustomerOrderDetail model = matchedDetail.get();
+                CopyProperty.CopyIgnoreNull(detail, model);
+                OrderUtils.calDetailPrice(model, detailInput);
+                detailList.add(model);
+                i++;
+                continue;
+            }
+
             detail.setCustomerOrderId(order.getId());
             if(Objects.nonNull(order.getCode())) {
                 detail.setCode(order.getCode().concat("-" + i));

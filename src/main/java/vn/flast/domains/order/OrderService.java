@@ -91,7 +91,6 @@ public class OrderService  implements Publisher, Serializable {
             var entity = orderRepository.findById(order.getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Not Found Order .!")
             );
-            detailRepository.deleteByOrderId(order.getId());
             CopyProperty.CopyIgnoreNull(entity, order);
         } else {
             Data data = dataRepository.findFirstByPhone(input.customer().getMobile()).orElseThrow(
@@ -108,10 +107,11 @@ public class OrderService  implements Publisher, Serializable {
         var listDetails = input.transformOrderDetail(order, order.getStatus());
         order.setDetails(listDetails);
         OrderUtils.calculatorPrice(order);
-        orderRepository.save(order);
 
+        /* CascadeType.ALL thì không cần detail save */
+        orderRepository.save(order);
+        listDetails.forEach(detail -> detail.setCustomerOrder(order));
         listDetails.forEach(detail -> detail.setCustomerOrderId(order.getId()));
-        detailRepository.saveAll(listDetails);
 
         this.sendMessageOnOrderChange(order);
         if (Objects.nonNull(input.paymentInfo()) && Boolean.TRUE.equals(input.paymentInfo().status())) {

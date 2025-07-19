@@ -1,5 +1,6 @@
 package vn.flast.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -170,7 +171,8 @@ public class CustomerOrder implements Cloneable {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+    @JsonManagedReference(value = "details")
+    @OneToMany(mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<CustomerOrderDetail> details;
 
     public CustomerOrderDetail takeDetailByCode(String dtCode) {
