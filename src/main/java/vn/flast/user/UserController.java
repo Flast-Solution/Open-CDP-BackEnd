@@ -87,12 +87,12 @@ public class UserController {
 
     @PostMapping("/uploads-file")
     public MyResponse<?> multiFileUpload(
-            @RequestParam Long sessionId,
-            @RequestParam(defaultValue = "0") Integer userId,
-            @RequestParam(value = "file") MultipartFile multipartFile
+        @RequestParam Long sessionId,
+        @RequestParam(defaultValue = "0") Integer userId,
+        @RequestParam(value = "file") MultipartFile multipartFile
     ) throws Exception {
         if (multipartFile.isEmpty()) {
-            MyResponse.response(400, "Upload file failed");
+            throw new RuntimeException("File not Empty");
         }
         var response = userService.uploadFile(multipartFile, sessionId, userId);
         return MyResponse.response(response);
@@ -112,12 +112,10 @@ public class UserController {
 
     @GetMapping("/list-name-id")
     public MyResponse<?> listNameId(){
-        var data = userRepository.findAll().stream()
-                .map(user -> Map.of(
-                        "id", user.getId(),
-                        "name", user.getSsoId()
-                ))
-                .collect(Collectors.toList());
+        var data = userRepository.findAll().stream().map(user -> Map.of(
+            "id", user.getId(),
+            "name", user.getSsoId()
+        )).collect(Collectors.toList());
         return MyResponse.response(data);
     }
 }

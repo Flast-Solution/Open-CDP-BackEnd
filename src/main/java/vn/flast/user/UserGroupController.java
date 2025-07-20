@@ -1,5 +1,4 @@
-package vn.flast.controller.user;
-
+package vn.flast.user;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.UserGroup;
-import vn.flast.models.WareHouseHistory;
 import vn.flast.service.user.UserGroupService;
 import vn.flast.validator.ValidationErrorBuilder;
 
