@@ -129,14 +129,8 @@ public class CustomerOrder implements Cloneable {
     @Column(name = "shipping_status")
     private Long shippingStatus;
 
-    @Column(name = "payment_status")
-    private Integer paymentStatus;
-
     @Column(name = "cancel_at")
     private Date cancelAt;
-
-    @Column(name = "paid_time")
-    private Date paidTime;
 
     @Column(name = "done_at")
     private Date doneAt;
@@ -203,7 +197,6 @@ public class CustomerOrder implements Cloneable {
         if(NumberUtils.isNull(status)) {
             status = 0;
         }
-        paymentStatus = 0;
     }
 
     public boolean isOrder() {

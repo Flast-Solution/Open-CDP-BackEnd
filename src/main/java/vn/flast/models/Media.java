@@ -37,5 +37,4 @@ public class Media {
 
     @Column(name = "status")
     private Integer status ;
-
 }

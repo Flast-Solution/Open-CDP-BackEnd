@@ -3,7 +3,6 @@ package vn.flast.utils;
 import vn.flast.entities.FilesInterface;
 import vn.flast.exception.InvalidParamsException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.InputStream;
@@ -42,11 +41,6 @@ public class UploadsUtils {
         String ret = pattern.matcher(nfdNormalizedString).replaceAll("")
                 .replaceAll("Đ", "D").replace("đ", "");
         return ret.replace(" ", "_");
-    }
-
-    public static String getNameFileFromPath(String file) {
-        String fd = System.getProperty("user.dir") + file;
-        return FilenameUtils.getName(fd);
     }
 
     private static String extension(String name) {

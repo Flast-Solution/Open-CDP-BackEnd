@@ -6,17 +6,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.flast.entities.FilesInterface;
+import vn.flast.utils.Common;
+import java.util.List;
 
 @Table(name = "data_media")
 @Entity
 @Getter @Setter
 @NoArgsConstructor
-public class DataMedia {
+public class DataMedia implements FilesInterface {
 
+    public static String FOLDER_UPLOAD = "/uploads/data";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -31,13 +34,13 @@ public class DataMedia {
     @Column(name = "file")
     private String file;
 
-    public DataMedia(
-        @NotNull(message = "dataId is can't be null") Long dataId,
-        @NotNull(message = "sessionId is can't be null") Long sessionId,
-        @NotNull(message = "file is can't be null") String file
-    ) {
-        this.dataId = dataId;
-        this.sessionId = sessionId;
-        this.file = file;
+    @Override
+    public String createFolderUpload() {
+        return Common.makeFolder(FOLDER_UPLOAD);
+    }
+
+    @Override
+    public List<String> filePass() {
+        return List.of("png", "jpg", "jpeg");
     }
 }

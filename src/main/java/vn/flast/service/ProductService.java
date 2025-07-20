@@ -158,7 +158,7 @@ public class ProductService {
     }
 
     private void updateMedia(Long sessionId, Long id) {
-        List<Media> mediaList = mediaService.listSesionId(sessionId);
+        List<Media> mediaList = mediaService.listSessionId(sessionId);
         if (!mediaList.isEmpty()) {
             mediaList.forEach(media -> media.setObjectId(Math.toIntExact(id))); // Không cần chuyển `Long` -> `int`
             mediaRepository.saveAll(mediaList); // Batch update

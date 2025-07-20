@@ -133,13 +133,8 @@ public class DataService extends Subscriber implements Publisher {
         }
     }
 
-    public void createAndUpdateDataMedias(List<String> urls, int sessionId, Long dataId) {
-        if(!urls.isEmpty()) {
-            urls.forEach(url -> dataMediaRepository.save(new DataMedia(dataId, (long) sessionId, url)));
-        }
-        if(sessionId != 0) {
-            updateDataMedias(dataId, sessionId);
-        }
+    public void createAndUpdateDataMedias(int sessionId, Long dataId) {
+        updateDataMedias(dataId, sessionId);
     }
 
     public BuilderParams saveData(Data model) {
@@ -149,11 +144,14 @@ public class DataService extends Subscriber implements Publisher {
         Product product = productRepository.findById(model.getProductId()).orElseThrow(
             () -> new ResourceNotFoundException("Sản phẩm Not Found !")
         );
+        model.setProductName(product.getName());
+        if(NumberUtils.isNull(model.getServiceId())) {
+            model.setServiceId(product.getServiceId());
+        }
 
         DataOwner dataOwner = updateOwner(model);
         model.setSaleId(dataOwner.getSaleId());
         model.setAssignTo(dataOwner.getSaleName());
-        model.setServiceId(product.getServiceId());
 
         Data entity = dataRepository.save(model);
         CustomerPersonal customerPersonal = customerPersonalService.createCustomerFromData(entity);
@@ -323,8 +321,10 @@ public class DataService extends Subscriber implements Publisher {
         var data = dataRepository.findById(id).orElseThrow(
             () -> new RuntimeException("Không tồn tại bản ghi này")
         );
-        data.setFileUrls(new ArrayList<>());
-        data.setListFileUploads(dataMediaRepository.findByDataId(id).orElse(new ArrayList<>()));
+        List<String> medias = dataMediaRepository.findByDataId(id)
+            .map(item -> String.valueOf(item.stream()
+            .map(DataMedia::getFile))).stream().toList();
+        data.setFileUrls(medias);
         return data;
     }
 

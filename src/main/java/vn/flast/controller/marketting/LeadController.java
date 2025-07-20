@@ -3,6 +3,7 @@ package vn.flast.controller.marketting;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
@@ -12,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import vn.flast.controller.BaseController;
 import vn.flast.entities.lead.LeadCareFilter;
 import vn.flast.entities.lead.NoOrderFilter;
 import vn.flast.models.DataCare;
+import vn.flast.models.DataMedia;
 import vn.flast.repositories.CustomerPersonalRepository;
+import vn.flast.repositories.DataMediaRepository;
 import vn.flast.repositories.DataRepository;
 import vn.flast.searchs.DataFilter;
 import vn.flast.entities.MyResponse;
@@ -26,11 +30,12 @@ import vn.flast.security.UserPrinciple;
 import vn.flast.service.DataService;
 import vn.flast.service.cskh.DataCareService;
 import vn.flast.utils.BuilderParams;
+import vn.flast.utils.UploadsUtils;
 import vn.flast.validator.ValidationErrorBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Log4j2
 @RestController
@@ -45,6 +50,9 @@ public class LeadController extends BaseController {
 
     @Autowired
     private DataRepository dataRepository;
+
+    @Autowired
+    private DataMediaRepository mediaRepository;
 
     @Autowired
     private CustomerPersonalRepository customerPersonalRepository;
@@ -78,7 +86,7 @@ public class LeadController extends BaseController {
         var entity = dataService.saveData(iodata);
 
         Long dataId = (Long) entity.getParams().get("dataId");
-        dataService.createAndUpdateDataMedias(iodata.getFileUrls(), sessionId, dataId);
+        dataService.createAndUpdateDataMedias(sessionId, dataId);
         return MyResponse.response(entity.getParams());
     }
 
@@ -112,15 +120,29 @@ public class LeadController extends BaseController {
         @RequestParam(defaultValue = "0") Long leadId,
         @RequestBody Data ioData
     ) {
-        Data data = Optional.ofNullable(dataService.findById(leadId)).orElseThrow(
-            () -> new RuntimeException("Không tìm thấy Lead!")
-        );
         dataService.Update(ioData);
         List<String> urls = ioData.getFileUrls();
         if(Objects.nonNull(urls)) {
-            dataService.createAndUpdateDataMedias(data.getFileUrls(), sessionId, leadId);
+            dataService.createAndUpdateDataMedias(sessionId, leadId);
         }
         return MyResponse.response("OK");
+    }
+
+    @PostMapping(value = "/uploads-files", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public MyResponse<?> uploadsFiles(
+        @RequestParam Long sessionId,
+        @RequestParam(value = "files") List<MultipartFile> files
+    ) throws Exception {
+        List<String> medias = new ArrayList<>();
+        for(MultipartFile mediaFile : files) {
+            DataMedia dataMedia = new DataMedia();
+            dataMedia.setSessionId(sessionId);
+            String media = UploadsUtils.upload(dataMedia, mediaFile);
+            dataMedia.setFile(media);
+            mediaRepository.save(dataMedia);
+            medias.add(media);
+        }
+        return MyResponse.response(medias);
     }
 
     @PostMapping(value = "/delete")

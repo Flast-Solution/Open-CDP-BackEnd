@@ -19,9 +19,6 @@ import vn.flast.searchs.ProductFilter;
 import vn.flast.service.MediaService;
 import vn.flast.service.ProductService;
 import vn.flast.validator.ValidationErrorBuilder;
-
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
@@ -75,21 +72,13 @@ public class ProductController {
         return MyResponse.response("Xáo bản ghi thành công .!");
     }
 
-    @PostMapping(path = "/upload-file", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(path = "/upload-files", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public MyResponse<?> uploadFileMedia(
         @RequestParam(value = "files") List<MultipartFile> files,
         @RequestParam(defaultValue = "0") Long sessionId,
         @RequestParam(defaultValue = "0") Long productId
-    ) throws NoSuchAlgorithmException {
-        if (files.isEmpty()) {
-            return MyResponse.response(403);
-        }
-        try {
-            var data = mediaService.uploadFileMediaProduct(files, sessionId, productId);
-            return MyResponse.response(data);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    ) {
+        throw new RuntimeException("Chưa hỗ trợ !");
     }
 
     @PostMapping("/remove-file")

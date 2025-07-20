@@ -148,9 +148,6 @@ public class Data implements Cloneable {
     private Date csTime;
 
     @Transient
-    List<DataMedia> listFileUploads = new ArrayList<>();
-
-    @Transient
     private List<String> fileUrls = new ArrayList<>();
 
     public enum PreSaleCall {

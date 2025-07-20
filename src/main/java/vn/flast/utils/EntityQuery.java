@@ -137,8 +137,9 @@ public class EntityQuery<E> {
     private TypedQuery<E> prepareSelectTypedQuery() {
         criteriaQuery.select(root);
         if(!predicates.isEmpty()) {
-            criteriaQuery.where(predicates.toArray(new Predicate[0])).orderBy(orders);
+            criteriaQuery.where(predicates.toArray(new Predicate[0]));
         }
+        criteriaQuery.orderBy(orders);
         return entityManager.createQuery(criteriaQuery);
     }
 

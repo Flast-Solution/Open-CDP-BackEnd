@@ -68,9 +68,7 @@ public class PayService {
         boolean isPaid = NumberUtils.gteZero(orderResponse.getPaid());
         orderResponse.setType(isPaid ? CustomerOrder.TYPE_ORDER: CustomerOrder.TYPE_CO_HOI);
         orderResponse.setCreatedAt(new Date());
-        if(orderResponse.getPaid() >= orderResponse.getTotal()) {
-            orderResponse.setPaymentStatus(OrderUtils.PAYMENT_STATUS_DONE);
-        }
+
         CustomerOrder order = new CustomerOrder();
         CopyProperty.CopyIgnoreNull(orderResponse, order);
         boolean reCalculatorOrder = false;
@@ -143,9 +141,6 @@ public class PayService {
         order.setPaid(totalPaid + model.getAmount());
         Integer statusStartOrder = statusOrderRepository.findStartOrder().getId();
         order.setStatus(statusStartOrder);
-        if(order.getPaidTime() == null) {
-            order.setPaidTime(new Date());
-        }
         List<Long> orderIds = List.of(order.getId());
         detailRepository.fetchDetailOrdersId(orderIds).forEach(detail -> {
             detail.setStatus(statusStartOrder);
