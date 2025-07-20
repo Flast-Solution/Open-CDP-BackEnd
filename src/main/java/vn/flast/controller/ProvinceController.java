@@ -1,4 +1,4 @@
-package vn.flast.controller.lead;
+package vn.flast.controller;
 
 
 import lombok.RequiredArgsConstructor;
@@ -9,14 +9,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.repositories.ProvinceRepository;
-import vn.flast.searchs.DataFilter;
 
 @Log4j2
 @RestController
 @RequestMapping("/province")
 @RequiredArgsConstructor
 public class ProvinceController {
-
 
     private final ProvinceRepository provinceRepository;
 

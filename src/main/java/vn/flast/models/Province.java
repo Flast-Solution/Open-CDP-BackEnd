@@ -13,8 +13,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "province")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public class Province implements java.io.Serializable {
 

@@ -165,8 +165,8 @@ public class ProductService {
         }
     }
 
-    public SaleProduct findName(String name) {
-        var entity = productsRepository.findByName(name).orElseThrow(
+    public SaleProduct findId(Long id) {
+        var entity = productsRepository.findById(id).orElseThrow(
             () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         SaleProduct saleProduct = new SaleProduct();
@@ -174,6 +174,7 @@ public class ProductService {
         saleProduct.setListProperties(productAttributedRepository.findByProduct(entity.getId()));
         saleProduct.setSkus(skuService.listProductSkuAndDetail(entity.getId()));
         saleProduct.setListOpenInfo(productPropertyRepository.findByProductId(entity.getId()));
+        saleProduct.setWarehouses(warehouseRepository.findByProductId(entity.getId()));
         return saleProduct;
     }
 

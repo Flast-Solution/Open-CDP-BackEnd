@@ -115,9 +115,17 @@ public class OrderService  implements Publisher, Serializable {
             }
             CopyProperty.CopyIgnoreNull(entity, order);
         } else {
-            Data data = dataRepository.findFirstByPhone(input.customer().getMobile()).orElseThrow(
-                () -> new ResourceNotFoundException("Lead Not Found .!")
-            );
+            Data data = null;
+            if(NumberUtils.isNotNull(input.dataId())) {
+                data = dataRepository.findById(input.dataId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Lead Id Not Found .!")
+                );
+            }
+            if(Objects.isNull(data)) {
+                data = dataRepository.findFirstByPhone(input.customer().getMobile()).orElseThrow(
+                    () -> new ResourceNotFoundException("Customer Lead Not Found .!")
+                );
+            }
             data.setStatus(DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
             dataRepository.save(data);
 

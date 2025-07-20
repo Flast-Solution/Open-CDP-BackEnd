@@ -9,11 +9,11 @@ import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.JsonUtils;
 import vn.flast.utils.NumberUtils;
-
 import java.util.*;
 
 public record OrderInput(
     Long id,
+    Long dataId,
     CustomerPersonal customer,
     OrderDiscount discount,
     OrderPaymentInfo paymentInfo,

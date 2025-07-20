@@ -1,4 +1,4 @@
-package vn.flast.controller.lead;
+package vn.flast.controller.marketting;
 
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -16,6 +16,7 @@ import vn.flast.controller.BaseController;
 import vn.flast.entities.lead.LeadCareFilter;
 import vn.flast.entities.lead.NoOrderFilter;
 import vn.flast.models.DataCare;
+import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataRepository;
 import vn.flast.searchs.DataFilter;
 import vn.flast.entities.MyResponse;
@@ -24,6 +25,7 @@ import vn.flast.pagination.Ipage;
 import vn.flast.security.UserPrinciple;
 import vn.flast.service.DataService;
 import vn.flast.service.cskh.DataCareService;
+import vn.flast.utils.BuilderParams;
 import vn.flast.validator.ValidationErrorBuilder;
 
 import java.util.List;
@@ -33,7 +35,7 @@ import java.util.Optional;
 @Log4j2
 @RestController
 @RequestMapping("/data")
-public class DataController extends BaseController {
+public class LeadController extends BaseController {
 
     @Autowired
     private DataService dataService;
@@ -43,6 +45,9 @@ public class DataController extends BaseController {
 
     @Autowired
     private DataRepository dataRepository;
+
+    @Autowired
+    private CustomerPersonalRepository customerPersonalRepository;
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @PostMapping(value = "/create")
@@ -88,6 +93,16 @@ public class DataController extends BaseController {
     public MyResponse<?> viewData(@RequestParam Long dataId){
         var data = dataService.findById(dataId);
         return MyResponse.response(data);
+    }
+
+    @GetMapping(value = "/get-customer")
+    public MyResponse<?> getCustomer(@RequestParam Long dataId){
+        var lead = dataService.findById(dataId);
+        var customer = customerPersonalRepository.findByPhone(lead.getCustomerMobile());
+        BuilderParams body = BuilderParams.create()
+            .addParam("lead", lead)
+            .addParam("customer", customer);
+        return MyResponse.response(body.getParams());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

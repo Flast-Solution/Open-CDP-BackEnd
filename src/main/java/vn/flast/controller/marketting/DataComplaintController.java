@@ -15,8 +15,8 @@ import java.util.Objects;
 
 @Log4j2
 @RestController
-@RequestMapping("/data-marketing")
-public class DataMarketingController {
+@RequestMapping("/data-complaint")
+public class DataComplaintController {
 
     @Autowired
     private DataComplaintService dataComplaintService;

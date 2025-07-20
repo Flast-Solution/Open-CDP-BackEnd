@@ -63,9 +63,9 @@ public class ProductController {
         return MyResponse.response(data);
     }
 
-    @GetMapping("/find-by-name")
-    public MyResponse<?> findName(@RequestParam("name") String name) {
-        var product = productService.findName(name);
+    @GetMapping("/find-by-id")
+    public MyResponse<?> findName(@RequestParam("id") Long id) {
+        var product = productService.findId(id);
         return MyResponse.response(product);
     }
 
