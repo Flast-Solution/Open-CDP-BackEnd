@@ -57,7 +57,7 @@ public class DataCareService extends BaseController {
             sqlCondiBuilder.addStringEquals("a.cause", filter.getCause());
         }
         sqlCondiBuilder.addDateBetween("b.in_time", filter.getFrom(), filter.getTo());
-        sqlCondiBuilder.addOrderBy("ORDER BY a.id DESC");
+        sqlCondiBuilder.addOrderByDesc("a.id");
         String finalQuery = sqlCondiBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlCondiBuilder.countQueryString());
         Long count = sqlCondiBuilder.countOrSumQuery(countQuery);

@@ -5,8 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.flast.utils.NumberUtils;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public class CustomerFilter {
     private String phone;
@@ -21,5 +20,4 @@ public class CustomerFilter {
     public Integer page() {
         return NumberUtils.isNull(page) ? 0 : (page - 1);
     }
-
 }

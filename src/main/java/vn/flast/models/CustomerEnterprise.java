@@ -1,21 +1,13 @@
 package vn.flast.models;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Date;
 
 @Table(name = "customer_enterprise")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class CustomerEnterprise {
 
     @Id
@@ -44,9 +36,6 @@ public class CustomerEnterprise {
     @Column(name = "ward_id")
     private Long wardId;
 
-    @Column(name = "district_id")
-    private Long districtId;
-
     @Column(name = "province_id")
     private Long provinceId;
 
@@ -61,4 +50,10 @@ public class CustomerEnterprise {
 
     @Column(name = "contract_file")
     private String contractFile;
+
+    @PrePersist
+    @PreUpdate
+    public void beforeCreate() {
+        inTime = new Date();
+    }
 }

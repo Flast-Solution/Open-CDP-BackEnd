@@ -8,7 +8,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -27,13 +26,4 @@ public class Province implements java.io.Serializable {
 
     @Column(name = "parent_id")
     private Integer parentId;
-
-    @Column(name = "level")
-    private Byte level;
-
-    @Column(name = "type")
-    private Byte type;
-
-    @Column(name = "order", nullable = false)
-    private int order;
 }

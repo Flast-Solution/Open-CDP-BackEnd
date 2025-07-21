@@ -12,7 +12,6 @@ import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.resultset.CustomerLever;
 import vn.flast.models.CustomerEnterprise;
 import vn.flast.models.CustomerPersonal;
-import vn.flast.models.Data;
 import vn.flast.models.DataOwner;
 import vn.flast.models.User;
 import vn.flast.pagination.Ipage;
@@ -23,7 +22,6 @@ import vn.flast.service.cskh.DataCareService;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
-
 import java.util.List;
 
 @Service
@@ -62,11 +60,10 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
         info.iCustomer = customer;
         info.lichSuTuongTac = dataDao.lastInteracted(phone);
         var listChuaHt = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_CO_HOI);
-        List<CustomerOrderWithoutDetails> donChuaht = CopyProperty.copyListIgnoreNull(
+        info.donChuaHoanThanh = CopyProperty.copyListIgnoreNull(
             listChuaHt,
             CustomerOrderWithoutDetails::new
         );
-        info.donChuaHoanThanh = donChuaht;
         var listDonHoanThanh = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_ORDER);
         List<CustomerOrderWithoutDetails> donHoanThanh = CopyProperty.copyListIgnoreNull(
             listDonHoanThanh,
@@ -83,24 +80,13 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
         if(dataOwner == null) {
             return null;
         }
-        return userRepository.findById(dataOwner.getSaleId().intValue()).orElseThrow(
+        return userRepository.findById(dataOwner.getSaleId()).orElseThrow(
             () -> new RuntimeException("user does not exist")
         );
     }
 
     public CustomerPersonal findByPhone(String phone) {
         return customerRepository.findByPhone(phone);
-    }
-
-    public CustomerPersonal createCustomer(Data data) {
-        CustomerPersonal model = new CustomerPersonal();
-        model.setSourceId(data.getSource().longValue());
-        model.setEmail(data.getCustomerEmail());
-        model.setName(data.getCustomerName());
-        model.setSaleId(data.getSaleId());
-        model.setMobile(data.getCustomerMobile());
-        customerRepository.save(model);
-        return model;
     }
 
     public Ipage<?> fetchCustomerPersonal(CustomerFilter filter){
@@ -125,7 +111,7 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
         sqlBuilder.addStringEquals("e.tax_code", filter.getTaxCode());
         sqlBuilder.addStringEquals("c.code", filter.getCode());
         sqlBuilder.addNotNUL("e.id");
-        sqlBuilder.addDesc("e.id");
+        sqlBuilder.addOrderByDesc("e.id");
 
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());

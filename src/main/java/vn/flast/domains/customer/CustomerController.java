@@ -1,11 +1,11 @@
 package vn.flast.domains.customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.flast.entities.MyResponse;
+import vn.flast.models.CustomerEnterprise;
+import vn.flast.repositories.CustomerEnterpriseRepository;
+import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.searchs.CustomerFilter;
 import vn.flast.service.customer.CustomerServiceGlobal;
@@ -19,6 +19,12 @@ public class CustomerController {
 
     @Autowired
     private CustomerPersonalService customerPersonalService;
+
+    @Autowired
+    private CustomerEnterpriseRepository enterpriseRepository;
+
+    @Autowired
+    private CustomerOrderRepository orderRepository;
 
     @Autowired
     private CustomerServiceGlobal cusService;
@@ -37,8 +43,8 @@ public class CustomerController {
 
     @GetMapping("/find-by-phone")
     public MyResponse<?> listDataStatus(
-            @RequestParam(name = "phone") String phone,
-            @RequestParam(defaultValue = "withOrder") String withOrder
+        @RequestParam(name = "phone") String phone,
+        @RequestParam(defaultValue = "withOrder") String withOrder
     ) {
         var data = ("withOrder".endsWith(withOrder) ? cusService.getInfo(phone) : cusService.findByPhone(phone));
         return MyResponse.response(data);
@@ -54,6 +60,21 @@ public class CustomerController {
     public MyResponse<?> fetchCustomerEnterPrise(vn.flast.entities.customer.CustomerFilter filter){
         var data = cusService.fetchCustomerEnterprise(filter);
         return MyResponse.response(data);
+    }
+
+    @PostMapping("/create-enterprise")
+    public MyResponse<?> createEnterPrise(
+        @RequestParam(name = "orderId") Long orderId,
+        @RequestBody CustomerEnterprise customerEnterprise
+    ) {
+        var order = orderRepository.findById(orderId).orElseThrow(
+            () -> new RuntimeException("Không tìm thấy thông tin đơn hàng")
+        );
+        var data = enterpriseRepository.save(customerEnterprise);
+        order.setEnterpriseId(data.getId());
+        order.setEnterpriseName(data.getCompanyName());
+        orderRepository.save(order);
+        return MyResponse.response(data, "Cập nhật thông tin công ty thành công !");
     }
 
     @GetMapping("/count-level-customer")

@@ -33,7 +33,7 @@ public class AccountantService {
         sqlBuilder.addStringEquals("p.code", filter.getCode());
         sqlBuilder.addStringEquals("c.customer_mobile_phone", filter.getPhone());
         sqlBuilder.addDateBetween("p.in_time", filter.getFrom(), filter.getTo());
-        sqlBuilder.addOrderBy("ORDER BY p.id DESC");
+        sqlBuilder.addOrderByDesc("p.id");
 
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());

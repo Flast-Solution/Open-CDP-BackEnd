@@ -210,7 +210,7 @@ public class ProductService {
         sqlBuilder.addStringEquals("p.code", filter.code());
         sqlBuilder.like("p.name", filter.name());
         sqlBuilder.addIntegerEquals("p.provider_id", filter.providerId());
-        sqlBuilder.addOrderBy("ORDER BY p.id DESC");
+        sqlBuilder.addOrderByDesc("p.id");
 
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());

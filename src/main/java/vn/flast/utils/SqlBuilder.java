@@ -38,8 +38,8 @@ public class SqlBuilder {
         return instances;
     }
 
-    public SqlBuilder addOrderBy(String strOrderBy) {
-        orderBy = strOrderBy;
+    public SqlBuilder addOrderByDesc(String strOrderBy) {
+        orderBy = "ORDER BY " + strOrderBy + " DESC";
         return this;
     }
 
@@ -182,21 +182,6 @@ public class SqlBuilder {
     public SqlBuilder addNotEquals(String column, Object value) {
         if(StringUtils.isNotEmpty(column) && value != null) {
             maps.put(" AND ".concat(column).concat(" != "), value);
-        }
-        return this;
-    }
-
-    public SqlBuilder addDesc(String column) {
-        if (StringUtils.isNotEmpty(column)) {
-            maps.put(" ORDER BY ".concat(column).concat(" DESC"), null);
-        }
-        return this;
-    }
-
-    public SqlBuilder addASC(String column) {
-        if (StringUtils.isNotEmpty(column)) {
-            // Append "ORDER BY column ASC" to the SQL query
-            maps.put(" ORDER BY ".concat(column).concat(" ASC"), null);
         }
         return this;
     }

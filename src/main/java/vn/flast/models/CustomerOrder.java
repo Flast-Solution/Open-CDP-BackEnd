@@ -43,7 +43,7 @@ public class CustomerOrder implements Cloneable {
     private Integer source;
 
     @Column(name = "enterprise_id")
-    private Integer enterpriseId;
+    private Long enterpriseId;
 
     @Column(name = "enterprise_name")
     private String enterpriseName;
