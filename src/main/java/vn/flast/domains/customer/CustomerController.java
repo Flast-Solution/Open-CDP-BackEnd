@@ -1,14 +1,22 @@
 package vn.flast.domains.customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import vn.flast.entities.MyResponse;
+import vn.flast.models.CustomerContract;
 import vn.flast.models.CustomerEnterprise;
+import vn.flast.repositories.CustomerContractRepository;
 import vn.flast.repositories.CustomerEnterpriseRepository;
 import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.searchs.CustomerFilter;
 import vn.flast.service.customer.CustomerServiceGlobal;
+import vn.flast.utils.Common;
+import vn.flast.utils.UploadsUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/customer")
@@ -19,6 +27,9 @@ public class CustomerController {
 
     @Autowired
     private CustomerPersonalService customerPersonalService;
+
+    @Autowired
+    private CustomerContractRepository contractRepository;
 
     @Autowired
     private CustomerEnterpriseRepository enterpriseRepository;
@@ -62,11 +73,11 @@ public class CustomerController {
         return MyResponse.response(data);
     }
 
-    @PostMapping("/create-enterprise")
-    public MyResponse<?> createEnterPrise(
+    @PostMapping(value = "/create-enterprise", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public MyResponse<?> createEnterprise(
         @RequestParam(name = "orderId") Long orderId,
-        @RequestBody CustomerEnterprise customerEnterprise
-    ) {
+        @ModelAttribute CustomerEnterprise customerEnterprise
+    ) throws Exception {
         var order = orderRepository.findById(orderId).orElseThrow(
             () -> new RuntimeException("Không tìm thấy thông tin đơn hàng")
         );
@@ -74,6 +85,19 @@ public class CustomerController {
         order.setEnterpriseId(data.getId());
         order.setEnterpriseName(data.getCompanyName());
         orderRepository.save(order);
+
+        List<CustomerContract> contracts = new ArrayList<>();
+        for(var item : customerEnterprise.getContracts()) {
+            CustomerContract contract = new CustomerContract();
+            String file = UploadsUtils.upload(contract, item);
+            contract.setFileName(file);
+            contract.setEnterpriseId(customerEnterprise.getId());
+            contract.setOrderCode(order.getCode());
+            contracts.add(contract);
+        }
+        if(!Common.CollectionIsEmpty(contracts)) {
+            contractRepository.saveAll(contracts);
+        }
         return MyResponse.response(data, "Cập nhật thông tin công ty thành công !");
     }
 

@@ -25,12 +25,7 @@ import vn.flast.orchestration.Message;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.Publisher;
 import vn.flast.pagination.Ipage;
-import vn.flast.repositories.CustomerOrderDetailRepository;
-import vn.flast.repositories.CustomerOrderNoteRepository;
-import vn.flast.repositories.CustomerOrderRepository;
-import vn.flast.repositories.CustomerOrderStatusRepository;
-import vn.flast.repositories.CustomerPersonalRepository;
-import vn.flast.repositories.DataRepository;
+import vn.flast.repositories.*;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.service.DataService;
 import vn.flast.utils.Common;
@@ -63,6 +58,9 @@ public class OrderService  implements Publisher, Serializable {
 
     @Autowired
     private CustomerPersonalRepository customerRepository;
+
+    @Autowired
+    private CustomerContractRepository customerContractRepository;
 
     @Autowired
     private DataRepository dataRepository;
@@ -530,5 +528,10 @@ public class OrderService  implements Publisher, Serializable {
             CopyProperty.CopyIgnoreNull(input, care);
             return orderNoteRepository.save(care);
         }
+    }
+
+    @Transactional
+    public void deleteContract(String code, String file) {
+        customerContractRepository.deleteByOrderCode(code, file);
     }
 }

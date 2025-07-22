@@ -13,7 +13,10 @@ import java.util.regex.Pattern;
 
 public class UploadsUtils {
 
-    public static String upload(FilesInterface uploadFiles, MultipartFile multipartFile) throws Exception {
+    public static String upload(
+        FilesInterface uploadFiles,
+        MultipartFile multipartFile
+    ) throws Exception {
 
         Objects.requireNonNull(multipartFile, "Multipart not empty .!");
         String nameFile = multipartFile.getOriginalFilename();

@@ -1,9 +1,13 @@
 package vn.flast.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "customer_enterprise")
 @Entity
@@ -48,12 +52,13 @@ public class CustomerEnterprise {
     @Column(name = "in_time")
     private Date inTime;
 
-    @Column(name = "contract_file")
-    private String contractFile;
-
     @PrePersist
     @PreUpdate
     public void beforeCreate() {
         inTime = new Date();
     }
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<MultipartFile> contracts;
 }

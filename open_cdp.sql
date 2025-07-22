@@ -191,6 +191,34 @@ LOCK TABLES `customer_address` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `customer_contract`
+--
+
+DROP TABLE IF EXISTS `customer_contract`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `customer_contract` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `file_name` varchar(500) NOT NULL,
+  `enterprise_id` bigint DEFAULT NULL,
+  `order_code` varchar(100) NOT NULL,
+  `in_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `enterprise_id` (`enterprise_id`),
+  CONSTRAINT `customer_contract_ibfk_1` FOREIGN KEY (`enterprise_id`) REFERENCES `customer_enterprise` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customer_contract`
+--
+
+LOCK TABLES `customer_contract` WRITE;
+/*!40000 ALTER TABLE `customer_contract` DISABLE KEYS */;
+/*!40000 ALTER TABLE `customer_contract` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `customer_enterprise`
 --
 
@@ -210,7 +238,6 @@ CREATE TABLE `customer_enterprise` (
   `email` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT '',
   `mobile_phone` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT '',
   `in_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `contract_file` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uc_tax_code_mobile_phone` (`tax_code`,`mobile_phone`)
 ) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -222,7 +249,7 @@ CREATE TABLE `customer_enterprise` (
 
 LOCK TABLES `customer_enterprise` WRITE;
 /*!40000 ALTER TABLE `customer_enterprise` DISABLE KEYS */;
-INSERT INTO `customer_enterprise` VALUES (51,'CÔNG TY TNHH TRUNG TÂM DẠY THÊM NHD',NULL,'VÕ THỊ THU THANH','0973560918','VÕ THỊ THU THANH','Thôn Tân Hóa Nam',389,27,NULL,'0973560918','2025-07-21 15:27:58',NULL);
+INSERT INTO `customer_enterprise` VALUES (51,'CÔNG TY TNHH TRUNG TÂM DẠY THÊM NHD',NULL,'VÕ THỊ THU THANH','0973560918','VÕ THỊ THU THANH','Thôn Tân Hóa Nam',389,27,NULL,'0973560918','2025-07-22 03:53:10');
 /*!40000 ALTER TABLE `customer_enterprise` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1602,4 +1629,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-21 22:45:02
+-- Dump completed on 2025-07-22 10:57:04

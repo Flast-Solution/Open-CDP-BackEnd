@@ -13,8 +13,7 @@ import java.util.Date;
 
 @Table(name = "customer_address")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class CustomerAddress {
 
     @Id

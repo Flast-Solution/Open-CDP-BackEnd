@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
+import vn.flast.entities.order.DeleteContract;
 import vn.flast.entities.order.OrderDetail;
 import vn.flast.entities.order.OrderResponse;
 import vn.flast.entities.warehouse.SkuDetails;
+import vn.flast.models.CustomerContract;
 import vn.flast.models.CustomerOrder;
+import vn.flast.repositories.CustomerContractRepository;
 import vn.flast.repositories.ProductRepository;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.utils.BuilderParams;
@@ -34,6 +37,9 @@ public class OrderController {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CustomerContractRepository contractRepository;
 
     @PostMapping("/save")
     public MyResponse<?> create(@Valid @RequestBody OrderInput entity, Errors errors) {
@@ -135,5 +141,20 @@ public class OrderController {
     public MyResponse<?> cancelCoHoi(@RequestParam Long orderId, @RequestParam Boolean detail){
         orderService.cancelCoHoi(orderId, detail);
         return MyResponse.response("oke");
+    }
+
+    @GetMapping("/get-contract")
+    public MyResponse<?> findContract(@RequestParam String code) {
+        var contracts = contractRepository.findByCode(code).stream().map(CustomerContract::createUrlFile);
+        return MyResponse.response(contracts);
+    }
+
+    @PostMapping("/delete-contract-file")
+    public MyResponse<?> findContract(@RequestParam String code, @RequestBody DeleteContract deleteContract) {
+        if(deleteContract.file().isEmpty()) {
+            throw new RuntimeException("File không được để trống");
+        }
+        orderService.deleteContract(code, deleteContract.file());
+        return MyResponse.response("Xóa file thành công !");
     }
 }
