@@ -28,21 +28,11 @@ import vn.flast.pagination.Ipage;
 import vn.flast.repositories.*;
 import vn.flast.searchs.OrderFilter;
 import vn.flast.service.DataService;
-import vn.flast.utils.Common;
-import vn.flast.utils.CopyProperty;
-import vn.flast.utils.EntityQuery;
-import vn.flast.utils.NumberUtils;
-import vn.flast.utils.SqlBuilder;
+import vn.flast.utils.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("orderService")
 @Log4j2
@@ -150,6 +140,60 @@ public class OrderService  implements Publisher, Serializable {
         return order;
     }
 
+    public Map<Integer, List<CustomerOrder>> fetchKanban() {
+        List<Integer> status = statusOrderRepository.findAll().stream().map(CustomerOrderStatus::getId).toList();
+        if(status.isEmpty()) {
+            throw new RuntimeException("Chưa cấu hình trạng thái đơn hàng");
+        }
+
+        Map<Integer, List<CustomerOrder>> mOrders = status.stream().collect(Collectors.toMap(
+            i -> i,
+            i -> new ArrayList<>()
+        ));
+        var mStatus = detailRepository.findOrderGroupsByStatus(status);
+        Map<Integer, List<Long>> result = new HashMap<>();
+        for (Object[] row : mStatus) {
+            Integer item = ((Number) row[0]).intValue();
+            String json = (String) row[1];
+            List<Long> ids = JsonUtils.Json2ListObject(json, Long.class);
+            result.put(item, ids);
+        }
+        List<Long> allOrderIds = result.values()
+            .stream()
+            .flatMap(List::stream)
+            .toList();
+
+        List<CustomerOrder> orders = orderRepository.findByIds(allOrderIds);
+        var orderWithDetails = transformDetails(orders);
+        for (CustomerOrder order : orderWithDetails) {
+            List<Integer> detailStatus = order.getDetails().stream().map(CustomerOrderDetail::getStatus).toList();
+            for (Map.Entry<Integer, List<CustomerOrder>> entry : mOrders.entrySet()) {
+                Integer orderStatus = entry.getKey();
+                if(detailStatus.contains(orderStatus)) {
+                    mOrders.get(orderStatus).add(order);
+                }
+            }
+        }
+        transformDetails(orders);
+        return mOrders;
+    }
+
+    public List<CustomerOrder>fetchKanbanDetail(OrderFilter filter) {
+
+        int LIMIT = filter.limit();
+        final String totalSQL = "FROM `customer_order` c left join `customer_order_detail` d on c.id = d.customer_order_id ";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+        sqlBuilder.addIntegerEquals("d.status", filter.status());
+        sqlBuilder.addStringEquals("c.customer_mobile_phone", filter.customerPhone());
+        sqlBuilder.addStringEquals("c.code", filter.code());
+
+        String finalQuery = sqlBuilder.builder();
+        var nativeQuery = entityManager.createNativeQuery("SELECT c.* " + finalQuery , CustomerOrder.class);
+        nativeQuery.setMaxResults(LIMIT);
+        var orders = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        return transformDetails(orders);
+    }
+
     public Ipage<?>fetchList(OrderFilter filter) {
         var sale = baseController.getInfo();
         Integer page = filter.page();
@@ -251,7 +295,7 @@ public class OrderService  implements Publisher, Serializable {
             () -> new RuntimeException("error no record exists")
         );
         if (order.getType().equals(CustomerOrder.TYPE_CO_HOI)) {
-            throw new RuntimeException("Không thể hoàn thành đơn hàng cơ hội. Vui lòng cập nhật trạng thái đơn hàng cơ hội thông qua chức năng khác.");
+            throw new RuntimeException("Không thể hoàn thành đơn hàng cơ hội.");
         }
         order.setDoneAt(new Date());
         orderRepository.save(order);
@@ -427,20 +471,17 @@ public class OrderService  implements Publisher, Serializable {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder updateStatusOrder(Long orderId, Integer statusId) {
+    public void updateStatusOrder(Long orderId, Long detailId, Integer statusId) {
         CustomerOrder order = orderRepository.findById(orderId).orElseThrow(
             () -> new RuntimeException("error no record exists")
         );
         if (order.getType().equals(CustomerOrder.TYPE_CO_HOI)) {
-            throw new RuntimeException("Không thể cập nhật trạng thái vì đơn hàng là cơ hội. Vui lòng cập nhật trạng thái đơn hàng cơ hội thông qua chức năng khác.");
+            throw new RuntimeException("Không thể cập nhật trạng thái vì đơn hàng là cơ hội.");
         }
         CustomerOrderStatus status = statusOrderRepository.findById(statusId).orElseThrow(
             () -> new RuntimeException("error no record exists")
         );
-        order.setStatus(status.getId());
-        orderRepository.save(order);
-        this.sendMessageOnOrderChange(order);
-        return order;
+        detailRepository.updateDetailStatus(status.getId(), detailId);
     }
 
     public void sendMessageOnOrderChange(CustomerOrder order) {

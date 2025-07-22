@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.order.OrderCare;
-import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderNote;
 import vn.flast.searchs.OrderFilter;
 
@@ -24,20 +23,17 @@ public class CSKHController {
 
     @GetMapping("/fetch-co-hoi")
     public MyResponse<?> fetchCoHoi(OrderFilter filter) {
-        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_CO_HOI);
-        return MyResponse.response(orderService.fetchList(updatedFilter));
+        return MyResponse.response(orderService.fetchList(filter));
     }
 
     @GetMapping("/fetch-co-hoi-not-care")
     public MyResponse<?> fetchCoHoiNotCare(OrderFilter filter) {
-        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_CO_HOI);
-        return MyResponse.response(orderService.fetchListCoHoiNotCare(updatedFilter));
+        return MyResponse.response(orderService.fetchListCoHoiNotCare(filter));
     }
 
     @GetMapping("/fetch-co-hoi-care")
     public MyResponse<?> fetchCoHoiCare(OrderFilter filter) {
-        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_CO_HOI);
-        return MyResponse.response(orderService.fetchListCoHoiCare(updatedFilter));
+        return MyResponse.response(orderService.fetchListCoHoiCare(filter));
     }
 
     @GetMapping("/find-co-hoi-care")
@@ -55,14 +51,12 @@ public class CSKHController {
 
     @GetMapping("/fetch-order-completed")
     public MyResponse<?> fetchOrderCompleted(OrderFilter filter) {
-        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
-        return MyResponse.response(orderService.fetchLisOrderNotCare(updatedFilter));
+        return MyResponse.response(orderService.fetchLisOrderNotCare(filter));
     }
 
     @GetMapping("/fetch-order-cancel")
     public MyResponse<?> fetchOrderCancel(OrderFilter filter) {
-        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
-        return MyResponse.response(orderService.fetchLisOrderCancel(updatedFilter));
+        return MyResponse.response(orderService.fetchLisOrderCancel(filter));
     }
 
     @PostMapping("/take-care-order")
@@ -74,7 +68,6 @@ public class CSKHController {
 
     @GetMapping("/fetch-order-take-care")
     public MyResponse<?> fetchOrderTakeCare(OrderFilter filter) {
-        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
-        return MyResponse.response(orderService.fetchLisOrderCare(updatedFilter));
+        return MyResponse.response(orderService.fetchLisOrderCare(filter));
     }
 }

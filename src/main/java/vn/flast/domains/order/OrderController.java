@@ -114,8 +114,19 @@ public class OrderController {
 
     @GetMapping("/fetch")
     public MyResponse<?> list(OrderFilter filter) {
-        OrderFilter updatedFilter = filter.withPage(filter.page() + 1).withType(CustomerOrder.TYPE_ORDER);
-        var orders = orderService.fetchList(updatedFilter);
+        var orders = orderService.fetchList(filter);
+        return MyResponse.response(orders);
+    }
+
+    @GetMapping("/fetch-kanban")
+    public MyResponse<?> fetchKanban() {
+        var orders = orderService.fetchKanban();
+        return MyResponse.response(orders);
+    }
+
+    @GetMapping("/fetch-kanban-detail")
+    public MyResponse<?> fetchKanbanDetail(OrderFilter filter) {
+        var orders = orderService.fetchKanbanDetail(filter);
         return MyResponse.response(orders);
     }
 
@@ -132,9 +143,13 @@ public class OrderController {
     }
 
     @PostMapping("/update-status-order")
-    public MyResponse<?> updateStatusOrder(@RequestParam Long orderId, @RequestParam Integer statusId){
-        CustomerOrder order = orderService.updateStatusOrder(orderId, statusId);
-        return MyResponse.response(order);
+    public MyResponse<?> updateStatusOrder(
+        @RequestParam Long orderId,
+        @RequestParam Long detailId,
+        @RequestParam Integer statusId
+    ){
+        orderService.updateStatusOrder(orderId, detailId, statusId);
+        return MyResponse.response("Oki", "Cập nhật đơn hàng thành công !");
     }
 
     @PostMapping("/cancel-co-hoi")

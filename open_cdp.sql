@@ -249,7 +249,7 @@ CREATE TABLE `customer_enterprise` (
 
 LOCK TABLES `customer_enterprise` WRITE;
 /*!40000 ALTER TABLE `customer_enterprise` DISABLE KEYS */;
-INSERT INTO `customer_enterprise` VALUES (51,'CÔNG TY TNHH TRUNG TÂM DẠY THÊM NHD',NULL,'VÕ THỊ THU THANH','0973560918','VÕ THỊ THU THANH','Thôn Tân Hóa Nam',389,27,NULL,'0973560918','2025-07-22 03:53:10');
+INSERT INTO `customer_enterprise` VALUES (51,'CÔNG TY TNHH TRUNG TÂM DẠY THÊM NHD',NULL,'VÕ THỊ THU THANH','0973560918','VÕ THỊ THU THANH','Thôn Tân Hóa Nam',389,27,NULL,'0973560918','2025-07-22 04:07:07');
 /*!40000 ALTER TABLE `customer_enterprise` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -312,7 +312,7 @@ CREATE TABLE `customer_order` (
   KEY `phone_idx` (`customer_mobile_phone`),
   KEY `data_id_idx` (`data_id`),
   KEY `customer_id_idx` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34005 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34006 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -321,7 +321,7 @@ CREATE TABLE `customer_order` (
 
 LOCK TABLES `customer_order` WRITE;
 /*!40000 ALTER TABLE `customer_order` DISABLE KEYS */;
-INSERT INTO `customer_order` VALUES (34002,33,5,NULL,NULL,NULL,'OFBG2625OWC',NULL,22,'Hà NAm',NULL,NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,720000,0,NULL,NULL,NULL,NULL,NULL,NULL,720000,0,NULL,0,NULL,NULL,NULL,'2025-07-19 00:16:17','2025-07-19 00:16:17',NULL,2,'admin',NULL,1,'cohoi','2025-07-19 00:16:17',0,2),(34003,33,5,51,'CÔNG TY TNHH TRUNG TÂM DẠY THÊM NHD',NULL,'OPJV2625QTK',NULL,22,'Hà NAm',NULL,NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,2800000,0,NULL,NULL,30000,NULL,NULL,NULL,3054000,8,NULL,2054000,NULL,NULL,NULL,'2025-07-19 14:34:27','2025-07-21 13:57:07',NULL,2,'admin',NULL,1,'order','2025-07-19 00:20:27',0,2),(34004,34,1,NULL,NULL,NULL,'OWLD2725IWD',NULL,23,'Pép DiaLa',NULL,NULL,NULL,NULL,'098545555',NULL,NULL,950000,0,NULL,NULL,20000,NULL,NULL,NULL,1046000,8,NULL,200000,NULL,NULL,NULL,'2025-07-20 12:31:48','2025-07-20 12:31:48',NULL,2,'Administrator',NULL,1,'order','2025-07-20 12:21:50',0,2);
+INSERT INTO `customer_order` VALUES (34002,33,5,NULL,NULL,NULL,'OFBG2625OWC',NULL,22,'Hà NAm',NULL,NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,720000,0,NULL,NULL,NULL,NULL,NULL,NULL,720000,0,NULL,0,NULL,NULL,NULL,'2025-07-19 00:16:17','2025-07-19 00:16:17',NULL,2,'admin',NULL,1,'cohoi','2025-07-19 00:16:17',0,2),(34003,33,5,51,'CÔNG TY TNHH TRUNG TÂM DẠY THÊM NHD',NULL,'OPJV2625QTK',NULL,22,'Hà NAm',NULL,NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,2800000,0,NULL,NULL,30000,NULL,NULL,NULL,3054000,8,NULL,2054000,NULL,NULL,NULL,'2025-07-19 14:34:27','2025-07-21 13:57:07',NULL,2,'admin',NULL,1,'order','2025-07-19 00:20:27',0,2),(34004,34,1,NULL,NULL,NULL,'OWLD2725IWD',NULL,23,'Pép DiaLa',NULL,NULL,NULL,NULL,'098545555',NULL,NULL,950000,0,NULL,NULL,20000,NULL,NULL,NULL,1046000,8,NULL,200000,NULL,NULL,NULL,'2025-07-20 12:31:48','2025-07-20 12:31:48',NULL,2,'Administrator',NULL,1,'order','2025-07-20 12:21:50',0,2),(34005,34,1,NULL,NULL,NULL,'OCFY2925YUX',NULL,23,'Pép DiaLa',NULL,NULL,NULL,NULL,'098545555',NULL,NULL,5600000,0,NULL,NULL,NULL,NULL,NULL,NULL,5600000,0,NULL,0,NULL,NULL,NULL,'2025-07-22 04:11:40','2025-07-22 10:56:30',NULL,2,'Administrator',NULL,2,'cohoi','2025-07-22 04:11:40',0,2);
 /*!40000 ALTER TABLE `customer_order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -353,7 +353,7 @@ CREATE TABLE `customer_order_detail` (
   `day_quote` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `customer_order_id` (`customer_order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34068 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34070 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -362,7 +362,7 @@ CREATE TABLE `customer_order_detail` (
 
 LOCK TABLES `customer_order_detail` WRITE;
 /*!40000 ALTER TABLE `customer_order_detail` DISABLE KEYS */;
-INSERT INTO `customer_order_detail` VALUES (34063,'OFBG2625OWC-1',34002,'Bán lẻ',774,'Hộp Mềm','(Chưa có)',10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',90000,8,0,720000,1,'2025-07-19 00:16:17','2025-07-19 00:16:17',NULL,NULL),(34064,'OPJV2625QTK-1',34003,'Bán lẻ',774,'Hộp Mềm','6 Tháng',10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',9000,100,0,900000,1,'2025-07-19 00:20:27','2025-07-19 00:20:27',NULL,NULL),(34066,'OPJV2625QTK-2',34003,'Bán lẻ',776,'Hộp carton lạnh','6 Tháng',10208,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10382,\"text\":\"Âm dương nắp lửng\"},{\"id\":10383,\"text\":\"Âm dương nắp lật\"},{\"id\":10384,\"text\":\"Nam châm nắp phẳng\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10387,\"text\":\"Giấy C150\"},{\"id\":10389,\"text\":\"Giấy Mỹ thuật\"}]}]',200000,10,100000,1900000,1,'2025-07-19 10:58:18','2025-07-19 10:58:18','',NULL),(34067,'OWLD2725IWD-1',34004,'Bán lẻ',774,'Hộp Mềm','6 Tháng',10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',100000,10,50000,950000,1,'2025-07-20 12:21:50','2025-07-20 12:21:50','',NULL);
+INSERT INTO `customer_order_detail` VALUES (34063,'OFBG2625OWC-1',34002,'Bán lẻ',774,'Hộp Mềm','(Chưa có)',10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',90000,8,0,720000,1,'2025-07-19 00:16:17','2025-07-19 00:16:17',NULL,NULL),(34064,'OPJV2625QTK-1',34003,'Bán lẻ',774,'Hộp Mềm','6 Tháng',10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',9000,100,0,900000,3,'2025-07-19 00:20:27','2025-07-22 14:43:43',NULL,NULL),(34066,'OPJV2625QTK-2',34003,'Bán lẻ',776,'Hộp carton lạnh','6 Tháng',10208,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10382,\"text\":\"Âm dương nắp lửng\"},{\"id\":10383,\"text\":\"Âm dương nắp lật\"},{\"id\":10384,\"text\":\"Nam châm nắp phẳng\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10387,\"text\":\"Giấy C150\"},{\"id\":10389,\"text\":\"Giấy Mỹ thuật\"}]}]',200000,10,100000,1900000,4,'2025-07-19 10:58:18','2025-07-22 14:44:34','',NULL),(34067,'OWLD2725IWD-1',34004,'Bán lẻ',774,'Hộp Mềm','6 Tháng',10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',100000,10,50000,950000,1,'2025-07-20 12:21:50','2025-07-22 14:36:06','',NULL),(34068,'OCFY2925YUX-1',34005,'Bán lẻ',774,'Hộp Mềm','(Chưa có)',10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',500000,10,0,5000000,1,'2025-07-22 04:11:40','2025-07-22 04:11:40','',NULL),(34069,'OCFY2925YUX-2',34005,'Bán lẻ',776,'Hộp carton lạnh','(Chưa có)',10208,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10385,\"text\":\"Hai tầng\"},{\"id\":10383,\"text\":\"Âm dương nắp lật\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10389,\"text\":\"Giấy Mỹ thuật\"},{\"id\":10388,\"text\":\"Giấy Crat\"}]}]',120000,5,0,600000,2,'2025-07-22 04:11:40','2025-07-22 10:54:54','',NULL);
 /*!40000 ALTER TABLE `customer_order_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -456,7 +456,7 @@ CREATE TABLE `customer_order_status` (
 
 LOCK TABLES `customer_order_status` WRITE;
 /*!40000 ALTER TABLE `customer_order_status` DISABLE KEYS */;
-INSERT INTO `customer_order_status` VALUES (1,'Đơn mới','red',1,0,1),(2,'Sản xuất','black',2,0,1),(3,'Hoàn thành','blue',3,0,1),(4,'ĐÓng gói',NULL,NULL,NULL,1),(5,'Đang triển khai',NULL,NULL,NULL,NULL),(6,'Test1',NULL,NULL,NULL,NULL),(7,'Test2',NULL,NULL,NULL,NULL),(8,'Test3',NULL,NULL,NULL,NULL),(9,'Test5',NULL,NULL,NULL,NULL),(10,'Test6',NULL,NULL,NULL,NULL),(11,'Test7',NULL,NULL,NULL,NULL);
+INSERT INTO `customer_order_status` VALUES (1,'Đơn mới','red',1,0,1),(2,'Sản xuất','black',2,0,1),(3,'Hoàn thành','blue',5,0,1),(4,'ĐÓng gói','green',3,0,1),(5,'Đang Giao','green',4,0,1),(6,'Đã giao','green',4,0,1);
 /*!40000 ALTER TABLE `customer_order_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -567,7 +567,7 @@ CREATE TABLE `data` (
 
 LOCK TABLES `data` WRITE;
 /*!40000 ALTER TABLE `data` DISABLE KEYS */;
-INSERT INTO `data` VALUES (32,1,NULL,'Administrator','Hà Nội',5,'Hà NAm','0974260540','manvtk32@gmail.com',NULL,NULL,2,NULL,'admin','2025-07-18 08:14:46','2025-07-18 08:14:46',7,0,NULL,776,'Hộp carton lạnh',NULL,NULL),(33,1,NULL,'Administrator','Hà Nội',5,'Hà NAm','0974260540','manvtk32@gmail.com',NULL,NULL,2,NULL,'admin','2025-07-18 09:06:15','2025-07-18 09:06:15',7,2,NULL,776,'Hộp carton lạnh',NULL,NULL),(34,1,NULL,'Administrator','Hà Nội',1,'Pép DiaLa','098545555',NULL,NULL,NULL,67,NULL,'LongHuu','2025-07-20 12:09:50','2025-07-20 15:07:55',0,2,NULL,774,'Hộp Mềm',NULL,NULL);
+INSERT INTO `data` VALUES (32,1,NULL,'Administrator','Hà Nội',5,'Hà NAm','0974260540','manvtk32@gmail.com',NULL,NULL,2,NULL,'admin','2025-07-18 08:14:46','2025-07-18 08:14:46',7,0,NULL,776,'Hộp carton lạnh',NULL,NULL),(33,1,NULL,'Administrator','Hà Nội',5,'Hà NAm','0974260540','manvtk32@gmail.com',NULL,NULL,2,NULL,'admin','2025-07-18 09:06:15','2025-07-18 09:06:15',7,2,NULL,776,'Hộp carton lạnh',NULL,NULL),(34,1,NULL,'Administrator','Hà Nội',1,'Pép DiaLa','098545555',NULL,NULL,NULL,67,NULL,'LongHuu','2025-07-20 12:09:50','2025-07-22 04:11:40',7,2,NULL,774,'Hộp Mềm',NULL,NULL);
 /*!40000 ALTER TABLE `data` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1629,4 +1629,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-22 10:57:04
+-- Dump completed on 2025-07-22 22:12:07

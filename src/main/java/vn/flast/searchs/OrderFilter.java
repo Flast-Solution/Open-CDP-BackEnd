@@ -1,14 +1,13 @@
 package vn.flast.searchs;
 
-import lombok.With;
 import vn.flast.utils.NumberUtils;
 
 public record OrderFilter(
-    @With Integer page,
+    Integer page,
     Integer limit,
     String code,
-
-    @With String type,
+    String type,
+    Integer status,
     String customerName,
     String customerEmail,
     Integer customerId,
