@@ -5,9 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import vn.flast.utils.NumberUtils;
 
 @Table(name = "customer_order_status")
 @Entity
@@ -33,4 +36,14 @@ public class CustomerOrderStatus {
 
     @Column(name = "status")
     private Integer status;
+
+    @PrePersist @PreUpdate
+    public void updateDefault() {
+        if(NumberUtils.isNull(order)) {
+            order = 0;
+        }
+        if(NumberUtils.isNull(delFlag)) {
+            delFlag = 0;
+        }
+    }
 }

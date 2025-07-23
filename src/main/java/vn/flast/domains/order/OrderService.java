@@ -208,11 +208,12 @@ public class OrderService  implements Publisher, Serializable {
         et.integerEqualsTo("userCreateId", userCreateId);
         et.like("customerName", filter.customerName())
             .integerEqualsTo("customerId", filter.customerId())
-            .like("customerMobile", filter.customerPhone())
-            .like("customerEmail", filter.customerEmail())
-            .like("code", filter.code())
-            .addDescendingOrderBy("createdAt")
+            .integerEqualsTo("status", filter.status())
+            .stringEqualsTo("customerMobile", filter.customerPhone())
+            .stringEqualsTo("customerEmail", filter.customerEmail())
+            .stringEqualsTo("code", filter.code())
             .stringEqualsTo("type", filter.type())
+            .addDescendingOrderBy("createdAt")
             .setMaxResults(filter.limit())
             .setFirstResult(page * filter.limit());
         var lists = transformDetails(et.list());
@@ -539,8 +540,11 @@ public class OrderService  implements Publisher, Serializable {
     }
 
     @Transactional
-    public void cancelCoHoi(Long orderId, Boolean isDetail){
-        Integer statusCancel = statusOrderRepository.findCancelOrder().getId();
+    public void cancelCoHoi(Long orderId, Boolean isDetail) {
+        var model = statusOrderRepository.findCancelOrder().orElseThrow(
+            () -> new RuntimeException("Chưa thiết lập trạng thái Hủy đơn !")
+        );
+        Integer statusCancel = model.getStatus();
         if(isDetail) {
             var order = detailRepository.findById(orderId).orElseThrow(
                 () -> new RuntimeException("error no record exists")
