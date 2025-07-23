@@ -18,10 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.service.user.UserService;
 import vn.flast.utils.CopyProperty;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
