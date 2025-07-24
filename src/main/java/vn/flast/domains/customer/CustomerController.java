@@ -61,18 +61,17 @@ public class CustomerController {
     }
 
     @GetMapping("/find-id")
-    public MyResponse<?> findById(@RequestParam Long customerId) {
-        var customers = customerRepository.findById(customerId);
-        return MyResponse.response(customers);
-    }
-
-    @GetMapping("/find-by-phone")
-    public MyResponse<?> listDataStatus(
-        @RequestParam(name = "phone") String phone,
-        @RequestParam(defaultValue = "withOrder") String withOrder
+    public MyResponse<?> findById(
+        @RequestParam Long customerId,
+        @RequestParam(defaultValue = "false") boolean isMoreInfoInReport
     ) {
-        var data = ("withOrder".endsWith(withOrder) ? cusService.getInfo(phone) : cusService.findByPhone(phone));
-        return MyResponse.response(data);
+        if(isMoreInfoInReport) {
+            var customerInfo = cusService.getInfo(customerId);
+            return MyResponse.response(customerInfo);
+        } else {
+            var customer = customerRepository.findById(customerId);
+            return MyResponse.response(customer);
+        }
     }
 
     @GetMapping("/fetch-customer-personal")
@@ -113,11 +112,5 @@ public class CustomerController {
             contractRepository.saveAll(contracts);
         }
         return MyResponse.response(data, "Cập nhật thông tin công ty thành công !");
-    }
-
-    @GetMapping("/count-level-customer")
-    public MyResponse<?> countLevelCustomer(){
-        var data = cusService.getCustomerLevel();
-        return MyResponse.response(data);
     }
 }

@@ -8,16 +8,10 @@ import vn.flast.entities.customer.CustomerFilter;
 import vn.flast.entities.customer.CustomerInfo;
 import vn.flast.entities.customer.CustomerOrderWithoutDetails;
 import vn.flast.models.CustomerOrder;
-import vn.flast.repositories.CustomerOrderRepository;
-import vn.flast.resultset.CustomerLever;
+import vn.flast.repositories.*;
 import vn.flast.models.CustomerEnterprise;
 import vn.flast.models.CustomerPersonal;
-import vn.flast.models.DataOwner;
-import vn.flast.models.User;
 import vn.flast.pagination.Ipage;
-import vn.flast.repositories.CustomerPersonalRepository;
-import vn.flast.repositories.DataOwnerRepository;
-import vn.flast.repositories.UserRepository;
 import vn.flast.service.cskh.DataCareService;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
@@ -29,6 +23,9 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
 
     @Autowired
     private CustomerPersonalRepository customerRepository;
+
+    @Autowired
+    private CustomerActivitiesRepository customerActivitiesRepository;
 
     @Autowired
     private DataDao dataDao;
@@ -45,48 +42,32 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
     @Autowired
     private UserRepository userRepository;
 
-
-    public CustomerPersonal save(CustomerPersonal customer){
-        return customerRepository.save(customer);
-    }
-
-    public CustomerInfo getInfo(String phone) {
-        var customer = customerRepository.findByPhone(phone);
-        if(customer == null) {
-            return null;
-        }
-        int cId = Math.toIntExact(customer.getId());
-        var info = new CustomerInfo();
-        info.iCustomer = customer;
-        info.lichSuTuongTac = dataDao.lastInteracted(phone);
-        var listChuaHt = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_CO_HOI);
-        info.donChuaHoanThanh = CopyProperty.copyListIgnoreNull(
-            listChuaHt,
-            CustomerOrderWithoutDetails::new
+    public CustomerInfo getInfo(Long customerId) {
+        var customer = customerRepository.findById(customerId).orElseThrow(
+            () -> new RuntimeException("Customer not found")
         );
-        var listDonHoanThanh = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_ORDER);
-        List<CustomerOrderWithoutDetails> donHoanThanh = CopyProperty.copyListIgnoreNull(
-            listDonHoanThanh,
+        int cId = Math.toIntExact(customer.getId());
+
+        CustomerInfo info = new CustomerInfo();
+        info.iCustomer = customer;
+        info.activities = customerActivitiesRepository.findByCustomerId(customer.getId());
+
+        var orders = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_ORDER);
+        List<CustomerOrderWithoutDetails> orderNoDetails = CopyProperty.copyListIgnoreNull(
+            orders,
             CustomerOrderWithoutDetails::new
         );
         info.dataCares = dataCareService.findByCustomerId(cId);
-        info.baDonGanNhat = donHoanThanh;
-        info.saleTakeCare = saleTakeCare(phone);
+        info.orders = orderNoDetails;
+        info.saleName = saleTakeCare(customer.getSaleId());
         return info;
     }
 
-    private User saleTakeCare(String phone) {
-        DataOwner dataOwner = dataOwnerRepository.findByMobile(phone);
-        if(dataOwner == null) {
-            return null;
-        }
-        return userRepository.findById(dataOwner.getSaleId()).orElseThrow(
+    private String saleTakeCare(Integer saleId) {
+        var user = userRepository.findById(saleId).orElseThrow(
             () -> new RuntimeException("user does not exist")
         );
-    }
-
-    public CustomerPersonal findByPhone(String phone) {
-        return customerRepository.findByPhone(phone);
+        return user.getSsoId();
     }
 
     public Ipage<?> fetchCustomerPersonal(CustomerFilter filter){
@@ -123,13 +104,5 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
 
         var listData = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerEnterprise.class);
         return Ipage.generator(LIMIT, count, filter.page(), listData);
-    }
-
-    public List<?> getCustomerLevel() {
-        final String sqlTotalLevel = """
-           SELECT COUNT(c.id) AS 'total', c.level AS level FROM `customer_personal` c  WHERE c.`status` = 1 GROUP BY c.level
-        """;
-        var nativeQuery = entityManager.createNativeQuery(sqlTotalLevel, CustomerLever.REPORT_CUSTOMER_LEVEL);
-        return EntityQuery.getListOfNativeQuery(nativeQuery, CustomerLever.class);
     }
 }
