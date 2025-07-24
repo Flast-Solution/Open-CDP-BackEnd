@@ -36,6 +36,10 @@ public class CustomerPersonalService extends Subscriber {
     @Autowired
     private DataOwnerRepository dataOwnerRepository;
 
+    public CustomerPersonal save(CustomerPersonal entity) {
+        return customerPersonalRepository.save(entity);
+    }
+
     public List<CustomerPersonal> find(CustomerFilter filter) {
         var et = EntityQuery.create(entityManager, CustomerPersonal.class);
         et.setMaxResults(20);

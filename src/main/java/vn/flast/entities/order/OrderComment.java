@@ -4,14 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.flast.models.CustomerOrder;
-import vn.flast.models.CustomerOrderNote;
+import vn.flast.models.FlastNote;
 
-import java.util.List;
-
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public class OrderComment extends CustomerOrder {
-
-    private CustomerOrderNote notes;
+    private FlastNote notes;
 }

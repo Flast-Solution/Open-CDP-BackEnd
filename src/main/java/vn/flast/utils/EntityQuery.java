@@ -6,7 +6,6 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
@@ -34,26 +33,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-/*
- * Hàm count cần phải gọi sau hàm list.
- * Example.
- * return EntityQuery.create(entityManager, ExampleEntity.class)
-    .setFirstResult(firstResult)
-    .setMaxResults(maxResults)
-    .addDescendingOrderBy("creationDate")
-    .stringEqualsTo("statusCode", searchParams.getStatusCode())
-    .objectEqualsTo("type", searchParams.getType())
-    .greaterThanOrEqualsTo("creationDate", searchParams.getStartDate())
-    .lessThanOrEqualsTo("creationDate", searchParams.getEndDate());
-    .list();
-*/
-
 @SuppressWarnings({"unchecked", "UnusedReturnValue"})
 @Slf4j
 public class EntityQuery<E> {
 
     private final EntityManager entityManager;
-    private final Class<E> entityClass;
     private final CriteriaBuilder criteriaBuilder;
     private final CriteriaQuery<E> criteriaQuery;
     private final Root<E> root;
@@ -62,13 +46,8 @@ public class EntityQuery<E> {
     private Integer maxResults;
     private final List<Order> orders = new ArrayList<>();
 
-    public CriteriaBuilder getCriteriaBuilder() {
-        return criteriaBuilder;
-    }
-
     private EntityQuery(EntityManager entityManager, Class<E> entityClass) {
         this.entityManager = entityManager;
-        this.entityClass = entityClass;
         this.criteriaBuilder = entityManager.getCriteriaBuilder();
         this.criteriaQuery = criteriaBuilder.createQuery(entityClass);
         this.root = criteriaQuery.from(criteriaQuery.getResultType());
@@ -119,7 +98,6 @@ public class EntityQuery<E> {
                 .getSqlString();
 
             String finalCount = generatedSql.replaceAll("(select)[^&]*(from)", "$1 COUNT(*) $2");
-            log.debug("SQL COUNT: {}", finalCount);
             Query countQuery = entityManager.createNativeQuery(finalCount);
             int i = 1;
             for (Map.Entry<QueryParameterImplementor<?>, List<SqmParameter<?>>> param : q.getDomainParameterXref().getQueryParameters().entrySet()) {
@@ -328,7 +306,6 @@ public class EntityQuery<E> {
         predicates.add(criteriaBuilder.isNull(toJpaPath(path)));
         return this;
     }
-
 
     private void addEqualPredicate(String path, Object value) {
         predicates.add(equalPredicate(path, value));

@@ -1,11 +1,15 @@
 package vn.flast.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -15,6 +19,8 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import java.util.Collection;
 import java.util.Date;
 
 @Table(name = "customer_personal")
@@ -31,9 +37,6 @@ public class CustomerPersonal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @Column(name = "type")
-    private String type;
 
     @Column(name = "id_card")
     private String idCard;
@@ -116,11 +119,15 @@ public class CustomerPersonal {
     @Column(name = "diem_danh_gia")
     private Integer diemDanhGia;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonManagedReference(value = "customerAddress")
+    @OneToMany(mappedBy = "customerPersonal", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<CustomerAddress> customerAddress;
+
     @PrePersist
     private void beforeSave() {
         if(StringUtils.isEmpty(gender)) {
             gender = "other";
         }
-        type = "newCustomer";
     }
 }

@@ -1,61 +1,55 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.util.Date;
 
-@Table(name = "customer_order_note")
+@Table(name = "flast_note")
 @Entity
-@Getter
-@Setter
-public class CustomerOrderNote {
-
-    public static final int NOTE_NOIBO = 0;
-    public static final int NOTE_KHACHHANG = 1;
-    public static final int NOTE_NHACUNGCAP = 2;
+@Getter @Setter
+public class FlastNote {
 
     public static final int TYPE_COHOI = 0;
     public static final int TYPE_ORDER = 1;
 
+    public static final String OBJECT_TYPE_ORDER_NOTE = "order";
+    public static final String OBJECT_TYPE_ORDER_LEAD = "data";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "order_code")
-    private String orderCode;
+    @NotNull(message = "Mã loại đối tượng không được để trống")
+    @Column(name = "object_type")
+    private String objectType;
 
-    @Column(name = "note")
-    private String note;
+    @NotNull(message = "Mã đối tượng không được để trống")
+    @Column(name = "object_id")
+    private Long objectId;
 
-    @Column(name = "type_note")
-    private Integer typeNote;
+    @Column(name = "data_type")
+    private Integer dataType;
 
     @Column(name = "user_id")
-    private Integer usesId;
+    private Integer userId;
 
-    @Column(name = "user_name")
-    private String userName;
-
+    @NotNull(message = "Người note không được để trống")
     @Column(name = "user_note")
     private String userNote;
 
-    @Column(name = "type")
-    private Integer type;
-
-    @Column(name = "cause")
-    private Integer cause;
+    @NotNull(message = "Vui lòng nhập nội dung")
+    @Column(name = "content")
+    private String content;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -64,6 +58,4 @@ public class CustomerOrderNote {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
-
-
 }

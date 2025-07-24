@@ -10,13 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.flast.controller.BaseController;
 import vn.flast.domains.payments.PayService;
 import vn.flast.entities.order.OrderCare;
-import vn.flast.entities.order.OrderComment;
 import vn.flast.entities.order.OrderDetail;
 import vn.flast.entities.order.OrderResponse;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;
-import vn.flast.models.CustomerOrderNote;
+import vn.flast.models.FlastNote;
 import vn.flast.models.CustomerOrderStatus;
 import vn.flast.models.Data;
 import vn.flast.orchestration.EventDelegate;
@@ -262,35 +261,6 @@ public class OrderService  implements Publisher, Serializable {
         return Ipage.generator(LIMIT, count, filter.page(), lists);
     }
 
-    public List<OrderComment> fetchListOrderStatus(OrderFilter filter) {
-        var sale = baseController.getInfo();
-        var et = EntityQuery.create(entityManager, CustomerOrder.class);
-        boolean isAdminOrManager = sale.getAuthorities().stream().anyMatch(auth
-            -> auth.getAuthority().equals("ROLE_ADMIN") || auth.getAuthority().equals("ROLE_SALE_MANAGER")
-        );
-        Integer userCreateId = (filter.saleId() != null) ?
-            (isAdminOrManager ? filter.saleId() : sale.getId()) :
-            (isAdminOrManager ? null : sale.getId());
-
-        et.integerEqualsTo("userCreateId", userCreateId);
-        et.like("customerName", filter.customerName())
-            .integerEqualsTo("customerId", filter.customerId())
-            .like("customerMobile", filter.customerPhone())
-            .like("customerEmail", filter.customerEmail())
-            .like("code", filter.code())
-            .dateIsNull("doneAt")
-            .addDescendingOrderBy("createdAt")
-            .stringEqualsTo("type", filter.type());
-
-        var lists = transformDetails(et.list());
-        return lists.stream().map(order -> {
-            OrderComment op = new OrderComment();
-            CopyProperty.CopyIgnoreNull(order, op);
-            op.setNotes(orderNoteRepository.findByOrderCode(order.getCode()));
-            return op;
-        }).toList();
-    }
-
     public CustomerOrder completeOrder(Long id) {
         CustomerOrder order = orderRepository.findById(id).orElseThrow(
             () -> new RuntimeException("error no record exists")
@@ -330,7 +300,7 @@ public class OrderService  implements Publisher, Serializable {
         sqlBuilder.like("c.customer_mobile", filter.customerPhone());
         sqlBuilder.like("c.customer_email", filter.customerEmail());
         sqlBuilder.like("c.code", filter.code());
-        sqlBuilder.addIntegerEquals("n.type", CustomerOrderNote.TYPE_COHOI);
+        sqlBuilder.addIntegerEquals("n.type", FlastNote.TYPE_COHOI);
 
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
@@ -403,7 +373,7 @@ public class OrderService  implements Publisher, Serializable {
         sqlBuilder.like("c.customer_email", filter.customerEmail());
         sqlBuilder.like("c.code", filter.code());
         sqlBuilder.addIsEmpty("n.order_code");
-        sqlBuilder.addIntegerEquals("n.type", CustomerOrderNote.TYPE_ORDER);
+        sqlBuilder.addIntegerEquals("n.type", FlastNote.TYPE_ORDER);
 
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
@@ -430,18 +400,17 @@ public class OrderService  implements Publisher, Serializable {
         int LIMIT = filter.limit();
         int OFFSET = filter.page() * LIMIT;
 
-        final String totalSQL = " FROM `customer_order` c left join `customer_order_note` n on c.code = n.order_code ";
+        final String totalSQL = "FROM `customer_order` c left join `customer_order_note` n on c.id = n.object_id";
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
         sqlBuilder.addIntegerEquals("c.user_create_id", userCreateId);
         sqlBuilder.addStringEquals("c.type", CustomerOrder.TYPE_ORDER);
         sqlBuilder.like("c.customer_name", filter.customerName());
         sqlBuilder.addIntegerEquals("c.customer_id", filter.customerId());
-        sqlBuilder.like("c.customer_mobile", filter.customerPhone());
-        sqlBuilder.like("c.customer_email", filter.customerEmail());
-        sqlBuilder.like("c.code", filter.code());
-        sqlBuilder.addNotNUL("n.order_code");
-        sqlBuilder.addIntegerEquals("n.type", CustomerOrderNote.TYPE_ORDER);
+        sqlBuilder.addStringEquals("c.customer_mobile", filter.customerPhone());
+        sqlBuilder.addStringEquals("c.customer_email", filter.customerEmail());
+        sqlBuilder.addStringEquals("c.code", filter.code());
 
+        sqlBuilder.addStringEquals("n.object_type", FlastNote.OBJECT_TYPE_ORDER_NOTE);
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
         Long count = sqlBuilder.countOrSumQuery(countQuery);
@@ -558,16 +527,16 @@ public class OrderService  implements Publisher, Serializable {
         }
     }
 
-    public CustomerOrderNote takeCareNoteCoHoi(OrderCare input) {
-        orderRepository.findByCode(input.getOrderCode()).orElseThrow(
+    public FlastNote takeCareNoteCoHoi(OrderCare input) {
+        orderRepository.findById(input.getOrderId()).orElseThrow(
             () -> new RuntimeException("error no record exists")
         );
-        var care = orderNoteRepository.findByOrderCode(input.getOrderCode());
-        if (care == null) {
-            var noteOrder = new CustomerOrderNote();
+        var care = orderNoteRepository.findByTypeId(FlastNote.OBJECT_TYPE_ORDER_NOTE, input.getOrderId());
+        if (Objects.isNull(care)) {
+            var noteOrder = new FlastNote();
             CopyProperty.CopyIgnoreNull(input, noteOrder);
-            noteOrder.setUserName(baseController.getInfo().getSsoId());
-            noteOrder.setUsesId(baseController.getInfo().getId());
+            noteOrder.setUserNote(baseController.getInfo().getSsoId());
+            noteOrder.setUserId(baseController.getInfo().getId());
             return orderNoteRepository.save(noteOrder);
         } else {
             CopyProperty.CopyIgnoreNull(input, care);

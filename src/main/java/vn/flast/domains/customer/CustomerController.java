@@ -1,11 +1,14 @@
 package vn.flast.domains.customer;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.CustomerContract;
 import vn.flast.models.CustomerEnterprise;
+import vn.flast.models.CustomerPersonal;
 import vn.flast.repositories.CustomerContractRepository;
 import vn.flast.repositories.CustomerEnterpriseRepository;
 import vn.flast.repositories.CustomerOrderRepository;
@@ -14,6 +17,7 @@ import vn.flast.searchs.CustomerFilter;
 import vn.flast.service.customer.CustomerServiceGlobal;
 import vn.flast.utils.Common;
 import vn.flast.utils.UploadsUtils;
+import vn.flast.validator.ValidationErrorBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +43,16 @@ public class CustomerController {
 
     @Autowired
     private CustomerServiceGlobal cusService;
+
+    @PostMapping("/save")
+    public MyResponse<?> save(@Valid @RequestBody CustomerPersonal entity, Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Input invalid .!");
+        }
+        var customer = customerPersonalService.save(entity);
+        return MyResponse.response(customer);
+    }
 
     @GetMapping("/find")
     public MyResponse<?> find(CustomerFilter filter) {

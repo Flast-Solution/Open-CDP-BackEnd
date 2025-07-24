@@ -136,12 +136,6 @@ public class OrderController {
         return MyResponse.response(order);
     }
 
-    @GetMapping("/fetch-by-process")
-    public MyResponse<?> fetchByProcess(OrderFilter filter) {
-        var orders = orderService.fetchListOrderStatus(filter);
-        return MyResponse.response(orders);
-    }
-
     @PostMapping("/update-status-order")
     public MyResponse<?> updateStatusOrder(
         @RequestParam Long orderId,

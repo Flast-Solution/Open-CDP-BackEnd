@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter @Setter
 @NoArgsConstructor
 public class OrderCare {
-    private String orderCode;
+    private Long orderId;
     private String note;
     private String userName;
     private String userNote;

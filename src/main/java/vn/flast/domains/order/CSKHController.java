@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.order.OrderCare;
-import vn.flast.models.CustomerOrderNote;
+import vn.flast.models.FlastNote;
 import vn.flast.searchs.OrderFilter;
 
 @Log4j2
@@ -44,7 +44,7 @@ public class CSKHController {
 
     @PostMapping("/take-care-co-hoi")
     public MyResponse<?> takeCareCoHoi(@RequestBody OrderCare input){
-        input.setType(CustomerOrderNote.TYPE_COHOI);
+        input.setType(FlastNote.TYPE_COHOI);
         var data = orderService.takeCareNoteCoHoi(input);
         return MyResponse.response(data);
     }
@@ -61,7 +61,7 @@ public class CSKHController {
 
     @PostMapping("/take-care-order")
     public MyResponse<?> takeCareOrder(@RequestBody OrderCare input){
-        input.setType(CustomerOrderNote.TYPE_ORDER);
+        input.setType(FlastNote.TYPE_ORDER);
         var data = orderService.takeCareNoteCoHoi(input);
         return MyResponse.response(data);
     }
