@@ -5,20 +5,21 @@ import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.flast.models.CustomerActivities;
+import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerPersonal;
 import vn.flast.models.Data;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.PubSubService;
 import vn.flast.orchestration.Subscriber;
-import vn.flast.repositories.CustomerOrderRepository;
-import vn.flast.repositories.CustomerPersonalRepository;
-import vn.flast.repositories.DataOwnerRepository;
-import vn.flast.searchs.CustomerFilter;
-import vn.flast.utils.EntityQuery;
+import vn.flast.repositories.*;
 
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Objects;
+import vn.flast.searchs.CustomerFilter;
+import vn.flast.utils.DateUtils;
+import vn.flast.utils.EntityQuery;
+import vn.flast.utils.NumberUtils;
+
+import java.util.*;
 
 @Slf4j
 @Service("customerPersonalService")
@@ -32,6 +33,12 @@ public class CustomerPersonalService extends Subscriber {
 
     @Autowired
     private CustomerPersonalRepository customerPersonalRepository;
+
+    @Autowired
+    private CustomerActivitiesRepository customerActivitiesRepository;
+
+    @Autowired
+    private CustomerEnterpriseRepository enterpriseRepository;
 
     @Autowired
     private DataOwnerRepository dataOwnerRepository;
@@ -64,8 +71,29 @@ public class CustomerPersonalService extends Subscriber {
         ListIterator<MessageInterface> iterator = subscriberMessages.listIterator();
         while(iterator.hasNext()) {
             var message = iterator.next();
-            log.info("Message Topic -> {} : {}", message.getTopic(), message.getPayload());
+            try {
+                if(message.isOrderChange() && message.getPayload() instanceof CustomerOrder order) {
+                    onOrderChange(order);
+                }
+            } catch (Exception e) {
+                log.error("Topic: {}, {}", message.getTopic(), e.getMessage());
+            }
             iterator.remove();
+        }
+    }
+
+    private void onOrderChange(CustomerOrder order) {
+        var model = customerOrderRepository.findById(order.getId()).orElseThrow();
+        var customer = customerPersonalRepository.findById(model.getId()).orElseThrow();
+        if(order.isOrder()) {
+            increaseNumOfOrder(customer);
+            customerPersonalRepository.save(customer);
+        }
+        if(NumberUtils.isNotNull(customer.getCompanyId())){
+            var enterprise = enterpriseRepository.findById(customer.getCompanyId()).orElseThrow();
+            model.setEnterpriseName(enterprise.getCompanyName());
+            model.setEnterpriseId(enterprise.getId());
+            customerOrderRepository.save(model);
         }
     }
 
@@ -85,16 +113,32 @@ public class CustomerPersonalService extends Subscriber {
             customer.setEmail(data.getCustomerEmail());
             customer.setAddress(data.getProvinceName());
             customerPersonalRepository.save(customer);
+            createActivities(customer);
         }
         return customer;
     }
 
-    public void increaseNumOfOrder(Long id) {
-        CustomerPersonal customer = customerPersonalRepository.findById(id).orElseThrow(
-            () -> new RuntimeException("no record found")
-        );
-        increaseNumOfOrder(customer);
-        customerPersonalRepository.save(customer);
+    private void createActivities(CustomerPersonal customerPersonal) {
+
+        List<CustomerActivities> activities = new ArrayList<>();
+        var activity = new CustomerActivities();
+
+        activity.setCustomerId(customerPersonal.getId());
+        activity.setName("Tư vấn lại 3 ngày chưa Cơ Hộ");
+        activity.setUserId(customerPersonal.getSaleId());
+        activity.setDueDate(DateUtils.addDays(new Date(), 3));
+        activities.add(activity);
+
+        var atBaoGia = activity.clone();
+        atBaoGia.setName("Gửi Báo giá");
+        atBaoGia.setDueDate(DateUtils.addDays(new Date(), 5));
+        activities.add(atBaoGia);
+
+        var atCoHoi = activity.clone();
+        atCoHoi.setName("Gọi điện 7 ngày chưa ra đơn");
+        atCoHoi.setDueDate(DateUtils.addDays(new Date(), 7));
+        activities.add(atCoHoi);
+        customerActivitiesRepository.saveAll(activities);
     }
 
     public void increaseNumOfOrder(CustomerPersonal customer) {

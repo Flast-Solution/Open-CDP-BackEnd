@@ -3,6 +3,8 @@ package vn.flast.orchestration;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @NoArgsConstructor
 public class Message implements MessageInterface {
     @Setter
@@ -28,5 +30,9 @@ public class Message implements MessageInterface {
     @Override
     public Object getPayload() {
         return payload;
+    }
+
+    public boolean isOrderChange() {
+        return Objects.nonNull(topic) && EventTopic.ORDER_CHANGE.equals(topic);
     }
 }

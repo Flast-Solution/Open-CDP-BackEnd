@@ -70,7 +70,6 @@ public class LeadController extends BaseController {
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
         UserPrinciple userPrinciple = getInfo();
-        iodata.setSaleId(getUserId());
         iodata.setStaff(getUsername());
         boolean isAdminOrManager = userPrinciple.getAuthorities().stream().anyMatch(auth
             -> auth.getAuthority().equals("ROLE_SALE") || auth.getAuthority().equals("ROLE_SALE_MANAGER")

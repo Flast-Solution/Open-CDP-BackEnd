@@ -14,7 +14,6 @@ import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderPayment;
 import vn.flast.repositories.CustomerOrderDetailRepository;
 import vn.flast.repositories.CustomerOrderPaymentRepository;
-import vn.flast.repositories.CustomerOrderRepository;
 import vn.flast.repositories.CustomerOrderStatusRepository;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
@@ -40,9 +39,6 @@ public class PayService {
 
     @Autowired
     private CustomerOrderDetailRepository detailRepository;
-
-    @Autowired
-    private CustomerOrderRepository orderRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -83,7 +79,7 @@ public class PayService {
         if(reCalculatorOrder) {
             OrderUtils.calculatorPrice(order);
         }
-        orderRepository.save(order);
+        orderService.save(order);
         return model;
     }
 
@@ -139,13 +135,6 @@ public class PayService {
         long totalPaid = paymentRepository.countByOrderCodeAndIsConfirm(input.getCode());
         order.setType(CustomerOrder.TYPE_ORDER);
         order.setPaid(totalPaid + model.getAmount());
-        Integer statusStartOrder = statusOrderRepository.findStartOrder().getId();
-        order.setStatus(statusStartOrder);
-        List<Long> orderIds = List.of(order.getId());
-        detailRepository.fetchDetailOrdersId(orderIds).forEach(detail -> {
-            detail.setStatus(statusStartOrder);
-            detailRepository.save(detail);
-        });
-        orderRepository.save(order);
+        orderService.save(order);
     }
 }

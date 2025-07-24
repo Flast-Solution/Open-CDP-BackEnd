@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface CustomerOrderStatusRepository extends JpaRepository<CustomerOrderStatus, Integer> {
 
     @Query("FROM CustomerOrderStatus s WHERE s.name = 'Đơn mới'")
-    CustomerOrderStatus findStartOrder();
+    Optional<CustomerOrderStatus> findStartOrder();
 
     @Query("FROM CustomerOrderStatus s WHERE s.name = 'Hủy đơn'")
     Optional<CustomerOrderStatus> findCancelOrder();

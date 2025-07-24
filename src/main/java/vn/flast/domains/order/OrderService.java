@@ -120,7 +120,11 @@ public class OrderService  implements Publisher, Serializable {
             order.setSource(data.getSource());
             order.setPaid(0.0);
         }
-        order.setStatus(statusOrderRepository.findStartOrder().getId());
+
+        var modelStatus = statusOrderRepository.findStartOrder().orElseThrow(
+            () -> new RuntimeException("Trạng thái mới chưa được cấu hình")
+        );
+        order.setStatus(modelStatus.getId());
 
         var listDetails = input.transformOrderDetail(order, order.getStatus());
         if (!removedIds.isEmpty()) {
@@ -137,6 +141,11 @@ public class OrderService  implements Publisher, Serializable {
 
         this.sendMessageOnOrderChange(order);
         return order;
+    }
+
+    public void save(CustomerOrder order) {
+        orderRepository.save(order);
+        this.sendMessageOnOrderChange(order);
     }
 
     public Map<Integer, List<CustomerOrder>> fetchKanban() {

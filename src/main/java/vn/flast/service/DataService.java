@@ -10,14 +10,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.config.ConfigUtil;
 import vn.flast.controller.BaseController;
 import vn.flast.domains.customer.CustomerPersonalService;
 import vn.flast.exception.ResourceNotFoundException;
-import vn.flast.models.CustomerPersonal;
-import vn.flast.models.DataOwner;
-import vn.flast.models.Product;
-import vn.flast.models.User;
+import vn.flast.models.*;
 import vn.flast.orchestration.EventDelegate;
 import vn.flast.orchestration.EventTopic;
 import vn.flast.orchestration.Message;
@@ -25,22 +21,13 @@ import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.PubSubService;
 import vn.flast.orchestration.Publisher;
 import vn.flast.orchestration.Subscriber;
-import vn.flast.repositories.DataOwnerRepository;
-import vn.flast.repositories.ProductRepository;
-import vn.flast.repositories.UserRepository;
+import vn.flast.repositories.*;
 import vn.flast.searchs.DataFilter;
-import vn.flast.models.Data;
-import vn.flast.models.DataMedia;
-import vn.flast.models.DataWork;
 import vn.flast.pagination.Ipage;
-import vn.flast.repositories.DataMediaRepository;
-import vn.flast.repositories.DataRepository;
 import vn.flast.utils.BuilderParams;
-import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.DateUtils;
 import vn.flast.utils.EntityQuery;
-import vn.flast.utils.GlobalUtil;
 import vn.flast.utils.NumberUtils;
 import vn.flast.utils.SqlBuilder;
 
@@ -55,13 +42,6 @@ import java.util.Optional;
 @Service("dataService")
 @RequiredArgsConstructor
 public class DataService extends Subscriber implements Publisher {
-
-    public static String UPLOAD_PATH =  "/uploads/data-media/";
-
-    public static String folderUpload() {
-        String fd = ConfigUtil.getRootPath() + UPLOAD_PATH + GlobalUtil.getFolderUpload(GlobalUtil.dateToInt())  + "/";
-        return Common.makeFolder(fd);
-    }
 
     private final DataMediaRepository dataMediaRepository;
     private final DataRepository dataRepository;
@@ -156,7 +136,6 @@ public class DataService extends Subscriber implements Publisher {
         Data entity = dataRepository.save(model);
         CustomerPersonal customerPersonal = customerPersonalService.createCustomerFromData(entity);
         sendMessageOnOrderChange(entity);
-
         return BuilderParams.create()
             .addParam("dataId", entity.getId())
             .addParam("data", entity)
@@ -191,23 +170,6 @@ public class DataService extends Subscriber implements Publisher {
         );
         CopyProperty.CopyIgnoreNull(input, data);
         dataRepository.save(data);
-    }
-
-    public Ipage<?> getAllData(DataFilter filter) {
-        var LIMIT = filter.getLimit();
-        var offset = filter.page() * LIMIT;
-        EntityQuery<Data> et = EntityQuery.create(entityManager, Data.class);
-        List<Data> lists = et.setFirstResult(offset)
-            .stringEqualsTo("customerMobile", filter.getCustomerMobile())
-            .integerEqualsTo("status", filter.getStatus())
-            .integerEqualsTo("fromDepartment", filter.getFromDepartment())
-            .integerEqualsTo("saleId", filter.getSaleMember())
-            .integerEqualsTo("partnerId", filter.getPartnerId())
-            .between("inTime", filter.getFrom(), filter.getTo())
-            .addDescendingOrderBy("inTime")
-            .setMaxResults(LIMIT)
-            .list();
-        return new Ipage<>(LIMIT, et.count(), filter.page(), lists);
     }
 
     public Ipage<Data> getListDataFromCustomerService(DataFilter filter) {
@@ -367,14 +329,5 @@ public class DataService extends Subscriber implements Publisher {
             dataOwnerRepository.save(dataOwner);
         }
         return dataOwner;
-    }
-
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
-    public void updateStatusCoHoi(Long dataId){
-        var data = dataRepository.findById(dataId).orElseThrow(
-            () -> new RuntimeException("Lead does not exist")
-        );
-        data.setStatus(DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
-        dataRepository.save(data);
     }
 }

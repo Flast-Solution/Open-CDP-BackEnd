@@ -18,7 +18,7 @@ import java.util.Date;
 @Table(name = "customer_activities")
 @Entity
 @Getter @Setter
-public class CustomerActivities {
+public class CustomerActivities implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +38,7 @@ public class CustomerActivities {
     private String note;
 
     @Column(name = "status")
-    private Integer status;
+    private Integer status = 0;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "due_date")
@@ -54,4 +54,13 @@ public class CustomerActivities {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @Override
+    public CustomerActivities clone() {
+        try {
+            return (CustomerActivities) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }
