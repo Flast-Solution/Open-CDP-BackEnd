@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.service.user.UserService;
 import vn.flast.utils.CopyProperty;
 
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -111,11 +111,16 @@ public class UserController {
     }
 
     @GetMapping("/list-name-id")
-    public MyResponse<?> listNameId(){
-        var data = userRepository.findAll().stream().map(user -> Map.of(
-            "id", user.getId(),
-            "name", user.getSsoId()
-        )).collect(Collectors.toList());
-        return MyResponse.response(data);
+    public MyResponse<?> listNameId(@RequestParam(name = "ids", defaultValue = "") List<Integer> ids) {
+        List<User> users;
+        if(ids.isEmpty()) {
+            users = userRepository.findAll();
+        } else {
+            users = userRepository.findAllById(ids);
+        }
+        var data = users.stream().map(
+        user -> Map.of("id", user.getId(), "name", user.getSsoId())
+        );
+        return MyResponse.response(data.toList());
     }
 }

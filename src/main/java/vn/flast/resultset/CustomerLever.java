@@ -11,18 +11,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @SqlResultSetMapping(
-        name = "CustomerLever",
-        entities = @EntityResult(
-                entityClass = CustomerLever.class,
-                fields = {
-                        @FieldResult(name = "total", column = "total"),
-                        @FieldResult(name = "level", column = "level")
-                }
-        )
+    name = "CustomerLever",
+    entities = @EntityResult(entityClass = CustomerLever.class, fields = {
+        @FieldResult(name = "total", column = "total"),
+        @FieldResult(name = "level", column = "level")
+    })
 )
 @Entity(name = "CustomerLever")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public class CustomerLever {
 
@@ -31,7 +27,5 @@ public class CustomerLever {
 
     @Id
     private Integer total;
-
     private Integer level;
-
 }

@@ -13,18 +13,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @SqlResultSetMapping( name = "ReportGroup",  entities= {
-        @EntityResult( entityClass = ReportGroup.class, fields={
-                @FieldResult(name = "groupId", column="groupId"),
-                @FieldResult(name = "groupName",  column="groupName"),
-                @FieldResult(name = "leader",  column="leader"),
-                @FieldResult(name = "total",  column="total")
-        })
+    @EntityResult( entityClass = ReportGroup.class, fields={
+        @FieldResult(name = "groupId", column="groupId"),
+        @FieldResult(name = "groupName",  column="groupName"),
+        @FieldResult(name = "leader",  column="leader"),
+        @FieldResult(name = "total",  column="total")
+    })
 })
 
 @Entity(name = "ReportGroup")
 @NoArgsConstructor
-@Setter
-@Getter
+@Setter @Getter
 public class ReportGroup {
 
     @Transient

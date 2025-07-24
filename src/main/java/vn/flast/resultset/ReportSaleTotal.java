@@ -11,22 +11,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @SqlResultSetMapping( name = "ReportSaleTotal",  entities= {
-        @EntityResult( entityClass = ReportSaleTotal.class, fields={
-                @FieldResult(name = "total", column="total"),
-                @FieldResult(name = "sale",  column="sale")
-        })
+    @EntityResult( entityClass = ReportSaleTotal.class, fields={
+        @FieldResult(name = "total", column="total"),
+        @FieldResult(name = "sale",  column="sale")
+    })
 })
 @Entity(name = "ReportSaleTotal")
 @NoArgsConstructor
-@Setter
-@Getter
+@Setter @Getter
 public class ReportSaleTotal {
 
     @Transient
     public static final String REPORT_SALE_TOTAL = "ReportSaleTotal";
-
 
     @Column(name = "total")
     private Long total;
