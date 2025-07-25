@@ -6,7 +6,9 @@ import java.util.List;
 public class CustomerInfo {
     public CustomerPersonal iCustomer;
     public String saleName;
+    public Data lead;
     public List<CustomerActivities> activities;
-    public List<CustomerOrderWithoutDetails> orders;
+    public List<CustomerOrder> orders;
+    public List<CustomerOrder> opportunities;
     public List<DataCare> dataCares;
 }

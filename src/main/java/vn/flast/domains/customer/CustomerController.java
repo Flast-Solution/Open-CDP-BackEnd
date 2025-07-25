@@ -66,7 +66,7 @@ public class CustomerController {
         @RequestParam(defaultValue = "false") boolean isMoreInfoInReport
     ) {
         if(isMoreInfoInReport) {
-            var customerInfo = cusService.getInfo(customerId);
+            var customerInfo = cusService.customerReport(customerId);
             return MyResponse.response(customerInfo);
         } else {
             var customer = customerRepository.findById(customerId);

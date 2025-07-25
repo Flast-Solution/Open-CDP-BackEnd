@@ -1,25 +1,30 @@
 package vn.flast.service.customer;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.flast.dao.DaoImpl;
-import vn.flast.dao.DataDao;
+import vn.flast.domains.order.OrderService;
 import vn.flast.entities.customer.CustomerFilter;
 import vn.flast.entities.customer.CustomerInfo;
-import vn.flast.entities.customer.CustomerOrderWithoutDetails;
 import vn.flast.models.CustomerOrder;
 import vn.flast.repositories.*;
 import vn.flast.models.CustomerEnterprise;
 import vn.flast.models.CustomerPersonal;
 import vn.flast.pagination.Ipage;
 import vn.flast.service.cskh.DataCareService;
-import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
 import java.util.List;
 
 @Service
-public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> {
+public class CustomerServiceGlobal {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private CustomerPersonalRepository customerRepository;
@@ -28,13 +33,13 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
     private CustomerActivitiesRepository customerActivitiesRepository;
 
     @Autowired
-    private DataDao dataDao;
-
-    @Autowired
     private DataCareService dataCareService;
 
     @Autowired
     private CustomerOrderRepository customerOrderRepository;
+
+    @Autowired
+    private DataRepository dataRepository;
 
     @Autowired
     private DataOwnerRepository dataOwnerRepository;
@@ -42,7 +47,7 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
     @Autowired
     private UserRepository userRepository;
 
-    public CustomerInfo getInfo(Long customerId) {
+    public CustomerInfo customerReport(Long customerId) {
         var customer = customerRepository.findById(customerId).orElseThrow(
             () -> new RuntimeException("Customer not found")
         );
@@ -50,17 +55,20 @@ public class CustomerServiceGlobal extends DaoImpl<Integer, CustomerEnterprise> 
 
         CustomerInfo info = new CustomerInfo();
         info.iCustomer = customer;
-        info.activities = customerActivitiesRepository.findByCustomerId(customer.getId());
-
-        var orders = customerOrderRepository.findByCustomerMobilePhone(customer.getMobile(), CustomerOrder.TYPE_ORDER);
-        List<CustomerOrderWithoutDetails> orderNoDetails = CopyProperty.copyListIgnoreNull(
-            orders,
-            CustomerOrderWithoutDetails::new
+        info.lead = dataRepository.findFirstByPhone(customer.getMobile()).orElseThrow(
+            () -> new RuntimeException("Lead not found, data not async !")
         );
+        info.activities = customerActivitiesRepository.findByCustomerId(customer.getId());
         info.dataCares = dataCareService.findByCustomerId(cId);
-        info.orders = orderNoDetails;
+        info.orders = findCustomerOrder(customerId, CustomerOrder.TYPE_ORDER);
+        info.opportunities = findCustomerOrder(customerId, CustomerOrder.TYPE_CO_HOI);
         info.saleName = saleTakeCare(customer.getSaleId());
         return info;
+    }
+
+    private List<CustomerOrder> findCustomerOrder(Long customerId, String type) {
+        var orders = customerOrderRepository.findByCustomerId(customerId, type);
+        return orderService.transformDetails(orders);
     }
 
     private String saleTakeCare(Integer saleId) {
