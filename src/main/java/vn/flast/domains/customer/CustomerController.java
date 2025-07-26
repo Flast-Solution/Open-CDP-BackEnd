@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import vn.flast.entities.MyResponse;
+import vn.flast.entities.customer.TagsRequest;
 import vn.flast.models.CustomerContract;
 import vn.flast.models.CustomerEnterprise;
 import vn.flast.models.CustomerPersonal;
@@ -42,7 +43,7 @@ public class CustomerController {
     private CustomerOrderRepository orderRepository;
 
     @Autowired
-    private CustomerServiceGlobal cusService;
+    private CustomerServiceGlobal customerServiceGlobal;
 
     @PostMapping("/save")
     public MyResponse<?> save(@Valid @RequestBody CustomerPersonal entity, Errors errors) {
@@ -66,7 +67,7 @@ public class CustomerController {
         @RequestParam(defaultValue = "false") boolean isMoreInfoInReport
     ) {
         if(isMoreInfoInReport) {
-            var customerInfo = cusService.customerReport(customerId);
+            var customerInfo = customerServiceGlobal.customerReport(customerId);
             return MyResponse.response(customerInfo);
         } else {
             var customer = customerRepository.findById(customerId);
@@ -74,15 +75,27 @@ public class CustomerController {
         }
     }
 
+    @GetMapping("/tags/fetch")
+    public MyResponse<?> fetchTags(@RequestParam List<Long> ids){
+        var data = customerPersonalService.fetchTags(ids);
+        return MyResponse.response(data);
+    }
+
+    @PostMapping("/tags/save/{customerId}")
+    public MyResponse<?> saveCustomerTags(@RequestBody TagsRequest tags, @PathVariable Long customerId) {
+        customerPersonalService.saveTags(customerId, tags.getTags());
+        return MyResponse.response("Okie");
+    }
+
     @GetMapping("/fetch-customer-personal")
     public MyResponse<?> fetchCustomerPersonal(vn.flast.entities.customer.CustomerFilter filter){
-        var data = cusService.fetchCustomerPersonal(filter);
+        var data = customerServiceGlobal.fetchCustomerPersonal(filter);
         return MyResponse.response(data);
     }
 
     @GetMapping("/fetch-customer-enterprise")
     public MyResponse<?> fetchCustomerEnterPrise(vn.flast.entities.customer.CustomerFilter filter){
-        var data = cusService.fetchCustomerEnterprise(filter);
+        var data = customerServiceGlobal.fetchCustomerEnterprise(filter);
         return MyResponse.response(data);
     }
 

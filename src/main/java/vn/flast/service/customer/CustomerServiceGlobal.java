@@ -7,15 +7,14 @@ import org.springframework.stereotype.Service;
 import vn.flast.domains.order.OrderService;
 import vn.flast.entities.customer.CustomerFilter;
 import vn.flast.entities.customer.CustomerInfo;
-import vn.flast.models.CustomerOrder;
+import vn.flast.models.*;
+import vn.flast.records.CustomerSummary;
 import vn.flast.repositories.*;
-import vn.flast.models.CustomerEnterprise;
-import vn.flast.models.CustomerPersonal;
 import vn.flast.pagination.Ipage;
 import vn.flast.service.cskh.DataCareService;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CustomerServiceGlobal {
@@ -28,6 +27,9 @@ public class CustomerServiceGlobal {
 
     @Autowired
     private CustomerPersonalRepository customerRepository;
+
+    @Autowired
+    private CustomerTagsRepository tagsRepository;
 
     @Autowired
     private CustomerActivitiesRepository customerActivitiesRepository;
@@ -63,7 +65,23 @@ public class CustomerServiceGlobal {
         info.orders = findCustomerOrder(customerId, CustomerOrder.TYPE_ORDER);
         info.opportunities = findCustomerOrder(customerId, CustomerOrder.TYPE_CO_HOI);
         info.saleName = saleTakeCare(customer.getSaleId());
+        info.summary = summary(customer.getMobile());
+        info.tags = tagsRepository.findByCustomerId(customerId);
         return info;
+    }
+
+    private CustomerSummary summary(String mobile) {
+        String query = """
+        SELECT\s
+            IFNULL(SUM(CASE WHEN co.type = 'cohoi' THEN 1 ELSE 0 END), 0) AS opportunities,
+            IFNULL(SUM(CASE WHEN co.type = 'order' THEN 1 ELSE 0 END), 0) AS order,
+            IFNULL((SELECT COUNT(id) FROM data WHERE customer_mobile = :mobile), 0) AS lead
+        FROM customer_order co\s
+        WHERE co.customer_mobile_phone = :mobile
+        """;
+        var nativeQuery = entityManager.createNativeQuery(query, CustomerSummary.class);
+        nativeQuery.setParameter("mobile", mobile);
+        return (CustomerSummary) nativeQuery.getSingleResult();
     }
 
     private List<CustomerOrder> findCustomerOrder(Long customerId, String type) {

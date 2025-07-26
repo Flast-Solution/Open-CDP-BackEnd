@@ -1,4 +1,4 @@
-package vn.flast.resultset;
+package vn.flast.records;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,22 +11,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@SqlResultSetMapping( name = "ReportSaleTotal",  entities= {
-    @EntityResult( entityClass = ReportSaleTotal.class, fields={
-        @FieldResult(name = "total", column="total"),
+@SqlResultSetMapping( name = "ReportLeadSale",  entities= {
+    @EntityResult( entityClass = ReportLeadSale.class, fields={
+        @FieldResult(name = "count", column="count"),
+        @FieldResult(name = "status", column="status"),
         @FieldResult(name = "sale",  column="sale")
     })
 })
-@Entity(name = "ReportSaleTotal")
+@Entity(name = "ReportLeadSale")
 @NoArgsConstructor
 @Setter @Getter
-public class ReportSaleTotal {
+public class ReportLeadSale {
 
     @Transient
-    public static final String REPORT_SALE_TOTAL = "ReportSaleTotal";
+    public static final String REPORT_LEAD_SALE = "ReportLeadSale";
 
-    @Column(name = "total")
-    private Long total;
+    @Column(name = "count")
+    private Integer count;
+
+    @Column(name = "status")
+    private String status;
+
     @Id
     @Column(name = "sale")
     private String sale;

@@ -5,10 +5,8 @@ import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.flast.models.CustomerActivities;
-import vn.flast.models.CustomerOrder;
-import vn.flast.models.CustomerPersonal;
-import vn.flast.models.Data;
+import org.springframework.transaction.annotation.Transactional;
+import vn.flast.models.*;
 import vn.flast.orchestration.MessageInterface;
 import vn.flast.orchestration.PubSubService;
 import vn.flast.orchestration.Subscriber;
@@ -20,6 +18,7 @@ import vn.flast.utils.EntityQuery;
 import vn.flast.utils.NumberUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service("customerPersonalService")
@@ -27,6 +26,9 @@ public class CustomerPersonalService extends Subscriber {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private CustomerTagsRepository tagsRepository;
 
     @Autowired
     private CustomerOrderRepository customerOrderRepository;
@@ -146,5 +148,28 @@ public class CustomerPersonalService extends Subscriber {
             int numOrderOfCustomer = customerOrderRepository.countOrder(customer.getId(), "order");
             customer.setNumOfOrder(numOrderOfCustomer + 1);
         }
+    }
+
+    @Transactional
+    public void saveTags(Long customerId, List<String> tags) {
+        tagsRepository.deleteByCustomerId(customerId);
+        List<CustomerTags> listTags = new ArrayList<>();
+        for(String tag : tags) {
+            CustomerTags customerTag = new CustomerTags();
+            customerTag.setCustomerId(customerId);
+            customerTag.setTag(tag);
+            listTags.add(customerTag);
+        }
+        tagsRepository.saveAll(listTags);
+    }
+
+    public Map<Long, List<CustomerTags>> fetchTags(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return Optional.ofNullable(tagsRepository.findByListId(ids))
+        .orElse(Collections.emptyList())
+        .stream()
+        .collect(Collectors.groupingBy(CustomerTags::getCustomerId));
     }
 }

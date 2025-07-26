@@ -28,11 +28,6 @@ import java.util.Date;
 @Getter @Setter
 public class CustomerPersonal {
 
-    public static final Integer KH_MOI = 1;
-    public static final Integer KH_THAN_THIET = 2;
-    public static final Integer KH_TIEM_NANG = 3;
-    public static final Integer KH_VIP = 4;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

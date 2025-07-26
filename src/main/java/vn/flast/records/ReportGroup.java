@@ -1,4 +1,4 @@
-package vn.flast.resultset;
+package vn.flast.records;
 
 
 import jakarta.persistence.Column;
