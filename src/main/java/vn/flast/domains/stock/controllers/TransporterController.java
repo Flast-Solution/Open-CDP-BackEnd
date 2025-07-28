@@ -1,4 +1,4 @@
-package vn.flast.controller.stock;
+package vn.flast.domains.stock.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

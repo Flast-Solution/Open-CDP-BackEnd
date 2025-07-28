@@ -1,4 +1,4 @@
-package vn.flast.controller.stock;
+package vn.flast.domains.stock.controllers;
 
 
 import jakarta.validation.Valid;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Shipping;
 import vn.flast.models.ShippingStatus;
-import vn.flast.models.WarehouseExportStatus;
 import vn.flast.service.ShippingService;
 import vn.flast.validator.ValidationErrorBuilder;
 

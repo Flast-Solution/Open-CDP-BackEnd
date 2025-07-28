@@ -84,6 +84,7 @@ public class DataCareService extends BaseController {
     public Ipage<?> fetchLeadNoCare(NoOrderFilter filter){
         int LIMIT = filter.getLimit();
         int OFFSET = filter.page() * LIMIT;
+
         final String totalSQL = "FROM `data` d left join `data_care` r on d.id = r.data_id";
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);;
         sqlBuilder.addIntegerEquals("d.sale_id", filter.getUserId());
@@ -93,13 +94,16 @@ public class DataCareService extends BaseController {
         sqlBuilder.addDateBetween("d.in_time", filter.getFrom(), filter.getTo());
         sqlBuilder.addIsEmpty("r.data_id");
         sqlBuilder.addNotIn("d.status", DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
+
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -3);
         Date dayBeforeYesterday = calendar.getTime();
         sqlBuilder.addDateLessThan("d.in_time", dayBeforeYesterday);
+
         String finalQuery = sqlBuilder.builder();
         var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
         Long count = sqlBuilder.countOrSumQuery(countQuery);
+
         var nativeQuery = entityManager.createNativeQuery("SELECT d.* " + finalQuery , Data.class);
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
@@ -113,7 +117,7 @@ public class DataCareService extends BaseController {
             throw new RuntimeException("Lead id does not exist .!");
         }
         var lead = dataRepository.findById(dataCare.getDataId()).orElseThrow(
-                () -> new RuntimeException("No lead exists .!")
+            () -> new RuntimeException("No lead exists .!")
         );
         var model = new DataCare();
         CopyProperty.CopyIgnoreNull(dataCare, model);
@@ -122,7 +126,7 @@ public class DataCareService extends BaseController {
         model.setSale(Optional.ofNullable(lead.getAssignTo()).orElse("N/A"));
         if(lead.getProductId() != null) {
             Product product = productRepository.findById(lead.getProductId()).orElseThrow(
-                    () -> new RuntimeException("No Product exists !.")
+                () -> new RuntimeException("No Product exists !.")
             );
             model.setProductName(Optional.ofNullable(product.getName()).orElse("--"));
         }
@@ -134,10 +138,5 @@ public class DataCareService extends BaseController {
         lead.setCsTime(new Date());
         dataRepository.save(lead);
         return model;
-    }
-
-    public List<DataCare> findByCustomerId(Integer cid){
-        var data = dataCareRepository.findByCustomerId(cid);
-        return data;
     }
 }

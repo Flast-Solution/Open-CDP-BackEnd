@@ -62,17 +62,15 @@ public class CustomerController {
     }
 
     @GetMapping("/find-id")
-    public MyResponse<?> findById(
-        @RequestParam Long customerId,
-        @RequestParam(defaultValue = "false") boolean isMoreInfoInReport
-    ) {
-        if(isMoreInfoInReport) {
-            var customerInfo = customerServiceGlobal.customerReport(customerId);
-            return MyResponse.response(customerInfo);
-        } else {
-            var customer = customerRepository.findById(customerId);
-            return MyResponse.response(customer);
-        }
+    public MyResponse<?> findById(@RequestParam Long customerId) {
+        var customer = customerRepository.findById(customerId);
+        return MyResponse.response(customer);
+    }
+
+    @GetMapping("/report-by-id/{customerId}")
+    public MyResponse<?> findReportId(@PathVariable Long customerId) {
+        var report = customerServiceGlobal.report(customerId);
+        return MyResponse.response(report);
     }
 
     @GetMapping("/tags/fetch")

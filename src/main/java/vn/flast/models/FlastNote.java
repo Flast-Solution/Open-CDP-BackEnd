@@ -21,9 +21,13 @@ public class FlastNote {
     public static final int TYPE_COHOI = 0;
     public static final int TYPE_ORDER = 1;
 
+    /* Object type defined */
     public static final String OBJECT_TYPE_ORDER_NOTE = "order";
     public static final String OBJECT_TYPE_CUSTOMER = "customer";
     public static final String DATA_TYPE_CUSTOMER_LEAD = "customer_lead";
+
+    /* Data type defined */
+    public static final String DATA_TYPE_LEAD_NOTE = "lead_note";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

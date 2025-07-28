@@ -64,7 +64,7 @@ public class OrderService  implements Publisher, Serializable {
     private CustomerOrderStatusRepository statusOrderRepository;
 
     @Autowired
-    private CustomerOrderNoteRepository orderNoteRepository;
+    private FlastNoteRepository orderNoteRepository;
 
     @Autowired
     @Lazy

@@ -1,4 +1,4 @@
-package vn.flast.service;
+package vn.flast.domains.stock.services;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -9,10 +9,10 @@ import vn.flast.controller.BaseController;
 import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.models.WareHouseStatus;
 import vn.flast.models.WareHouseStock;
-import vn.flast.models.Warehouse;
+import vn.flast.models.WarehouseProduct;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.WareHouseStatusRepository;
-import vn.flast.repositories.WarehouseRepository;
+import vn.flast.repositories.WarehouseProductRepository;
 import vn.flast.repositories.WarehouseStockRepository;
 import vn.flast.searchs.WarehouseFilter;
 import vn.flast.utils.CopyProperty;
@@ -31,7 +31,7 @@ public class WarehouseService extends BaseController {
     protected EntityManager entityManager;
 
     @Autowired
-    private WarehouseRepository wareHouseRepository;
+    private WarehouseProductRepository wareHouseRepository;
 
     @Autowired
     private WareHouseStatusRepository wareHouseStatusRepository;
@@ -39,7 +39,7 @@ public class WarehouseService extends BaseController {
     @Autowired
     private WarehouseStockRepository warehouseStockRepository;
 
-    public Warehouse created(SaveStock saveStock) {
+    public WarehouseProduct created(SaveStock saveStock) {
         var input = saveStock.model();
         input.setUserName(getUserSso());
         input.setSkuInfo(JsonUtils.toJson(saveStock.mSkuDetails()));
@@ -51,7 +51,7 @@ public class WarehouseService extends BaseController {
         return wareHouseRepository.save(input);
     }
 
-    public Warehouse updated(SaveStock saveStock) {
+    public WarehouseProduct updated(SaveStock saveStock) {
         var input = saveStock.model();
         var warehouse = wareHouseRepository.findById(input.getId()).orElseThrow(
                 () -> new RuntimeException("Bản ghi không tồn tại !")
@@ -66,7 +66,7 @@ public class WarehouseService extends BaseController {
         return wareHouseRepository.save(warehouse);
     }
 
-    public Warehouse updated(Warehouse model) {
+    public WarehouseProduct updated(WarehouseProduct model) {
         return wareHouseRepository.save(model);
     }
 
@@ -74,7 +74,7 @@ public class WarehouseService extends BaseController {
         int LIMIT = filter.limit();
         int currentPage = filter.page();
 
-        var et = EntityQuery.create(entityManager, Warehouse.class);
+        var et = EntityQuery.create(entityManager, WarehouseProduct.class);
         et.addDescendingOrderBy("id");
         et.integerEqualsTo("productId", filter.productId())
             .setMaxResults(LIMIT)
@@ -98,19 +98,19 @@ public class WarehouseService extends BaseController {
         return wareHouseStatusRepository.save(input);
     }
 
-    public Warehouse findById(Integer id) {
+    public WarehouseProduct findById(Integer id) {
         return wareHouseRepository.findById(id).orElseThrow(
             () -> new RuntimeException("Bản ghi không tồn tại !")
         );
     }
 
-    public Warehouse findByStockAndSku(Integer stockId, Long productId, Long skuId){
+    public WarehouseProduct findByStockAndSku(Integer stockId, Long productId, Long skuId){
         return wareHouseRepository.findProductSku(productId, skuId, stockId);
     }
 
-    public Map<Integer, Warehouse> findByIds(List<Integer> ids) {
-        List<Warehouse> warehouses = wareHouseRepository.findByIds(ids);
-        return warehouses.stream().collect(Collectors.toMap(Warehouse::getId, Function.identity()));
+    public Map<Integer, WarehouseProduct> findByIds(List<Integer> ids) {
+        List<WarehouseProduct> warehouses = wareHouseRepository.findByIds(ids);
+        return warehouses.stream().collect(Collectors.toMap(WarehouseProduct::getId, Function.identity()));
     }
 
     public List<WareHouseStatus> fetchStatus(){

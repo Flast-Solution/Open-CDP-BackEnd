@@ -6,12 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.flast.domains.order.OrderService;
 import vn.flast.entities.customer.CustomerFilter;
-import vn.flast.entities.customer.CustomerInfo;
+import vn.flast.entities.customer.CustomerReport;
 import vn.flast.models.*;
 import vn.flast.records.CustomerSummary;
 import vn.flast.repositories.*;
 import vn.flast.pagination.Ipage;
-import vn.flast.service.cskh.DataCareService;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
 import java.util.*;
@@ -26,6 +25,9 @@ public class CustomerServiceGlobal {
     private OrderService orderService;
 
     @Autowired
+    private FlastNoteRepository noteRepository;
+
+    @Autowired
     private CustomerPersonalRepository customerRepository;
 
     @Autowired
@@ -35,39 +37,40 @@ public class CustomerServiceGlobal {
     private CustomerActivitiesRepository customerActivitiesRepository;
 
     @Autowired
-    private DataCareService dataCareService;
-
-    @Autowired
     private CustomerOrderRepository customerOrderRepository;
 
     @Autowired
     private DataRepository dataRepository;
 
     @Autowired
-    private DataOwnerRepository dataOwnerRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
-    public CustomerInfo customerReport(Long customerId) {
+    public CustomerReport report(Long customerId) {
         var customer = customerRepository.findById(customerId).orElseThrow(
             () -> new RuntimeException("Customer not found")
         );
-        int cId = Math.toIntExact(customer.getId());
 
-        CustomerInfo info = new CustomerInfo();
+        CustomerReport info = new CustomerReport();
         info.iCustomer = customer;
         info.lead = dataRepository.findFirstByPhone(customer.getMobile()).orElseThrow(
             () -> new RuntimeException("Lead not found, data not async !")
         );
+        info.notes = findNotes(customer);
         info.activities = customerActivitiesRepository.findByCustomerId(customer.getId());
-        info.dataCares = dataCareService.findByCustomerId(cId);
         info.orders = findCustomerOrder(customerId, CustomerOrder.TYPE_ORDER);
         info.opportunities = findCustomerOrder(customerId, CustomerOrder.TYPE_CO_HOI);
         info.saleName = saleTakeCare(customer.getSaleId());
         info.summary = summary(customer.getMobile());
         info.tags = tagsRepository.findByCustomerId(customerId);
         return info;
+    }
+
+    @SuppressWarnings("CollectionAddAllCanBeReplacedWithConstructor")
+    private List<FlastNote> findNotes(CustomerPersonal customer) {
+        List<FlastNote> alls = new ArrayList<>();
+        alls.addAll(noteRepository.fetchMobileOfLead(customer.getMobile()));
+        /* Các note khác của order, Kho, CSKH ... */
+        return alls;
     }
 
     private CustomerSummary summary(String mobile) {
