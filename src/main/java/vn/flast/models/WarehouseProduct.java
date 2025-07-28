@@ -1,12 +1,15 @@
 package vn.flast.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import vn.flast.entities.warehouse.SkuDetails;
 import vn.flast.utils.NumberUtils;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "warehouse_product")
 @Entity
@@ -36,6 +39,7 @@ public class WarehouseProduct {
     @Column(name = "sku_id")
     private Long skuId;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "sku_info")
     private String skuInfo;
 
@@ -64,4 +68,16 @@ public class WarehouseProduct {
         }
         total = quantity;
     }
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public List<SkuDetails> skuDetails;
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public Product product;
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public String providerName;
 }

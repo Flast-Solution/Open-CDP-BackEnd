@@ -5,7 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.entities.warehouse.WareHouseItem;
+import vn.flast.entities.warehouse.SkuDetails;
 import vn.flast.entities.warehouse.WarehouseHistoryFilter;
 import vn.flast.models.WareHouseHistory;
 import vn.flast.pagination.Ipage;
@@ -13,9 +13,6 @@ import vn.flast.repositories.WareHouseHistoryRepository;
 import vn.flast.repositories.WarehouseStockRepository;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -32,13 +29,8 @@ public class WarehouseHistoryService {
         var stock = warehouseStockRepository.findById(input.getStockId()).orElseThrow(
             () -> new RuntimeException("record does not exist.")
         );
-
-        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = wareHouseHistoryRepository.countByCreatedDate(LocalDate.now());
-        String code = String.format("WH-%s-%04d", today, count + 1);
-        input.setCode(code); // Gán mã lệnh nhập kho vào input
         input.setStockName(stock.getName());
-        input.setInfo(JsonUtils.toJson(input.getItems()));
+        input.setSkuInfo(JsonUtils.toJson(input.getItems()));
         return wareHouseHistoryRepository.save(input);
     }
 
@@ -56,7 +48,7 @@ public class WarehouseHistoryService {
         et.addDescendingOrderBy("id");
         et.setMaxResults(filter.getLimit()).setFirstResult(filter.getLimit() * filter.page());
         var lists = et.list();
-        lists.forEach(item -> item.setItems(JsonUtils.Json2ListObject(item.getInfo(), WareHouseItem.class)));
+        lists.forEach(item -> item.setItems(JsonUtils.Json2ListObject(item.getSkuInfo(), SkuDetails.class)));
         return Ipage.generator(filter.getLimit(), et.count(), filter.page(), lists);
     }
 

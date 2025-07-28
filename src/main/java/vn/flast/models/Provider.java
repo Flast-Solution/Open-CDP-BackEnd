@@ -3,7 +3,6 @@ package vn.flast.models;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -11,16 +10,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
-
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Table(name = "provider")
 @Entity
 @Getter @Setter
-public class Provider {
+public class Provider implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

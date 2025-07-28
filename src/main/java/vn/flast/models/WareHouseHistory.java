@@ -1,6 +1,7 @@
 package vn.flast.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +14,7 @@ import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import vn.flast.entities.warehouse.WareHouseItem;
+import vn.flast.entities.warehouse.SkuDetails;
 
 import java.util.Date;
 import java.util.List;
@@ -62,5 +63,10 @@ public class WareHouseHistory {
     private Integer status;
 
     @Transient
-    private List<WareHouseItem> items;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<SkuDetails> items;
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Product product;
 }

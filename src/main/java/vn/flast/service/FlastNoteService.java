@@ -28,7 +28,7 @@ public class FlastNoteService {
 
     private FlastNote factoryAsLead() {
         FlastNote flastNote = new FlastNote();
-        flastNote.setObjectType(FlastNote.OBJECT_TYPE_ORDER_LEAD);
+        flastNote.setObjectType(FlastNote.OBJECT_TYPE_LEAD);
         assignUser(flastNote);
         return flastNote;
     }

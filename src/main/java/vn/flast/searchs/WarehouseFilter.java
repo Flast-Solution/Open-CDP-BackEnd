@@ -5,6 +5,9 @@ import vn.flast.utils.NumberUtils;
 public record WarehouseFilter(
     Integer page,
     Integer productId,
+    Integer skuId,
+    Integer stockId,
+    Integer providerId,
     Integer limit
 ) {
     @Override

@@ -23,8 +23,7 @@ public class FlastNote {
 
     /* Object type defined */
     public static final String OBJECT_TYPE_ORDER_NOTE = "order";
-    public static final String OBJECT_TYPE_CUSTOMER = "customer";
-    public static final String DATA_TYPE_CUSTOMER_LEAD = "customer_lead";
+    public static final String OBJECT_TYPE_LEAD = "data";
 
     /* Data type defined */
     public static final String DATA_TYPE_LEAD_NOTE = "lead_note";
