@@ -26,10 +26,10 @@ import vn.flast.searchs.DataFilter;
 import vn.flast.pagination.Ipage;
 import vn.flast.utils.BuilderParams;
 import vn.flast.utils.CopyProperty;
-import vn.flast.utils.DateUtils;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.NumberUtils;
 import vn.flast.utils.SqlBuilder;
+import vn.flast.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +50,7 @@ public class DataService extends Subscriber implements Publisher {
     private final DataOwnerRepository dataOwnerRepository;
     private final BaseController baseController;
     private final ProductRepository productRepository;
+    private final FlastNoteService noteService;
 
     @Autowired
     @Lazy
@@ -134,6 +135,10 @@ public class DataService extends Subscriber implements Publisher {
         model.setAssignTo(dataOwner.getSaleName());
 
         Data entity = dataRepository.save(model);
+        if(StringUtils.isNotNull(entity.getNote())) {
+            noteService.createLeadNote(entity);
+        }
+
         CustomerPersonal customerPersonal = customerPersonalService.createCustomerFromData(entity);
         sendMessageOnOrderChange(entity);
         return BuilderParams.create()
@@ -247,36 +252,6 @@ public class DataService extends Subscriber implements Publisher {
 
         var listData = EntityQuery.getListOfNativeQuery(nativeQuery, Data.class);
         return Ipage.generator(LIMIT, count, filter.page(), listData);
-    }
-
-    public Ipage<Data> getDataBySale(int currentPage, int saleId, boolean isLeader, DataFilter filter) {
-        var LIMIT = filter.getLimit();
-        EntityQuery<Data> et = EntityQuery.create(entityManager, Data.class);
-
-        /* Lọc theo báo cáo hàng ngày thì không cần lọc theo sale và thời gian chỉ lấy trong ngày, bao gồm lead và cơ hội, đơn hàng */
-        this.filterForSaleId(et, isLeader, filter, saleId);
-        et.stringEqualsTo("customerMobile", filter.getCustomerMobile());
-        et.integerEqualsTo("status", filter.getStatus());
-        et.integerEqualsTo("source", filter.getSource());
-        et.integerEqualsTo("fromDepartment", filter.getFromDepartment());
-        et.addDescendingOrderBy("inTime");
-        et.setMaxResults(LIMIT).setFirstResult(currentPage * LIMIT);
-
-        var data = et.list();
-        var totalItems = (int) et.count();
-        return new Ipage<>(LIMIT, totalItems, currentPage, data);
-    }
-
-    private void filterForSaleId(EntityQuery<Data> et, boolean isLeader, DataFilter filter, int saleId) {
-        if (filter.ofDaily()) {
-            et.integerEqualsTo("saleId", filter.getSaleMember());
-            Date currentDate = new Date();
-            Date from = DateUtils.atStartOfDay(currentDate);
-            Date to = DateUtils.atEndOfDay(currentDate);
-            et.between("inTime", from, to);
-        } else {
-            et.between("inTime", filter.getFrom(), filter.getTo());
-        }
     }
 
     public Data findById(Long id) {

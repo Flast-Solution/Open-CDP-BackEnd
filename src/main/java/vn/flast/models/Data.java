@@ -1,6 +1,7 @@
 package vn.flast.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -108,6 +109,7 @@ public class Data implements Cloneable {
     @Column(name = "sale_id")
     private Integer saleId;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "note")
     private String note;
 
