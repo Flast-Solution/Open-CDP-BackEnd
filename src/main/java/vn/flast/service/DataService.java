@@ -259,8 +259,8 @@ public class DataService extends Subscriber implements Publisher {
             () -> new RuntimeException("Không tồn tại bản ghi này")
         );
         List<String> medias = dataMediaRepository.findByDataId(id)
-            .map(item -> String.valueOf(item.stream()
-            .map(DataMedia::getFile))).stream().toList();
+            .stream()
+            .map(DataMedia::getFile).toList();
         data.setFileUrls(medias);
         return data;
     }
