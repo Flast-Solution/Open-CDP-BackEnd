@@ -26,6 +26,9 @@ public class CustomerServiceGlobal {
     private OrderService orderService;
 
     @Autowired
+    private FlastNoteRepository noteRepository;
+
+    @Autowired
     private CustomerPersonalRepository customerRepository;
 
     @Autowired
@@ -44,9 +47,6 @@ public class CustomerServiceGlobal {
     private DataRepository dataRepository;
 
     @Autowired
-    private DataOwnerRepository dataOwnerRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     public CustomerInfo customerReport(Long customerId) {
@@ -60,6 +60,7 @@ public class CustomerServiceGlobal {
         info.lead = dataRepository.findFirstByPhone(customer.getMobile()).orElseThrow(
             () -> new RuntimeException("Lead not found, data not async !")
         );
+        info.notes = findNotes(customer);
         info.activities = customerActivitiesRepository.findByCustomerId(customer.getId());
         info.dataCares = dataCareService.findByCustomerId(cId);
         info.orders = findCustomerOrder(customerId, CustomerOrder.TYPE_ORDER);
@@ -68,6 +69,14 @@ public class CustomerServiceGlobal {
         info.summary = summary(customer.getMobile());
         info.tags = tagsRepository.findByCustomerId(customerId);
         return info;
+    }
+
+    @SuppressWarnings("CollectionAddAllCanBeReplacedWithConstructor")
+    private List<FlastNote> findNotes(CustomerPersonal customer) {
+        List<FlastNote> alls = new ArrayList<>();
+        alls.addAll(noteRepository.findByMobileOfLead(customer.getMobile()));
+        /* Các note khác của order, Kho, CSKH ... */
+        return alls;
     }
 
     private CustomerSummary summary(String mobile) {

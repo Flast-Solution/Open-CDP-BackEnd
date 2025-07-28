@@ -10,6 +10,7 @@ public class CustomerInfo {
     public Data lead;
     public CustomerSummary summary;
     public List<CustomerTags> tags;
+    public List<FlastNote> notes;
     public List<CustomerActivities> activities;
     public List<CustomerOrder> orders;
     public List<CustomerOrder> opportunities;
