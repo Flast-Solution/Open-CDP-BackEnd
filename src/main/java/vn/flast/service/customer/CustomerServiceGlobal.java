@@ -45,7 +45,7 @@ public class CustomerServiceGlobal {
     @Autowired
     private UserRepository userRepository;
 
-    public CustomerInfo customerReport(Long customerId) {
+    public CustomerInfo report(Long customerId) {
         var customer = customerRepository.findById(customerId).orElseThrow(
             () -> new RuntimeException("Customer not found")
         );
