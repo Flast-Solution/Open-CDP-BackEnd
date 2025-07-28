@@ -23,8 +23,6 @@ import java.util.List;
 @Getter @Setter
 public class WareHouseHistory {
 
-    public static int CONFIRM_WAREHOUSE = 1;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -33,14 +31,11 @@ public class WareHouseHistory {
     @Column(name = "stock_id")
     private Integer stockId;
 
-    @Column(name = "code")
-    private String code;
-
     @Column(name = "stock_name")
     private String stockName;
 
-    @Column(name = "warehouser_id")
-    private Integer warehouserId;
+    @Column(name = "warehouser_product_id")
+    private Integer warehouserProductId;
 
     @Column(name = "provider_id")
     private Long providerId;
@@ -48,20 +43,14 @@ public class WareHouseHistory {
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "info")
-    private String info;
+    @Column(name = "sku_info")
+    private String skuInfo;
+
+    @Column(name = "quality")
+    private Long quality;
 
     @Column(name = "fee")
     private Long fee;
-
-    @Column(name = "location_id")
-    private Integer locationId;
-
-    @Column(name = "discount")
-    private String discount;
-
-    @Column(name = "vat")
-    private Integer vat;
 
     @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -71,9 +60,6 @@ public class WareHouseHistory {
 
     @Column(name = "status")
     private Integer status;
-
-    @Column(name = "status_confirm")
-    private Integer statusConfirm = 0;
 
     @Transient
     private List<WareHouseItem> items;

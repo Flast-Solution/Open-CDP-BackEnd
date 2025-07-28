@@ -2750,22 +2750,18 @@ DROP TABLE IF EXISTS `warehouse_history`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `warehouse_history` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `warehouser_id` int DEFAULT NULL,
-  `user_name` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `info` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
+  `warehouser_product_id` bigint NOT NULL,
+  `user_name` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `sku_info` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `fee` int DEFAULT '0',
   `provider_id` int DEFAULT NULL,
-  `status` int DEFAULT NULL,
-  `location_id` int DEFAULT NULL,
-  `discount` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
-  `vat` int DEFAULT NULL,
-  `in_time` timestamp NULL DEFAULT NULL,
   `stock_id` int DEFAULT NULL,
   `stock_name` varchar(50) DEFAULT NULL,
-  `code` varchar(50) DEFAULT NULL,
-  `status_confirm` int DEFAULT NULL,
+  `quality` int NOT NULL,
+  `status` int DEFAULT NULL,
+  `in_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `product_retain_idx` (`warehouser_id`) USING BTREE
+  KEY `product_retain_idx` (`warehouser_product_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2893,4 +2889,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-07-28 14:46:36
+-- Dump completed on 2025-07-28 15:29:05
