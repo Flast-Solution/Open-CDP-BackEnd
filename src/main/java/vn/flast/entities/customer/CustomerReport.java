@@ -4,7 +4,7 @@ import vn.flast.models.*;
 import vn.flast.records.CustomerSummary;
 import java.util.List;
 
-public class CustomerInfo {
+public class CustomerReport {
     public CustomerPersonal iCustomer;
     public String saleName;
     public Data lead;

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.flast.domains.order.OrderService;
 import vn.flast.entities.customer.CustomerFilter;
-import vn.flast.entities.customer.CustomerInfo;
+import vn.flast.entities.customer.CustomerReport;
 import vn.flast.models.*;
 import vn.flast.records.CustomerSummary;
 import vn.flast.repositories.*;
@@ -45,12 +45,12 @@ public class CustomerServiceGlobal {
     @Autowired
     private UserRepository userRepository;
 
-    public CustomerInfo report(Long customerId) {
+    public CustomerReport report(Long customerId) {
         var customer = customerRepository.findById(customerId).orElseThrow(
             () -> new RuntimeException("Customer not found")
         );
 
-        CustomerInfo info = new CustomerInfo();
+        CustomerReport info = new CustomerReport();
         info.iCustomer = customer;
         info.lead = dataRepository.findFirstByPhone(customer.getMobile()).orElseThrow(
             () -> new RuntimeException("Lead not found, data not async !")
