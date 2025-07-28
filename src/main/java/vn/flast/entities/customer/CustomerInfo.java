@@ -14,5 +14,4 @@ public class CustomerInfo {
     public List<CustomerActivities> activities;
     public List<CustomerOrder> orders;
     public List<CustomerOrder> opportunities;
-    public List<DataCare> dataCares;
 }

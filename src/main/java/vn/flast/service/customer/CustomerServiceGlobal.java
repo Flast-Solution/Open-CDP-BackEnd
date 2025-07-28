@@ -11,7 +11,6 @@ import vn.flast.models.*;
 import vn.flast.records.CustomerSummary;
 import vn.flast.repositories.*;
 import vn.flast.pagination.Ipage;
-import vn.flast.service.cskh.DataCareService;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
 import java.util.*;
@@ -38,9 +37,6 @@ public class CustomerServiceGlobal {
     private CustomerActivitiesRepository customerActivitiesRepository;
 
     @Autowired
-    private DataCareService dataCareService;
-
-    @Autowired
     private CustomerOrderRepository customerOrderRepository;
 
     @Autowired
@@ -53,7 +49,6 @@ public class CustomerServiceGlobal {
         var customer = customerRepository.findById(customerId).orElseThrow(
             () -> new RuntimeException("Customer not found")
         );
-        int cId = Math.toIntExact(customer.getId());
 
         CustomerInfo info = new CustomerInfo();
         info.iCustomer = customer;
@@ -62,7 +57,6 @@ public class CustomerServiceGlobal {
         );
         info.notes = findNotes(customer);
         info.activities = customerActivitiesRepository.findByCustomerId(customer.getId());
-        info.dataCares = dataCareService.findByCustomerId(cId);
         info.orders = findCustomerOrder(customerId, CustomerOrder.TYPE_ORDER);
         info.opportunities = findCustomerOrder(customerId, CustomerOrder.TYPE_CO_HOI);
         info.saleName = saleTakeCare(customer.getSaleId());
