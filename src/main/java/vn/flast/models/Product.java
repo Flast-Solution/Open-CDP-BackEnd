@@ -92,5 +92,5 @@ public class Product {
     private List<String> imageLists;
 
     @Transient
-    private List<Warehouse> warehouses;
+    private List<WarehouseProduct> warehouses;
 }

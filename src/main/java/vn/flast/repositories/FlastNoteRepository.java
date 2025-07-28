@@ -10,6 +10,6 @@ public interface FlastNoteRepository extends JpaRepository<FlastNote, Long> {
     @Query("FROM FlastNote c WHERE c.objectType = :objectType AND objectId = :objectId")
     FlastNote findByTypeId(String objectType, Long objectId);
 
-    @Query(name = "SELECT n.* FROM flast_note as n LEFT JOIN data as l on l.id = n.object_id WHERE l.customer_mobile = :mobile", nativeQuery = true)
-    List<FlastNote> findByMobileOfLead(@Param("mobile") String mobile);
+    @Query(value = "SELECT n.* FROM flast_note as n LEFT JOIN data as l on l.id = n.object_id WHERE l.customer_mobile = :mobile", nativeQuery = true)
+    List<FlastNote> fetchMobileOfLead(@Param("mobile") String mobile);
 }

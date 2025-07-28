@@ -68,7 +68,7 @@ public class CustomerServiceGlobal {
     @SuppressWarnings("CollectionAddAllCanBeReplacedWithConstructor")
     private List<FlastNote> findNotes(CustomerPersonal customer) {
         List<FlastNote> alls = new ArrayList<>();
-        alls.addAll(noteRepository.findByMobileOfLead(customer.getMobile()));
+        alls.addAll(noteRepository.fetchMobileOfLead(customer.getMobile()));
         /* Các note khác của order, Kho, CSKH ... */
         return alls;
     }

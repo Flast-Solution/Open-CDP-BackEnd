@@ -8,10 +8,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import vn.flast.utils.NumberUtils;
 import java.util.Date;
 
-@Table(name = "warehouse")
+@Table(name = "warehouse_product")
 @Entity
 @Getter @Setter
-public class Warehouse {
+public class WarehouseProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

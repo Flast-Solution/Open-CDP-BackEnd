@@ -1,4 +1,4 @@
-package vn.flast.controller.stock;
+package vn.flast.domains.stock.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import vn.flast.entities.MyResponse;
 import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.models.WareHouseStock;
 import vn.flast.searchs.WarehouseFilter;
-import vn.flast.service.WarehouseService;
+import vn.flast.domains.stock.services.WarehouseService;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController

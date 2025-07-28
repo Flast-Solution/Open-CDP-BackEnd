@@ -28,7 +28,7 @@ import vn.flast.repositories.ProductSkusDetailsRepository;
 import vn.flast.repositories.ProductSkusPriceRepository;
 import vn.flast.repositories.ProductSkusRepository;
 import vn.flast.repositories.ProviderRepository;
-import vn.flast.repositories.WarehouseRepository;
+import vn.flast.repositories.WarehouseProductRepository;
 import vn.flast.searchs.ProductFilter;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
@@ -84,7 +84,7 @@ public class ProductService {
     private MediaRepository mediaRepository;
 
     @Autowired
-    private WarehouseRepository warehouseRepository;
+    private WarehouseProductRepository warehouseRepository;
 
     public Product createdSeo(Product input) {
         return productsRepository.save(input);

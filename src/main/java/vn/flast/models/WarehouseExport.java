@@ -31,26 +31,14 @@ public class WarehouseExport {
     @Column(name = "order_id")
     private Long orderId;
 
-    @Column(name = "order_code")
-    private String  orderCode;
-
-    @Column(name = "sale")
-    private String  sale;
-
     @Column(name = "status")
     private Integer status;
-
-    @Column(name = "warehouse_delivery_id")
-    private Integer warehouseDeliveryId;
-
-    @Column(name = "warehouse_receiving_id")
-    private Integer warehouseReceivingId;
 
     @Column(name = "note")
     private String note;
 
-    @Column(name = "info")
-    private String info;
+    @Column(name = "sku_info")
+    private String skuInfo;
 
     @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -64,14 +52,6 @@ public class WarehouseExport {
     @Column(name = "update_time")
     private Date updateTime;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_by")
-    private Date createdBy;
-
-    @Column(name = "type")
-    private Integer type;
-
     @Column(name = "user_export")
     private Integer userExport;
 
@@ -79,5 +59,5 @@ public class WarehouseExport {
     List<ExportItem> items;
 
     @Transient
-    Warehouse warehouse;
+    WarehouseProduct warehouse;
 }
