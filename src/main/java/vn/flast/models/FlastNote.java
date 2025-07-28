@@ -22,7 +22,8 @@ public class FlastNote {
     public static final int TYPE_ORDER = 1;
 
     public static final String OBJECT_TYPE_ORDER_NOTE = "order";
-    public static final String OBJECT_TYPE_ORDER_LEAD = "data";
+    public static final String OBJECT_TYPE_CUSTOMER = "customer";
+    public static final String DATA_TYPE_CUSTOMER_LEAD = "customer_lead";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +39,7 @@ public class FlastNote {
     private Long objectId;
 
     @Column(name = "data_type")
-    private Integer dataType;
+    private String dataType;
 
     @Column(name = "user_id")
     private Integer userId;
