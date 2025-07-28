@@ -69,8 +69,8 @@ public class CustomerController {
 
     @GetMapping("/report-by-id/{customerId}")
     public MyResponse<?> findReportId(@PathVariable Long customerId) {
-        var customerInfo = customerServiceGlobal.report(customerId);
-        return MyResponse.response(customerInfo);
+        var report = customerServiceGlobal.report(customerId);
+        return MyResponse.response(report);
     }
 
     @GetMapping("/tags/fetch")
