@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import vn.flast.entities.warehouse.SkuDetails;
+import vn.flast.utils.JsonUtils;
 import vn.flast.utils.NumberUtils;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +74,11 @@ public class WarehouseProduct {
 
     @Transient
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public List<SkuDetails> skuDetails;
+    public List<SkuDetails> skuDetails = new ArrayList<>();
+
+    public void addSKUDetailFormSkuInfo () {
+        skuDetails = JsonUtils.Json2ListObject(skuInfo, SkuDetails.class);
+    }
 
     @Transient
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
