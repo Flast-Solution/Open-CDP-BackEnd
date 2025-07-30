@@ -1,6 +1,5 @@
 package vn.flast.models;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,13 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Date;
 
-@Table(name = "shipping")
+@Table(name = "shipping_history")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 public class ShippingHistory {
 
     @Id
@@ -32,14 +29,11 @@ public class ShippingHistory {
     @Column(name = "order_name")
     private String orderName;
 
-    @Column(name = "customer_mobile_phone")
-    private String customerMobilePhone;
-
     @Column(name = "warehouse_id")
     private Long warehouse_id;
 
-    @Column(name = "transport_code")
-    private String transportCode;
+    @Column(name = "transport_name")
+    private String transportName;
 
     @Column(name = "transporter_id")
     private Long transporterId;
@@ -56,17 +50,11 @@ public class ShippingHistory {
     @Column(name = "province_id")
     private Long provinceId;
 
-    @Column(name = "district_id")
-    private Long districtId;
-
     @Column(name = "ward_id")
     private Long wardId;
 
     @Column(name = "address")
     private String address;
-
-    @Column(name = "content")
-    private String content;
 
     @Column(name = "note")
     private String note;

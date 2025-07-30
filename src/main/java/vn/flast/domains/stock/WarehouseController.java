@@ -1,4 +1,4 @@
-package vn.flast.domains.stock.controllers;
+package vn.flast.domains.stock;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
 import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.models.WareHouseStock;
+import vn.flast.models.WarehouseExchange;
 import vn.flast.searchs.WarehouseFilter;
-import vn.flast.domains.stock.services.WarehouseService;
 import vn.flast.validator.ValidationErrorBuilder;
 
 @RestController
@@ -47,6 +47,12 @@ public class WarehouseController {
     public MyResponse<?> fetch(WarehouseFilter filter) {
         var data = warehouseService.fetch(filter);
         return MyResponse.response(data);
+    }
+
+    @PostMapping("/exchange")
+    public MyResponse<?> exchange(@RequestBody WarehouseExchange input) {
+        var model = warehouseService.exchange(input);
+        return MyResponse.response(model, "Xuất kho thành công !");
     }
 
     @PostMapping("/delete")

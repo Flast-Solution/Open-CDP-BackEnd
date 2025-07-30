@@ -1,44 +1,40 @@
 package vn.flast.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import vn.flast.entities.ExportItem;
 import java.util.Date;
-import java.util.List;
 
-@Table(name = "warehouse_export")
+@Table(name = "warehouse_exchange")
 @Entity
 @Getter @Setter
-public class WarehouseExport {
+public class WarehouseExchange {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "order_id")
-    private Long orderId;
+    @Column(name = "warehouse_source_id", nullable = false)
+    private Integer warehouseSourceId;
+
+    @Column(name = "warehouse_target_id", nullable = false)
+    private Integer warehouseTargetId;
+
+    @Column(name = "sso_id")
+    private String ssoId;
 
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
+
     @Column(name = "note")
     private String note;
-
-    @Column(name = "sku_info")
-    private String skuInfo;
 
     @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -52,12 +48,8 @@ public class WarehouseExport {
     @Column(name = "update_time")
     private Date updateTime;
 
-    @Column(name = "user_export")
-    private Integer userExport;
-
-    @Transient
-    List<ExportItem> items;
-
-    @Transient
-    WarehouseProduct warehouse;
+    @PrePersist
+    public void beforeSave() {
+        status = 0;
+    }
 }

@@ -1,17 +1,18 @@
-package vn.flast.domains.stock.services;
+package vn.flast.domains.stock;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.flast.controller.BaseController;
+import vn.flast.components.RecordNotFoundException;
 import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.entities.warehouse.SkuDetails;
 import vn.flast.models.*;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.*;
 import vn.flast.searchs.WarehouseFilter;
+import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class WarehouseService extends BaseController {
+public class WarehouseService {
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -31,12 +32,13 @@ public class WarehouseService extends BaseController {
     private final WarehouseProductRepository wareHouseRepository;
     private final WareHouseStatusRepository wareHouseStatusRepository;
     private final WarehouseStockRepository warehouseStockRepository;
+    private final WarehouseExchangeRepository exportRepository;
     private final ProductRepository productRepository;
     private final ProviderRepository providerRepository;
 
     public WarehouseProduct created(SaveStock saveStock) {
         var input = saveStock.model();
-        input.setUserName(getUserSso());
+        input.setUserName(Common.getSsoId());
         input.setSkuInfo(JsonUtils.toJson(saveStock.mSkuDetails()));
 
         WareHouseStock stock = warehouseStockRepository.findById(input.getStockId()).orElseThrow(
@@ -61,8 +63,25 @@ public class WarehouseService extends BaseController {
         return wareHouseRepository.save(warehouse);
     }
 
-    public WarehouseProduct updated(WarehouseProduct model) {
-        return wareHouseRepository.save(model);
+    public WarehouseExchange exchange(WarehouseExchange model) {
+        WarehouseProduct modelWHSource = wareHouseRepository.findById(model.getWarehouseSourceId()).orElseThrow(
+            () -> new RecordNotFoundException("")
+        );
+        WarehouseProduct modelWHTarget = wareHouseRepository.findById(model.getWarehouseTargetId()).orElseThrow(
+            () -> new RecordNotFoundException("")
+        );
+
+        if(modelWHSource.getQuantity() < model.getQuantity()) {
+            throw new RuntimeException("Số lượng đã vượt quá trong kho");
+        }
+        modelWHSource.setQuantity(modelWHSource.getQuantity() - model.getQuantity());
+        wareHouseRepository.save(modelWHSource);
+
+        modelWHTarget.setQuantity(model.getQuantity() + modelWHTarget.getQuantity());
+        wareHouseRepository.save(modelWHTarget);
+
+        model.setSsoId(Common.getSsoId());
+        return exportRepository.save(model);
     }
 
     public Ipage<?> fetch(WarehouseFilter filter) {
@@ -116,11 +135,6 @@ public class WarehouseService extends BaseController {
         return wareHouseRepository.findById(id).orElseThrow(
             () -> new RuntimeException("Bản ghi không tồn tại !")
         );
-    }
-
-    public Map<Integer, WarehouseProduct> findByIds(List<Integer> ids) {
-        List<WarehouseProduct> warehouses = wareHouseRepository.findByIds(ids);
-        return warehouses.stream().collect(Collectors.toMap(WarehouseProduct::getId, Function.identity()));
     }
 
     public List<WareHouseStatus> fetchStatus(){
