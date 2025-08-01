@@ -94,6 +94,7 @@ public class WarehouseService {
             entity.setUserName(Common.getSsoId());
         } else {
             entity.setQuantity(model.getQuantity() + entity.getQuantity());
+            entity.setTotal(model.getQuantity() + entity.getTotal());
         }
         modelWHSource.setQuantity(modelWHSource.getQuantity() - model.getQuantity());
         wareHouseRepository.save(modelWHSource);
