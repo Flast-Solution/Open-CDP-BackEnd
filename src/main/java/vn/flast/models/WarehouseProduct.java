@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "warehouse_product")
 @Entity
 @Getter @Setter
-public class WarehouseProduct {
+public class WarehouseProduct implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,10 +50,10 @@ public class WarehouseProduct {
     private Long fee;
 
     @Column(name = "quantity")
-    private Long quantity;
+    private Integer quantity;
 
     @Column(name = "total")
-    private Long total;
+    private Integer total;
 
     @Column(name = "sku_name")
     private String skuName;
@@ -87,4 +87,13 @@ public class WarehouseProduct {
     @Transient
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String providerName;
+
+    @Override
+    public WarehouseProduct clone() {
+        try {
+            return (WarehouseProduct) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

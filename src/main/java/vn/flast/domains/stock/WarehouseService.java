@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.flast.components.RecordNotFoundException;
 import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.entities.warehouse.SkuDetails;
+import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.*;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.*;
@@ -16,6 +17,7 @@ import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
+import vn.flast.utils.NumberUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -63,22 +65,39 @@ public class WarehouseService {
         return wareHouseRepository.save(warehouse);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public WarehouseExchange exchange(WarehouseExchange model) {
+        if(model.getWarehouseTargetId().equals(model.getWarehouseSourceId())) {
+            throw new RuntimeException("Chọn cùng kho là không được phép");
+        }
         WarehouseProduct modelWHSource = wareHouseRepository.findById(model.getWarehouseSourceId()).orElseThrow(
-            () -> new RecordNotFoundException("")
+            () -> new RecordNotFoundException("Kho nguồn không tồn tại")
         );
-        WarehouseProduct modelWHTarget = wareHouseRepository.findById(model.getWarehouseTargetId()).orElseThrow(
-            () -> new RecordNotFoundException("")
-        );
-
         if(modelWHSource.getQuantity() < model.getQuantity()) {
             throw new RuntimeException("Số lượng đã vượt quá trong kho");
         }
+        var stock = warehouseStockRepository.findById(model.getWarehouseTargetId()).orElseThrow(
+            () -> new ResourceNotFoundException("Kho không tồn tại")
+        );
+
+        var listSkus = wareHouseRepository.findBySkuAndStockId(modelWHSource.getSkuId(), model.getWarehouseTargetId());
+        var entity = listSkus.stream()
+            .filter(i -> i.getSkuInfo().equals(modelWHSource.getSkuInfo()))
+            .findFirst()
+            .orElseGet(WarehouseProduct::new);
+        if(NumberUtils.isNull(entity.getId())) {
+            CopyProperty.CopyIgnoreNull(modelWHSource, entity, "id");
+            entity.setQuantity(model.getQuantity());
+            entity.setStockId(stock.getId());
+            entity.setStockName(stock.getName());
+            entity.setTotal(model.getQuantity());
+            entity.setUserName(Common.getSsoId());
+        } else {
+            entity.setQuantity(model.getQuantity() + entity.getQuantity());
+        }
         modelWHSource.setQuantity(modelWHSource.getQuantity() - model.getQuantity());
         wareHouseRepository.save(modelWHSource);
-
-        modelWHTarget.setQuantity(model.getQuantity() + modelWHTarget.getQuantity());
-        wareHouseRepository.save(modelWHTarget);
+        wareHouseRepository.save(entity);
 
         model.setSsoId(Common.getSsoId());
         return exportRepository.save(model);

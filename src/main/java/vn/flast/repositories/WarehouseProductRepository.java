@@ -10,6 +10,6 @@ public interface WarehouseProductRepository extends JpaRepository<WarehouseProdu
     @Query("FROM WarehouseProduct w WHERE w.productId = :productId")
     List<WarehouseProduct> findByProductId(Long productId);
 
-    @Query("FROM WarehouseProduct w WHERE w.id IN (:ids)")
-    List<WarehouseProduct> findByIds(List<Integer> ids);
+    @Query("FROM WarehouseProduct w WHERE w.skuId = :skuId AND stockId = :stockId")
+    List<WarehouseProduct> findBySkuAndStockId(Long skuId, Integer stockId);
 }
