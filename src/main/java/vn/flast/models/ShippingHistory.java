@@ -5,9 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import vn.flast.utils.NumberUtils;
 import java.util.Date;
 
 @Table(name = "shipping_history")
@@ -26,26 +30,23 @@ public class ShippingHistory {
     @Column(name = "detail_code")
     private String detailCode;
 
-    @Column(name = "order_name")
-    private String orderName;
+    @Column(name = "sso_id")
+    private String ssoId;
 
     @Column(name = "warehouse_id")
-    private Long warehouse_id;
+    private Integer warehouseId;
 
     @Column(name = "transport_name")
     private String transportName;
 
-    @Column(name = "transporter_id")
+    @Column(name = "transporter_id", nullable = false)
     private Long transporterId;
 
     @Column(name = "shipping_cost")
     private Long shippingCost;
 
-    @Column(name = "quantity")
-    private Long quantity;
-
-    @Column(name = "in_time")
-    private Date inTime;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
 
     @Column(name = "province_id")
     private Long provinceId;
@@ -60,5 +61,19 @@ public class ShippingHistory {
     private String note;
 
     @Column(name = "status")
-    private Long status;
+    private Integer status;
+
+    @CreationTimestamp
+    @Column(name = "in_time")
+    private Date inTime;
+
+    @PrePersist
+    public void beforeSave() {
+        if(NumberUtils.isNull(status)) {
+            status = 0;
+        }
+    }
+
+    @Transient
+    private WarehouseProduct warehouseProduct;
 }

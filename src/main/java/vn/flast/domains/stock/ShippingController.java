@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
+import vn.flast.models.ShippingHistory;
 import vn.flast.models.ShippingStatus;
 import vn.flast.service.ShippingService;
 
@@ -20,8 +21,14 @@ public class ShippingController {
 
     @GetMapping("/fetch")
     public MyResponse<?> fetch(@RequestParam Integer page) {
-        var data = shippingService.fetch(page);
-        return MyResponse.response(data);
+        var ships = shippingService.fetch(page);
+        return MyResponse.response(ships);
+    }
+
+    @PostMapping("/delivery")
+    public MyResponse<?> delivery(@RequestBody ShippingHistory input){
+        var data = shippingService.delivery(input);
+        return MyResponse.response(data, "Giao hàng thành công !");
     }
 
     @PostMapping("/created-status")

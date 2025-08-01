@@ -5,9 +5,9 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.flast.entities.TransportFilter;
-import vn.flast.models.Transport;
+import vn.flast.models.Transporter;
 import vn.flast.pagination.Ipage;
-import vn.flast.repositories.TransportRepository;
+import vn.flast.repositories.TransporterRepository;
 import vn.flast.utils.EntityQuery;
 
 @Service
@@ -17,18 +17,18 @@ public class TransportService {
     @PersistenceContext
     protected EntityManager entityManager;
 
-    private final TransportRepository transportRepository;
+    private final TransporterRepository transportRepository;
 
-    public Transport create(Transport transport) {
+    public Transporter create(Transporter transport) {
         return transportRepository.save(transport);
     }
 
-    public Transport update(Transport transport) {
+    public Transporter update(Transporter transport) {
         return transportRepository.save(transport);
     }
 
     public Ipage<?> fetch(TransportFilter filter) {
-        var et = EntityQuery.create(entityManager, Transport.class);
+        var et = EntityQuery.create(entityManager, Transporter.class);
         et.longEqualsTo("orderId", filter.getOrderId());
         et.between("inTime", filter.getFrom(), filter.getTo());
         et.addDescendingOrderBy("id");

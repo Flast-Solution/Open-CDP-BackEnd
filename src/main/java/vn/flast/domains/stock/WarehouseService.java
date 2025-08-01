@@ -104,20 +104,7 @@ public class WarehouseService {
         return exportRepository.save(model);
     }
 
-    public Ipage<?> fetch(WarehouseFilter filter) {
-        int LIMIT = filter.limit();
-        int currentPage = filter.page();
-
-        var et = EntityQuery.create(entityManager, WarehouseProduct.class);
-        et.addDescendingOrderBy("id")
-            .integerEqualsTo("productId", filter.productId())
-            .integerEqualsTo("skuId", filter.skuId())
-            .integerEqualsTo("providerId", filter.providerId())
-            .integerEqualsTo("stockId", filter.stockId())
-            .setMaxResults(LIMIT)
-            .setFirstResult(LIMIT * currentPage);
-        var lists = et.list();
-
+    public void appendFieldTransient(List<WarehouseProduct> lists) {
         List<Long> pIds = lists.stream().map(WarehouseProduct::getProductId).toList();
         List<Product> products = productRepository.findByListId(pIds);
         Map<Long, Product> mProducts = products.stream().collect(Collectors.toMap(Product::getId, Function.identity()));
@@ -133,6 +120,23 @@ public class WarehouseService {
             String mPName = mProviders.get(whProduct.getProviderId());
             whProduct.setProviderName(mPName);
         }
+    }
+
+    public Ipage<?> fetch(WarehouseFilter filter) {
+        int LIMIT = filter.limit();
+        int currentPage = filter.page();
+
+        var et = EntityQuery.create(entityManager, WarehouseProduct.class);
+        et.addDescendingOrderBy("id")
+            .integerEqualsTo("productId", filter.productId())
+            .integerEqualsTo("skuId", filter.skuId())
+            .integerEqualsTo("providerId", filter.providerId())
+            .integerEqualsTo("stockId", filter.stockId())
+            .setMaxResults(LIMIT)
+            .setFirstResult(LIMIT * currentPage);
+        var lists = et.list();
+
+        appendFieldTransient(lists);
         return Ipage.generator(LIMIT, et.count(), currentPage, lists);
     }
 
