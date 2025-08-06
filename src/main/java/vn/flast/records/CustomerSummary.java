@@ -13,8 +13,8 @@ import lombok.Setter;
     name = "CustomerSummary",
     entities = @EntityResult(entityClass = CustomerSummary.class, fields = {
         @FieldResult(name = "opportunities", column = "opportunities"),
-        @FieldResult(name = "order", column = "order"),
-        @FieldResult(name = "lead", column = "lead")
+        @FieldResult(name = "orders", column = "orders"),
+        @FieldResult(name = "leads", column = "leads")
     })
 )
 @Entity(name = "CustomerSummary")
@@ -23,6 +23,6 @@ import lombok.Setter;
 public class CustomerSummary {
     @Id
     private Integer opportunities;
-    private Integer order;
-    private Integer lead;
+    private Integer orders;
+    private Integer leads;
 }

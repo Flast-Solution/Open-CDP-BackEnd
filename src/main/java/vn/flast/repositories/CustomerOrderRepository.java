@@ -20,6 +20,6 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
     @Query("SELECT COUNT(c.id) FROM CustomerOrder c WHERE c.customerId = :id AND c.type = :type")
     Integer countOrder(@Param("id") Long id, @Param("type") String type);
 
-    @Query(value = "FROM CustomerOrder c WHERE c.type = :type AND c.customerId = :customerId LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT c.* FROM customer_order c WHERE c.customer_id = :customerId AND c.type = :type LIMIT 5", nativeQuery = true)
     List<CustomerOrder> findByCustomerId(Long customerId, String type);
 }

@@ -77,8 +77,8 @@ public class CustomerServiceGlobal {
         String query = """
         SELECT\s
             IFNULL(SUM(CASE WHEN co.type = 'cohoi' THEN 1 ELSE 0 END), 0) AS opportunities,
-            IFNULL(SUM(CASE WHEN co.type = 'order' THEN 1 ELSE 0 END), 0) AS order,
-            IFNULL((SELECT COUNT(id) FROM data WHERE customer_mobile = :mobile), 0) AS lead
+            IFNULL(SUM(CASE WHEN co.type = 'order' THEN 1 ELSE 0 END), 0) AS orders,
+            IFNULL((SELECT COUNT(id) FROM data WHERE customer_mobile = :mobile), 0) AS leads
         FROM customer_order co\s
         WHERE co.customer_mobile_phone = :mobile
         """;
