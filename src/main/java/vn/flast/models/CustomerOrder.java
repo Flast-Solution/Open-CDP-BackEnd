@@ -70,9 +70,6 @@ public class CustomerOrder implements Cloneable {
     @Column(name = "customer_ward_id")
     private Integer customerWardId;
 
-    @Column(name = "customer_district_id")
-    private Integer customerDistrictId;
-
     @Column(name = "customer_province_id")
     private Integer customerProvinceId;
 
@@ -123,9 +120,6 @@ public class CustomerOrder implements Cloneable {
 
     @Column(name = "fee_sale_other", columnDefinition = "integer default 0")
     private Integer feeSaleOther = 0;
-
-    @Column(name = "flag_free_ship")
-    private String flagFreeShip;
 
     @Column(name = "shipping_status")
     private Long shippingStatus;

@@ -17,7 +17,7 @@ public class BaseController {
         return Optional.ofNullable(getInfo()).map(UserPrinciple::getId).orElse(0);
     }
 
-    protected String getUserSso() {
+    protected String getUserSsoId() {
         return Optional.ofNullable(getInfo()).map(UserPrinciple::getSsoId).orElse(null);
     }
 
