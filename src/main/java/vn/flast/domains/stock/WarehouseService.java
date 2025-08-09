@@ -13,11 +13,7 @@ import vn.flast.models.*;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.*;
 import vn.flast.searchs.WarehouseFilter;
-import vn.flast.utils.Common;
-import vn.flast.utils.CopyProperty;
-import vn.flast.utils.EntityQuery;
-import vn.flast.utils.JsonUtils;
-import vn.flast.utils.NumberUtils;
+import vn.flast.utils.*;
 
 import java.util.List;
 import java.util.Map;
@@ -46,6 +42,9 @@ public class WarehouseService {
         WareHouseStock stock = warehouseStockRepository.findById(input.getStockId()).orElseThrow(
             () -> new RuntimeException("Kho không tồn tại !")
         );
+
+        String hash = StockUtils.hashSku(input.getSkuInfo());
+        input.setSkuHash(hash);
         input.setStockName(stock.getName());
         return wareHouseRepository.save(input);
     }
@@ -62,6 +61,9 @@ public class WarehouseService {
         );
         warehouse.setStockName(stock.getName());
         warehouse.setSkuInfo(JsonUtils.toJson(saveStock.mSkuDetails()));
+
+        String hash = StockUtils.hashSku(warehouse.getSkuInfo());
+        warehouse.setSkuHash(hash);
         return wareHouseRepository.save(warehouse);
     }
 
@@ -134,6 +136,10 @@ public class WarehouseService {
             .integerEqualsTo("stockId", filter.stockId())
             .setMaxResults(LIMIT)
             .setFirstResult(LIMIT * currentPage);
+
+        if(StringUtils.isNotNull(filter.skuHash())) {
+            et.stringEqualsTo("skuHash", filter.skuHash());
+        }
         var lists = et.list();
 
         appendFieldTransient(lists);

@@ -46,6 +46,9 @@ public class WarehouseProduct implements Cloneable {
     @Column(name = "sku_info")
     private String skuInfo;
 
+    @Column(name = "sku_hash", nullable = false)
+    private String skuHash;
+
     @Column(name = "fee")
     private Long fee;
 

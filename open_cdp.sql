@@ -1483,13 +1483,15 @@ CREATE TABLE `warehouse_product` (
   `fee` int DEFAULT '0',
   `quantity` int DEFAULT '0',
   `total` int DEFAULT '0',
-  `in_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `sku_hash` varchar(500) NOT NULL,
+  `sku_name` varchar(250) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `provider_id` int DEFAULT NULL,
-  `sku_name` varchar(250) DEFAULT NULL,
+  `in_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `product_idx` (`product_id`),
   KEY `sku_idx` (`sku_id`),
-  KEY `stock_idx` (`stock_id`)
+  KEY `stock_idx` (`stock_id`),
+  KEY `index_stock_hash` (`sku_hash`,`stock_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=279 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1499,7 +1501,7 @@ CREATE TABLE `warehouse_product` (
 
 LOCK TABLES `warehouse_product` WRITE;
 /*!40000 ALTER TABLE `warehouse_product` DISABLE KEYS */;
-INSERT INTO `warehouse_product` VALUES (274,5,'Kho Nam Từ Liêm','Administrator',776,10208,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10385,\"text\":\"Hai tầng\"},{\"id\":10383,\"text\":\"Âm dương nắp lật\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10389,\"text\":\"Giấy Mỹ thuật\"},{\"id\":10388,\"text\":\"Giấy Crat\"}]}]',0,11,11,'2025-07-14 09:04:44',10008,'Hộp 1.3mm'),(275,1,'Kho Trung Hòa','Administrator',776,10209,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10395,\"text\":\"Hai cánh mở giữa\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10399,\"text\":\"Giấy Op/Ford\"}]}]',0,20,200,'2025-07-15 02:55:56',10009,'Hộp 1.5mm'),(276,4,'Kho Trung Hòa 3','Administrator',774,10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',0,100,100,'2025-07-16 08:51:20',10009,'Thuộc tính gia công và đóng gói'),(278,4,'Kho Trung Hòa 3','Administrator',776,10208,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10385,\"text\":\"Hai tầng\"},{\"id\":10383,\"text\":\"Âm dương nắp lật\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10389,\"text\":\"Giấy Mỹ thuật\"},{\"id\":10388,\"text\":\"Giấy Crat\"}]}]',0,4,4,'2025-08-01 07:40:06',10008,'Hộp 1.3mm');
+INSERT INTO `warehouse_product` VALUES (274,5,'Kho Nam Từ Liêm','Administrator',776,10208,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10385,\"text\":\"Hai tầng\"},{\"id\":10383,\"text\":\"Âm dương nắp lật\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10389,\"text\":\"Giấy Mỹ thuật\"},{\"id\":10388,\"text\":\"Giấy Crat\"}]}]',0,11,11,'5d5c2436157d19043dcf4857ae9a258f6aae27b5','Hộp 1.3mm',10008,'2025-07-14 09:04:44'),(275,1,'Kho Trung Hòa','Administrator',776,10209,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10395,\"text\":\"Hai cánh mở giữa\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10399,\"text\":\"Giấy Op/Ford\"}]}]',0,20,200,'8c34ae8d93c5210260e785b246821897d5f862b0','Hộp 1.5mm',10009,'2025-07-15 02:55:56'),(276,4,'Kho Trung Hòa 3','Administrator',774,10198,'[{\"text\":\"PHong cách\",\"values\":[{\"id\":10341,\"text\":\"Tối giản B+\"}]}]',0,100,100,'1b62a89accfa05b69453e6fd0171691f40c7b626','Thuộc tính gia công và đóng gói',10009,'2025-07-16 08:51:20'),(278,4,'Kho Trung Hòa 3','Administrator',776,10208,'[{\"text\":\"Dạng kết cấu\",\"values\":[{\"id\":10385,\"text\":\"Hai tầng\"},{\"id\":10383,\"text\":\"Âm dương nắp lật\"}]},{\"text\":\"Bồi vỏ\",\"values\":[{\"id\":10389,\"text\":\"Giấy Mỹ thuật\"},{\"id\":10388,\"text\":\"Giấy Crat\"}]}]',0,4,4,'5d5c2436157d19043dcf4857ae9a258f6aae27b5','Hộp 1.3mm',10008,'2025-08-01 07:40:06');
 /*!40000 ALTER TABLE `warehouse_product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1570,4 +1572,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-06 22:42:31
+-- Dump completed on 2025-08-09 17:44:22
