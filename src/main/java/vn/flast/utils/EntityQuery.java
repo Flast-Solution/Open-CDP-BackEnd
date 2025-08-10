@@ -4,13 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.hibernate.query.spi.QueryParameterImplementor;
 import org.hibernate.query.sqm.internal.QuerySqmImpl;
 import org.hibernate.query.sqm.sql.internal.StandardSqmTranslator;
@@ -121,14 +115,6 @@ public class EntityQuery<E> {
         return entityManager.createQuery(criteriaQuery);
     }
 
-    public EntityQuery<E> innerJoinFetch(String attribute) {
-        root.fetch(attribute, JoinType.INNER);
-        return this;
-    }
-    public EntityQuery<E> innerJoin(String path) {
-        root.join(path, JoinType.INNER);
-        return this;
-    }
     public EntityQuery<E> leftJoinFetch(String attribute) {
         root.fetch(attribute, JoinType.LEFT);
         return this;
@@ -175,6 +161,44 @@ public class EntityQuery<E> {
         return this;
     }
 
+    public EntityQuery<E> dateBetween(String path, Date fromDate, Date toDate) {
+        if (fromDate != null && toDate != null) {
+            predicates.add(criteriaBuilder.between(toJpaPath(path), fromDate, toDate));
+        } else if (fromDate != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(toJpaPath(path), fromDate));
+        } else if (toDate != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(toJpaPath(path), toDate));
+        }
+        return this;
+    }
+
+    /**
+     * Thực hiện LEFT JOIN với các bảng liên kết
+     * Ví dụ:
+     * - Join 2 bảng: .leftJoin("department")
+     *                .objectEqualsTo("department.name", "ABC Corp")
+     * - Join 3 bảng: .leftJoin("department.company")
+     *                .objectEqualsTo("department.company.name", "ABC Corp")
+     * @param path Đường dẫn join (ví dụ: "department", "department.company")
+     * @return this
+     */
+    public EntityQuery<E> leftJoin(String path) {
+        String[] parts = path.split("\\.");
+        From<?, ?> from = root;
+        for (String part : parts) {
+            from = from.join(part, JoinType.LEFT);
+        }
+        return this;
+    }
+
+    public EntityQuery<E> innerJoin(String path) {
+        String[] parts = path.split("\\.");
+        From<?, ?> from = root;
+        for (String part : parts) {
+            from = from.join(part, JoinType.INNER);
+        }
+        return this;
+    }
 
 	@SafeVarargs
     public final EntityQuery<E> addInDisjunction(Optional<Predicate>... optionalPredicates) {
@@ -260,7 +284,6 @@ public class EntityQuery<E> {
         predicates.add(criteriaBuilder.lessThanOrEqualTo(leftPath, rightPath));
         return this;
     }
-
 
     public EntityQuery<E> fieldLessThan(String left, String right) {
         Path<BigDecimal> leftPath = toJpaPath(left);

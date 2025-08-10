@@ -16,11 +16,8 @@ import vn.flast.pagination.Ipage;
 import vn.flast.repositories.*;
 import vn.flast.searchs.WarehouseFilter;
 import vn.flast.utils.*;
-
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -118,11 +115,11 @@ public class WarehouseService {
     public void appendFieldTransient(List<WarehouseProduct> lists) {
         List<Long> pIds = lists.stream().map(WarehouseProduct::getProductId).toList();
         List<Product> products = productRepository.findByListId(pIds);
-        Map<Long, Product> mProducts = products.stream().collect(Collectors.toMap(Product::getId, Function.identity()));
+        Map<Long, Product> mProducts = MapUtils.toIdentityMap(products, Product::getId);
 
         List<Long> providerIds = lists.stream().map(WarehouseProduct::getProviderId).toList();
         List<Provider> providers = providerRepository.findByListId(providerIds);
-        Map<Long, String> mProviders = providers.stream().collect(Collectors.toMap(Provider::getId, Provider::getName));
+        Map<Long, String> mProviders = MapUtils.mapKeyValue(providers, Provider::getId, Provider::getName);
 
         for(WarehouseProduct whProduct : lists) {
             whProduct.setSkuDetails(JsonUtils.Json2ListObject(whProduct.getSkuInfo(), SkuDetails.class));
