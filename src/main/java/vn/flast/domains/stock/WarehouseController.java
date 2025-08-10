@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.MyResponse;
+import vn.flast.entities.warehouse.Delivery;
 import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.models.WareHouseStock;
 import vn.flast.models.WarehouseExchange;
@@ -53,6 +54,12 @@ public class WarehouseController {
     public MyResponse<?> exchange(@RequestBody WarehouseExchange input) {
         var model = warehouseService.exchange(input);
         return MyResponse.response(model, "Xuất kho thành công !");
+    }
+
+    @PostMapping("/delivery")
+    public MyResponse<?> delivery(@RequestBody @Valid Delivery input) {
+        var model = warehouseService.delivery(input);
+        return MyResponse.response(model, "Giao kho thành công !");
     }
 
     @PostMapping("/delete")

@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.components.RecordNotFoundException;
+import vn.flast.domains.order.OrderService;
+import vn.flast.entities.warehouse.Delivery;
 import vn.flast.entities.warehouse.SaveStock;
 import vn.flast.entities.warehouse.SkuDetails;
 import vn.flast.exception.ResourceNotFoundException;
@@ -31,8 +33,15 @@ public class WarehouseService {
     private final WareHouseStatusRepository wareHouseStatusRepository;
     private final WarehouseStockRepository warehouseStockRepository;
     private final WarehouseExchangeRepository exportRepository;
+
+    private final TransporterRepository transporterRepository;
+    private final ShippingHistoryRepository shippingHistoryRepository;
+
     private final ProductRepository productRepository;
     private final ProviderRepository providerRepository;
+
+    private final OrderService orderService;
+    private final CustomerOrderRepository orderRepository;
 
     public WarehouseProduct created(SaveStock saveStock) {
         var input = saveStock.model();
@@ -167,8 +176,32 @@ public class WarehouseService {
         );
     }
 
-    public List<WareHouseStatus> fetchStatus(){
-        return wareHouseStatusRepository.findAll();
+    @Transactional(rollbackFor = Exception.class)
+    public ShippingHistory delivery(Delivery input){
+        ShippingHistory history = input.transformShip();
+        var transporter = transporterRepository.findById(input.transporterId()).orElseThrow(
+            () -> new RecordNotFoundException("Không tìm thấy đơn vị vận chuyển")
+        );
+        history.setSsoId(Common.getSsoId());
+        history.setTransportName(transporter.getName());
+        var warehouse = wareHouseRepository.findById(history.getWarehouseId()).orElseThrow(
+            () -> new RecordNotFoundException("Không tìm thấy tồn kho")
+        );
+        warehouse.setQuantity(warehouse.getQuantity() - history.getQuantity());
+
+        wareHouseRepository.save(warehouse);
+        shippingHistoryRepository.save(history);
+
+        var order = orderRepository.findByCode(input.orderCode()).orElseThrow(
+            () -> new ResourceNotFoundException("Order not found .!")
+        );
+        if(StringUtils.isNull(order.getCustomerAddress())) {
+            order.setCustomerAddress(history.getAddress());
+            order.setCustomerProvinceId(history.getProvinceId());
+            order.setCustomerWardId(history.getWardId());
+            orderService.save(order);
+        }
+        return history;
     }
 
     public void createStock(WareHouseStock input){

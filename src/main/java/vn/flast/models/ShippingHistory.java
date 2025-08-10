@@ -30,6 +30,12 @@ public class ShippingHistory {
     @Column(name = "detail_code")
     private String detailCode;
 
+    @Column(name = "receiver_name")
+    private String receiverName;
+
+    @Column(name = "receiver_mobile")
+    private String receiverMobile;
+
     @Column(name = "sso_id")
     private String ssoId;
 
@@ -39,20 +45,23 @@ public class ShippingHistory {
     @Column(name = "transport_name")
     private String transportName;
 
-    @Column(name = "transporter_id", nullable = false)
-    private Long transporterId;
+    @Column(name = "transport_code")
+    private String transporterCode;
+
+    @Column(name = "transport_id", nullable = false)
+    private Integer transporterId;
 
     @Column(name = "shipping_cost")
-    private Long shippingCost;
+    private Integer shippingCost;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
     @Column(name = "province_id")
-    private Long provinceId;
+    private Integer provinceId;
 
     @Column(name = "ward_id")
-    private Long wardId;
+    private Integer wardId;
 
     @Column(name = "address")
     private String address;

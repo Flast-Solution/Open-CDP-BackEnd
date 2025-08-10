@@ -38,7 +38,7 @@ public class TransporterController {
     }
 
     @PostMapping("/delete")
-    public MyResponse<?> delete(@RequestParam Long id) {
+    public MyResponse<?> delete(@RequestParam Integer id) {
         transporterRepository.deleteById(id);
         return MyResponse.response("Xáo bản ghi thành công .!");
     }

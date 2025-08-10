@@ -55,13 +55,10 @@ public class CustomerPersonal {
     private String name;
 
     @Column(name = "province_id")
-    private Long provinceId;
-
-    @Column(name = "district_id")
-    private Long districtId;
+    private Integer provinceId;
 
     @Column(name = "ward_id")
-    private Long wardId;
+    private Integer wardId;
 
     @Column(name = "address")
     private String address;

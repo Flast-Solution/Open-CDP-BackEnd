@@ -16,6 +16,7 @@ import vn.flast.searchs.CustomerFilter;
 import vn.flast.utils.DateUtils;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.NumberUtils;
+import vn.flast.utils.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -89,6 +90,13 @@ public class CustomerPersonalService extends Subscriber {
         var customer = customerPersonalRepository.findById(model.getId()).orElseThrow();
         if(order.isOrder()) {
             increaseNumOfOrder(customer);
+            if(StringUtils.isNull(customer.getAddress()) && StringUtils.isNotNull(order.getCustomerAddress())) {
+                customer.setAddress(order.getCustomerAddress());
+            }
+            if(NumberUtils.isNull(customer.getProvinceId()) && NumberUtils.isNotNull(order.getCustomerProvinceId())) {
+                customer.setProvinceId(order.getCustomerProvinceId());
+                customer.setWardId(order.getCustomerWardId());
+            }
             customerPersonalRepository.save(customer);
         }
         if(NumberUtils.isNotNull(customer.getCompanyId())){
