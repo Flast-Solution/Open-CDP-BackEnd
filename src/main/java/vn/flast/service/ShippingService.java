@@ -17,6 +17,8 @@ import vn.flast.repositories.WarehouseProductRepository;
 import vn.flast.searchs.ShipFilter;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.MapUtils;
+import vn.flast.utils.NumberUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +42,7 @@ public class ShippingService {
         et.stringEqualsTo("orderCode", filter.orderCode())
             .stringEqualsTo("detailCode", filter.detailCode())
             .integerEqualsTo("transporterId", filter.transporterId())
+            .integerEqualsTo("status", filter.status())
             .stringEqualsTo("transporterCode", filter.transporterCode())
             .setMaxResults(LIMIT)
             .setFirstResult(LIMIT * PAGE);
@@ -67,7 +70,8 @@ public class ShippingService {
             () -> new ResourceNotFoundException("")
         );
 
-        boolean isEditQuantity = !input.getQuantity().equals(model.getQuantity());
+        boolean isEditQuantity = NumberUtils.isNotNull(input.getQuantity())
+            && !input.getQuantity().equals(model.getQuantity());
         if(isEditQuantity && input.getQuantity() < model.getQuantity()) {
             int revert = model.getQuantity() - input.getQuantity();
             warehouseProduct.setQuantity(warehouseProduct.getQuantity() + revert);
@@ -78,7 +82,12 @@ public class ShippingService {
             }
             warehouseProduct.setQuantity(warehouseProduct.getQuantity() - shipAdd);
         }
-        warehouseProductRepository.save(warehouseProduct);
+        if(isEditQuantity){
+            warehouseProductRepository.save(warehouseProduct);
+        }
+        if(NumberUtils.isNotNull(input.getStatus())) {
+            model.setStatus(input.getStatus());
+        }
         shippingHistoryRepository.save(model);
         return model;
     }

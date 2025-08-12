@@ -9,6 +9,7 @@ public record ShipFilter (
     Integer transporterId,
     String transporterCode,
     Integer page,
+    Integer status,
     Date from,
     Date to
 ) {

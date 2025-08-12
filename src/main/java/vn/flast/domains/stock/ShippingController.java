@@ -28,7 +28,7 @@ public class ShippingController {
     @PostMapping("/update")
     public MyResponse<?> update(@RequestBody ShippingHistory input) {
         var data = shippingService.update(input);
-        return MyResponse.response(data, "Giao hàng thành công !");
+        return MyResponse.response(data, "Cập nhật dữ liệu mới thành công !");
     }
 
     @PostMapping("/created-status")
