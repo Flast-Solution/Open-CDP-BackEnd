@@ -1,4 +1,4 @@
-package vn.flast.service.cskh;
+package vn.flast.domains.cskh;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

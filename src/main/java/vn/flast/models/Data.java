@@ -144,12 +144,6 @@ public class Data implements Cloneable {
     private String afterSaleCall;
 
     @Transient
-    private String csCause;
-
-    @Transient
-    private Date csTime;
-
-    @Transient
     private List<String> fileUrls = new ArrayList<>();
 
     public enum PreSaleCall {
@@ -160,21 +154,6 @@ public class Data implements Cloneable {
             return value;
         }
         PreSaleCall(int value) {
-            this.value = value;
-        }
-    }
-
-    public enum AfterSaleCall {
-        CHUA_LIEN_HE("Chưa liên hệ"),
-        KHONG_HAI_LONG("Không hài lòng"),
-        HAI_LONG("Hài lòng"),
-        RAT_HAI_LONG("Rất hài lòng");
-
-        private final String value;
-        public String value() {
-            return value;
-        }
-        AfterSaleCall(String value) {
             this.value = value;
         }
     }

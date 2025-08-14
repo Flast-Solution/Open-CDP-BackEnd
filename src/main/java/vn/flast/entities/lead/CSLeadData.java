@@ -6,7 +6,7 @@ import vn.flast.models.Data;
 import vn.flast.models.DataCare;
 
 @Getter @Setter
-public class CskhLeadData {
+public class CSLeadData {
     private DataCare dataCare;
     private Data data;
 }

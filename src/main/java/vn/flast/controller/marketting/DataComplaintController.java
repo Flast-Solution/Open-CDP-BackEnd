@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.entities.ComplaintFilter;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.DataComplaint;
-import vn.flast.service.cskh.DataComplaintService;
+import vn.flast.domains.cskh.DataComplaintService;
 import java.util.Objects;
 
 @Log4j2

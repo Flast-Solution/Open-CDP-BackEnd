@@ -10,16 +10,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.util.Date;
-
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "data_care")
 @NoArgsConstructor
-@Getter
-@Setter
+@Getter @Setter
 public class DataCare implements Cloneable {
 
     @Id
@@ -27,26 +24,23 @@ public class DataCare implements Cloneable {
     @Column(name = "id", unique = true)
     private Integer id;
 
+    @Column(name = "user_name")
+    private String userName;
+
     @Column(name = "customer_id")
     private Long customerId;
-
-    @Column(name = "sale")
-    private String sale;
-
-    @Column(name = "type")
-    private String type;  //
-
-    @Column(name = "user_note")
-    private String userNote;
-
-    @Column(name = "product_name")
-    private String productName;
 
     @Column(name = "data_id")
     private Long dataId;
 
+    @Column(name = "information")
+    private String information ;
+
     @Column(name = "cause")
     private String cause;
+
+    @Column(name = "priority")
+    private String priority;
 
     @Column(name = "note")
     private String note;
