@@ -46,6 +46,7 @@ public class DataComplaintService extends BaseController {
         input.setStaff(getUsername());
         return dataComplaintRepository.save(data);
     }
+
     public Ipage<?> fetchComplaint(ComplaintFilter filter){
         EntityQuery<DataComplaint> et = EntityQuery.create(entityManager, DataComplaint.class);
         et.setMaxResults(filter.getLimit()).setFirstResult(filter.getPage() * filter.getLimit());
