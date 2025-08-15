@@ -39,6 +39,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter @Setter
 public class DataCare implements Cloneable {
 
+    public static final String OBJECT_TYPE_LEAD = "lead";
+    public static final String OBJECT_TYPE_ORDER = "order";
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "id", unique = true)
@@ -50,8 +53,11 @@ public class DataCare implements Cloneable {
     @Column(name = "customer_id")
     private Long customerId;
 
-    @Column(name = "data_id")
-    private Long dataId;
+    @Column(name = "object_id")
+    private Long objectId;
+
+    @Column(name = "object_type")
+    private String objectType;
 
     @Column(name = "information")
     private String information ;

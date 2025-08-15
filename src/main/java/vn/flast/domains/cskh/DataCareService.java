@@ -48,6 +48,7 @@ public class DataCareService extends BaseController {
         int currentPage =  filter.page();
         String initQuery = "FROM `data_care` a LEFT JOIN `data` b on a.`data_id` = b.`id`";
         SqlBuilder sqlBuilder = SqlBuilder.init(initQuery);
+        sqlBuilder.addStringEquals("a.object_type", DataCare.OBJECT_TYPE_LEAD);
         if(StringUtils.isNotEmpty(filter.getPhone())) {
             sqlBuilder.addStringEquals("b.customer_mobile", filter.getPhone());
         }
@@ -65,11 +66,11 @@ public class DataCareService extends BaseController {
         nativeQuery.setMaxResults(filter.getLimit());
         nativeQuery.setFirstResult(filter.getLimit() * currentPage);
         if(count.equals(0L)) {
-            return new Ipage<>(filter.getLimit(), 0, currentPage, null);
+            return Ipage.empty();
         }
 
         var listDataCare = EntityQuery.getListOfNativeQuery(nativeQuery, DataCare.class);
-        var listIds = listDataCare.stream().map(DataCare::getDataId).toList();
+        var listIds = listDataCare.stream().map(DataCare::getObjectId).toList();
         var leads = dataRepository.fetchDataIds(listIds);
         Map<Long, Data> mLeads = MapUtils.toIdentityMap(leads, Data::getId);
 
@@ -77,7 +78,7 @@ public class DataCareService extends BaseController {
         for(DataCare cs : listDataCare) {
             var csLeadData = new CSLeadData();
             csLeadData.setDataCare(cs);
-            csLeadData.setData(mLeads.get(cs.getDataId()));
+            csLeadData.setData(mLeads.get(cs.getObjectId()));
             listRet.add(csLeadData);
         }
         return new Ipage<>(filter.getLimit(), Math.toIntExact(count), currentPage, listRet);
@@ -115,15 +116,16 @@ public class DataCareService extends BaseController {
     }
 
     public DataCare update(DataCare dataCare) {
-        if(Optional.ofNullable(dataCare.getDataId()).isEmpty()) {
+        if(Optional.ofNullable(dataCare.getObjectId()).isEmpty()) {
             throw new RuntimeException("Lead id does not exist .!");
         }
-        var lead = dataRepository.findById(dataCare.getDataId()).orElseThrow(
+        var lead = dataRepository.findById(dataCare.getObjectId()).orElseThrow(
             () -> new RuntimeException("No lead exists .!")
         );
         var model = new DataCare();
         CopyProperty.CopyIgnoreNull(dataCare, model);
-        model.setDataId(lead.getId());
+        model.setObjectId(lead.getId());
+        model.setObjectType(DataCare.OBJECT_TYPE_LEAD);
         model.setUserName(getInfo().getSsoId());
 
         var customer = customerRepository.findByPhone(lead.getCustomerMobile());

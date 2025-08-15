@@ -21,14 +21,18 @@ package vn.flast.pagination;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
+import lombok.Getter;
 
-
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Ipage <T> {
     
+    @Getter
     private PageDetail page;
+
+    @Getter
     private final List<T> embedded;
     
     private final int pageSize;
@@ -38,7 +42,7 @@ public class Ipage <T> {
     public Ipage(int size, long totalElements, int number, List<T> embedded) {
         this.pageSize = size;
         this.totalElements = totalElements;
-        this.embedded = embedded;
+        this.embedded = Objects.isNull(embedded) ? new ArrayList<>() : embedded;
         if (totalElements % size == 0) {
             this.total = (int) totalElements/size;
         } else {
@@ -47,22 +51,15 @@ public class Ipage <T> {
         this.setPage();
     }
 
-
-
     public static Ipage<?> generator(int size, long totalElements, int currentPage, List<?> embedded) {
         return new Ipage<>(size, totalElements, currentPage, embedded);
     }
 
+    public static Ipage<?> empty() {
+        return new Ipage<>(0, 0, 1, new ArrayList<>());
+    }
 
     private void setPage() {
         this.page = new PageDetail(this.pageSize, this.totalElements, total);
-    }
-
-    public PageDetail getPage() {
-        return page;
-    }
-    
-    public List<T> getEmbedded() {
-        return embedded;
     }
 }

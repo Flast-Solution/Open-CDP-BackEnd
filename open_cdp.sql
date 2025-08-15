@@ -746,14 +746,14 @@ UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = cp850 */ ;
-/*!50003 SET character_set_results = cp850 */ ;
-/*!50003 SET collation_connection  = cp850_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `delete_from_data_care_after_data` AFTER DELETE ON `data` FOR EACH ROW BEGIN
-    DELETE FROM `data_care` WHERE data_id = OLD.id;
+    DELETE FROM `data_care` WHERE object_id = OLD.id and object_type = "lead";
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -772,7 +772,8 @@ CREATE TABLE `data_care` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `user_name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT '',
   `customer_id` int unsigned DEFAULT '0',
-  `data_id` int unsigned DEFAULT '0',
+  `object_id` int unsigned DEFAULT '0',
+  `object_type` varchar(100) NOT NULL,
   `cause` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT '',
   `information` text NOT NULL,
   `note` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
@@ -782,7 +783,7 @@ CREATE TABLE `data_care` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `customer_id` (`customer_id`) USING BTREE,
-  KEY `data_id_Idx` (`data_id`) USING BTREE
+  KEY `data_id_Idx` (`object_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -793,50 +794,6 @@ CREATE TABLE `data_care` (
 LOCK TABLES `data_care` WRITE;
 /*!40000 ALTER TABLE `data_care` DISABLE KEYS */;
 /*!40000 ALTER TABLE `data_care` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `data_complaint`
---
-
-DROP TABLE IF EXISTS `data_complaint`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `data_complaint` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `service_id` int DEFAULT '0',
-  `level` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `staff` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `source` tinyint(1) DEFAULT '0',
-  `sale_id` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `customer_name` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `customer_mobile` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `customer_email` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT '',
-  `customer_facebook` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT '',
-  `chuyenmuc_id` int DEFAULT '0',
-  `note` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  `assign_to` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT '',
-  `process_time` timestamp NULL DEFAULT NULL,
-  `status` tinyint(1) DEFAULT '0',
-  `type` int DEFAULT '0',
-  `kn_order_code` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  `in_time` timestamp NULL DEFAULT NULL,
-  `update_time` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `status_index` (`status`) USING BTREE,
-  KEY `customer_mobile_idx` (`customer_mobile`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `data_complaint`
---
-
-LOCK TABLES `data_complaint` WRITE;
-/*!40000 ALTER TABLE `data_complaint` DISABLE KEYS */;
-INSERT INTO `data_complaint` VALUES
-(1,NULL,NULL,'Hữu Long',1,'1','Hà NAm','0936295123','long.huu.100@gmail.com','0',1,'check 123','',NULL,1,1,NULL,'2025-02-04 07:13:26','2025-02-04 07:13:26');
-/*!40000 ALTER TABLE `data_complaint` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -2874,4 +2831,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-08-14 17:06:07
+-- Dump completed on 2025-08-15 17:42:46
