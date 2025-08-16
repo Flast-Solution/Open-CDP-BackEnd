@@ -4,6 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import vn.flast.components.RecordNotFoundException;
 import vn.flast.domains.stock.WarehouseService;
 import vn.flast.exception.ResourceNotFoundException;
@@ -59,6 +61,7 @@ public class ShippingService {
         return  Ipage.generator(LIMIT, et.count(), PAGE, lists);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ShippingHistory update(ShippingHistory input) {
         var model = shippingHistoryRepository.findById(input.getId()).orElseThrow(
             () -> new RecordNotFoundException("Record not found")
