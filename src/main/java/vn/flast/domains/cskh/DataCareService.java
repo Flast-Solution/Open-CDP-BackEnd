@@ -1,4 +1,4 @@
-package vn.flast.service.cskh;
+package vn.flast.domains.cskh;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -6,26 +6,26 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.flast.controller.BaseController;
-import vn.flast.entities.lead.CskhLeadData;
+import vn.flast.entities.lead.CSLeadData;
 import vn.flast.entities.lead.LeadCareFilter;
 import vn.flast.entities.lead.NoOrderFilter;
 import vn.flast.models.Data;
 import vn.flast.models.DataCare;
-import vn.flast.models.Product;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataCareRepository;
 import vn.flast.repositories.DataRepository;
-import vn.flast.repositories.ProductRepository;
 import vn.flast.service.DataService;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
+import vn.flast.utils.MapUtils;
 import vn.flast.utils.SqlBuilder;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -40,48 +40,51 @@ public class DataCareService extends BaseController {
     @Autowired
     private CustomerPersonalRepository customerRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
-
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Ipage<?> fetchLeadTookCare(LeadCareFilter filter){
+    public Ipage<?> fetchLead3DayReady(LeadCareFilter filter) {
+
         int currentPage =  filter.page();
         String initQuery = "FROM `data_care` a LEFT JOIN `data` b on a.`data_id` = b.`id`";
-        SqlBuilder sqlCondiBuilder = SqlBuilder.init(initQuery);
+        SqlBuilder sqlBuilder = SqlBuilder.init(initQuery);
+        sqlBuilder.addStringEquals("a.object_type", DataCare.OBJECT_TYPE_LEAD);
         if(StringUtils.isNotEmpty(filter.getPhone())) {
-            sqlCondiBuilder.addStringEquals("b.customer_mobile", filter.getPhone());
+            sqlBuilder.addStringEquals("b.customer_mobile", filter.getPhone());
         }
         if(StringUtils.isNotEmpty(filter.getCause())) {
-            sqlCondiBuilder.addStringEquals("a.cause", filter.getCause());
+            sqlBuilder.addStringEquals("a.cause", filter.getCause());
         }
-        sqlCondiBuilder.addDateBetween("b.in_time", filter.getFrom(), filter.getTo());
-        sqlCondiBuilder.addOrderByDesc("a.id");
-        String finalQuery = sqlCondiBuilder.builder();
-        var countQuery = entityManager.createNativeQuery(sqlCondiBuilder.countQueryString());
-        Long count = sqlCondiBuilder.countOrSumQuery(countQuery);
-        var ccvs = entityManager.createNativeQuery("SELECT a.* " + finalQuery, DataCare.class);
-        ccvs.setMaxResults(filter.getLimit());
-        ccvs.setFirstResult(filter.getLimit() * currentPage);
+        sqlBuilder.addDateBetween("b.in_time", filter.getFrom(), filter.getTo());
+        sqlBuilder.addOrderByDesc("a.id");
+        String finalQuery = sqlBuilder.builder();
+
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+
+        var nativeQuery = entityManager.createNativeQuery("SELECT a.* " + finalQuery, DataCare.class);
+        nativeQuery.setMaxResults(filter.getLimit());
+        nativeQuery.setFirstResult(filter.getLimit() * currentPage);
         if(count.equals(0L)) {
-            return new Ipage<>(filter.getLimit(), 0, currentPage, null);
+            return Ipage.empty();
         }
-        var dataCcvs = EntityQuery.getListOfNativeQuery(ccvs, DataCare.class);
-        var listIds = dataCcvs.stream().map(DataCare::getDataId).toList();
-        var datas = dataRepository.fetchDataIds(listIds);
-        List<CskhLeadData> listRet = new ArrayList<>();
-        for(DataCare cs : dataCcvs) {
-            var cskhLeadData = new CskhLeadData();
-            cskhLeadData.setDataCare(cs);
-            var data = datas.stream().filter(item -> item.getId().equals(cs.getDataId())).findFirst().orElse(null);
-            cskhLeadData.setData(data);
-            listRet.add(cskhLeadData);
+
+        var listDataCare = EntityQuery.getListOfNativeQuery(nativeQuery, DataCare.class);
+        var listIds = listDataCare.stream().map(DataCare::getObjectId).toList();
+        var leads = dataRepository.fetchDataIds(listIds);
+        Map<Long, Data> mLeads = MapUtils.toIdentityMap(leads, Data::getId);
+
+        List<CSLeadData> listRet = new ArrayList<>();
+        for(DataCare cs : listDataCare) {
+            var csLeadData = new CSLeadData();
+            csLeadData.setDataCare(cs);
+            csLeadData.setData(mLeads.get(cs.getObjectId()));
+            listRet.add(csLeadData);
         }
         return new Ipage<>(filter.getLimit(), Math.toIntExact(count), currentPage, listRet);
     }
 
-    public Ipage<?> fetchLeadNoCare(NoOrderFilter filter){
+    public Ipage<?> fetchLead3Day(NoOrderFilter filter){
         int LIMIT = filter.getLimit();
         int OFFSET = filter.page() * LIMIT;
 
@@ -112,30 +115,24 @@ public class DataCareService extends BaseController {
         return Ipage.generator(LIMIT, count, filter.page(), listData);
     }
 
-    public DataCare createLeadCare(DataCare dataCare){
-        if(Optional.ofNullable(dataCare.getDataId()).isEmpty()) {
+    public DataCare update(DataCare dataCare) {
+        if(Optional.ofNullable(dataCare.getObjectId()).isEmpty()) {
             throw new RuntimeException("Lead id does not exist .!");
         }
-        var lead = dataRepository.findById(dataCare.getDataId()).orElseThrow(
+        var lead = dataRepository.findById(dataCare.getObjectId()).orElseThrow(
             () -> new RuntimeException("No lead exists .!")
         );
         var model = new DataCare();
         CopyProperty.CopyIgnoreNull(dataCare, model);
-        model.setDataId(lead.getId());
-        model.setUserNote(getInfo().getSsoId());
-        model.setSale(Optional.ofNullable(lead.getAssignTo()).orElse("N/A"));
-        if(lead.getProductId() != null) {
-            Product product = productRepository.findById(lead.getProductId()).orElseThrow(
-                () -> new RuntimeException("No Product exists !.")
-            );
-            model.setProductName(Optional.ofNullable(product.getName()).orElse("--"));
-        }
+        model.setObjectId(lead.getId());
+        model.setObjectType(DataCare.OBJECT_TYPE_LEAD);
+        model.setUserName(getInfo().getSsoId());
+
         var customer = customerRepository.findByPhone(lead.getCustomerMobile());
         model.setCustomerId(Optional.ofNullable(customer.getId()).orElse(0L));
         dataCareRepository.save(model);
+
         lead.setPreSaleCall(Data.PreSaleCall.DA_LIEN_HE.value());
-        lead.setCsCause(model.getCause());
-        lead.setCsTime(new Date());
         dataRepository.save(lead);
         return model;
     }

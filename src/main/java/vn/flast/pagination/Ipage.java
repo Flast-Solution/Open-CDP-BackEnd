@@ -1,11 +1,38 @@
 
 package vn.flast.pagination;
+/**************************************************************************/
+/*  app.java                                                              */
+/**************************************************************************/
+/*                       Tệp này là một phần của:                         */
+/*                             Open CDP                                   */
+/*                        https://flast.vn                                */
+/**************************************************************************/
+/* Bản quyền (c) 2025 - này thuộc về các cộng tác viên Flast Solution     */
+/* (xem AUTHORS.md).                                                      */
+/* Bản quyền (c) 2024-2025 Long Huu, Thành Trung                          */
+/*                                                                        */
+/* Bạn được quyền sử dụng phần mềm này miễn phí cho bất kỳ mục đích nào,  */
+/* bao gồm sao chép, sửa đổi, phân phối, bán lại…                         */
+/*                                                                        */
+/* Chỉ cần giữ nguyên thông tin bản quyền và nội dung giấy phép này trong */
+/* các bản sao.                                                           */
+/*                                                                        */
+/* Đội ngũ phát triển mong rằng phần mềm được sử dụng đúng mục đích và    */
+/* có trách nghiệm                                                        */
+/**************************************************************************/
 
+import lombok.Getter;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Ipage <T> {
     
+    @Getter
     private PageDetail page;
+
+    @Getter
     private final List<T> embedded;
     
     private final int pageSize;
@@ -15,7 +42,7 @@ public class Ipage <T> {
     public Ipage(int size, long totalElements, int number, List<T> embedded) {
         this.pageSize = size;
         this.totalElements = totalElements;
-        this.embedded = embedded;
+        this.embedded = Objects.isNull(embedded) ? new ArrayList<>() : embedded;
         if (totalElements % size == 0) {
             this.total = (int) totalElements/size;
         } else {
@@ -24,22 +51,15 @@ public class Ipage <T> {
         this.setPage();
     }
 
-
-
     public static Ipage<?> generator(int size, long totalElements, int currentPage, List<?> embedded) {
         return new Ipage<>(size, totalElements, currentPage, embedded);
     }
 
+    public static Ipage<?> empty() {
+        return new Ipage<>(0, 0, 1, new ArrayList<>());
+    }
 
     private void setPage() {
         this.page = new PageDetail(this.pageSize, this.totalElements, total);
-    }
-
-    public PageDetail getPage() {
-        return page;
-    }
-    
-    public List<T> getEmbedded() {
-        return embedded;
     }
 }

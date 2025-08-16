@@ -1,4 +1,4 @@
-package vn.flast.dao;
+package vn.flast.entities.lead;
 /**************************************************************************/
 /*  app.java                                                              */
 /**************************************************************************/
@@ -23,14 +23,13 @@ package vn.flast.dao;
 
 
 
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+import vn.flast.models.Data;
+import vn.flast.models.DataCare;
 
-public interface InterfaceDao <K, E> {
-    void flush();
-    void persist(E entity);
-    E merge(E entity);
-    void remove(E entity);
-    E findById(K id);
-    List<E> findAll();
-    void rollBack();
+@Getter @Setter
+public class CSLeadData {
+    private DataCare dataCare;
+    private Data data;
 }

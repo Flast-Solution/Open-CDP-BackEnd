@@ -1,4 +1,27 @@
 package vn.flast.models;
+/**************************************************************************/
+/*  app.java                                                              */
+/**************************************************************************/
+/*                       Tệp này là một phần của:                         */
+/*                             Open CDP                                   */
+/*                        https://flast.vn                                */
+/**************************************************************************/
+/* Bản quyền (c) 2025 - này thuộc về các cộng tác viên Flast Solution     */
+/* (xem AUTHORS.md).                                                      */
+/* Bản quyền (c) 2024-2025 Long Huu, Thành Trung                          */
+/*                                                                        */
+/* Bạn được quyền sử dụng phần mềm này miễn phí cho bất kỳ mục đích nào,  */
+/* bao gồm sao chép, sửa đổi, phân phối, bán lại…                         */
+/*                                                                        */
+/* Chỉ cần giữ nguyên thông tin bản quyền và nội dung giấy phép này trong */
+/* các bản sao.                                                           */
+/*                                                                        */
+/* Đội ngũ phát triển mong rằng phần mềm được sử dụng đúng mục đích và    */
+/* có trách nghiệm                                                        */
+/**************************************************************************/
+
+
+
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -144,12 +167,6 @@ public class Data implements Cloneable {
     private String afterSaleCall;
 
     @Transient
-    private String csCause;
-
-    @Transient
-    private Date csTime;
-
-    @Transient
     private List<String> fileUrls = new ArrayList<>();
 
     public enum PreSaleCall {
@@ -160,21 +177,6 @@ public class Data implements Cloneable {
             return value;
         }
         PreSaleCall(int value) {
-            this.value = value;
-        }
-    }
-
-    public enum AfterSaleCall {
-        CHUA_LIEN_HE("Chưa liên hệ"),
-        KHONG_HAI_LONG("Không hài lòng"),
-        HAI_LONG("Hài lòng"),
-        RAT_HAI_LONG("Rất hài lòng");
-
-        private final String value;
-        public String value() {
-            return value;
-        }
-        AfterSaleCall(String value) {
             this.value = value;
         }
     }

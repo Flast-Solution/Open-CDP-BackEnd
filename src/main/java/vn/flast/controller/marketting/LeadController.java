@@ -1,4 +1,24 @@
 package vn.flast.controller.marketting;
+/*************************************************************************/
+/*  app.java                                                              */
+/**************************************************************************/
+/*                       Tệp này là một phần của:                         */
+/*                             Open CDP                                   */
+/*                        https://flast.vn                                */
+/**************************************************************************/
+/* Bản quyền (c) 2025 - này thuộc về các cộng tác viên Flast Solution     */
+/* (xem AUTHORS.md).                                                      */
+/* Bản quyền (c) 2024-2025 Long Huu, Thành Trung                          */
+/*                                                                        */
+/* Bạn được quyền sử dụng phần mềm này miễn phí cho bất kỳ mục đích nào,  */
+/* bao gồm sao chép, sửa đổi, phân phối, bán lại…                         */
+/*                                                                        */
+/* Chỉ cần giữ nguyên thông tin bản quyền và nội dung giấy phép này trong */
+/* các bản sao.                                                           */
+/*                                                                        */
+/* Đội ngũ phát triển mong rằng phần mềm được sử dụng đúng mục đích và    */
+/* có trách nghiệm                                                        */
+/**************************************************************************/
 
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -15,9 +35,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import vn.flast.controller.BaseController;
-import vn.flast.entities.lead.LeadCareFilter;
-import vn.flast.entities.lead.NoOrderFilter;
-import vn.flast.models.DataCare;
 import vn.flast.models.DataMedia;
 import vn.flast.repositories.CustomerPersonalRepository;
 import vn.flast.repositories.DataMediaRepository;
@@ -28,7 +45,6 @@ import vn.flast.models.Data;
 import vn.flast.pagination.Ipage;
 import vn.flast.security.UserPrinciple;
 import vn.flast.service.DataService;
-import vn.flast.service.cskh.DataCareService;
 import vn.flast.utils.BuilderParams;
 import vn.flast.utils.UploadsUtils;
 import vn.flast.validator.ValidationErrorBuilder;
@@ -44,9 +60,6 @@ public class LeadController extends BaseController {
 
     @Autowired
     private DataService dataService;
-
-    @Autowired
-    private DataCareService dataCareService;
 
     @Autowired
     private DataRepository dataRepository;
@@ -149,24 +162,6 @@ public class LeadController extends BaseController {
         log.info("IoDataRequest delete id: {}", id);
         Boolean isUpdate = dataService.delete(id);
         return MyResponse.response(isUpdate ? "OK" : "FALSE");
-    }
-
-    @GetMapping("/not-taken-care")
-    public MyResponse<?> findNotTakenCare(NoOrderFilter filter){
-        var data = dataCareService.fetchLeadNoCare(filter);
-        return MyResponse.response(data);
-    }
-
-    @GetMapping("/taken-care")
-    public MyResponse<?> findTakenCare(LeadCareFilter filter){
-        var data = dataCareService.fetchLeadTookCare(filter);
-        return MyResponse.response(data);
-    }
-
-    @PostMapping("/create-lead-care")
-    public MyResponse<?> createLeadCare(@RequestBody DataCare input){
-        var data = dataCareService.createLeadCare(input);
-        return MyResponse.response(data);
     }
 
     @PostMapping("/re-assign")
