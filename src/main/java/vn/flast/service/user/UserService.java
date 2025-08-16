@@ -20,9 +20,6 @@ package vn.flast.service.user;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.apache.commons.io.FileUtils;
@@ -34,10 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.flast.dao.UserProfileDao;
 import vn.flast.entities.user.ChangPass;
 import vn.flast.entities.user.ChangeInfo;
-import vn.flast.models.Media;
 import vn.flast.models.User;
 import vn.flast.models.UserGroup;
-import vn.flast.repositories.MediaRepository;
 import vn.flast.repositories.UserRepository;
 import vn.flast.utils.Common;
 import vn.flast.utils.CopyProperty;
@@ -48,7 +43,6 @@ import vn.flast.utils.SqlBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Service
@@ -69,9 +63,6 @@ public class UserService {
 
     @Autowired
     private UserProfileDao userProfileDao;
-
-    @Autowired
-    private MediaRepository mediaRepository;
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -98,24 +89,18 @@ public class UserService {
         User entity = userRepository.findById(user.getId()).orElseThrow(
             () -> new RuntimeException("Không tìm thấy bản ghi")
         );
-        if (entity != null) {
-            entity.setSsoId(user.getSsoId());
-            if (!user.getPassword().equals(entity.getPassword())) {
-                entity.setPassword(user.getPassword());
-            }
-            entity.setFullName(user.getFullName());
-            entity.setEmail(user.getEmail());
-            entity.setUserProfiles(user.getUserProfiles());
-            userProfileDao.updateLinkProfile(user.permissions, user.getId());
+        entity.setSsoId(user.getSsoId());
+        if (!user.getPassword().equals(entity.getPassword())) {
+            entity.setPassword(user.getPassword());
         }
+        entity.setFullName(user.getFullName());
+        entity.setEmail(user.getEmail());
+        entity.setUserProfiles(user.getUserProfiles());
+        userProfileDao.updateLinkProfile(user.permissions, user.getId());
     }
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
-    }
-
-    public void deleteById(int id) {
-        userRepository.deleteById(id);
     }
 
     public boolean isAdmin(int uId) {
@@ -133,11 +118,6 @@ public class UserService {
     public boolean isSaleManager(int id) {
         var user = this.findById(id);
         return user.ruleSaleManager();
-    }
-
-    public boolean isCustomerService(int id) {
-        var user = this.findById(id);
-        return user.ruleCskh();
     }
 
     public boolean isSaleMember(User user) {
@@ -175,20 +155,15 @@ public class UserService {
         return EntityQuery.getListOfNativeQuery(users, User.class);
     }
 
-    public Media uploadFile(MultipartFile multipartFile, Long sessionId, Integer userId) throws NoSuchAlgorithmException, IOException {
+    public String uploadFile(MultipartFile multipartFile) throws IOException {
         var folderUpload = folderUpload();
         String fileName = multipartFile.getOriginalFilename();
         assert fileName != null : "File name not extract .!";
-        String fileMd5 = GlobalUtil.setFileName(fileName + GlobalUtil.dateToInt())  + "." +  GlobalUtil.pathNameFile(fileName);
-        String filePath = folderUpload + fileMd5;
+
+        String filePath = folderUpload + fileName;
         InputStream fileStream = multipartFile.getInputStream();
         File targetFile = new File(filePath);
         FileUtils.copyInputStreamToFile(fileStream, targetFile);
-        Media model = new Media();
-        model.setSectionId(sessionId);
-        model.setObject("User");
-        model.setFileName(fileMd5);
-        mediaRepository.save(model);
-        return model;
+        return UPLOAD_PATH + fileName;
     }
 }

@@ -20,9 +20,6 @@ package vn.flast.utils;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import vn.flast.security.UserPrinciple;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -44,14 +41,21 @@ public class Common {
         return pattern.matcher(nfdNormalizedString).toString();
     }
 
-    public static String escape(String s){
+    public static String escape(String s) {
+        if (s == null) return null;
         return s.replace("\\", "\\\\")
             .replace("\t", "\\t")
             .replace("\b", "\\b")
             .replace("\n", "\\n")
             .replace("\r", "\\r")
             .replace("\f", "\\f")
-            .replace("\"", "\\\"");
+            .replace("\"", "\\\"")
+            .replace("_", "\\_")
+            .replace(";", "\\;")
+            .replace("--", "\\--")
+            .replace("#", "\\#")
+            .replace("/*", "/\\*")
+            .replace("*/", "*\\/");
     }
 
     private static UserPrinciple getInfo() {

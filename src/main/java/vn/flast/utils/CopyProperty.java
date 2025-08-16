@@ -20,9 +20,6 @@ package vn.flast.utils;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import java.beans.FeatureDescriptor;
 import java.util.Arrays;
 import java.util.List;

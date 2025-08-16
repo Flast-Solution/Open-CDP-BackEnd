@@ -20,9 +20,6 @@ package vn.flast.utils;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.persistence.Query;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +36,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@SuppressWarnings({"UnusedReturnValue", "unchecked", "FieldCanBeLocal", "unused"})
 @NoArgsConstructor
 public class SqlBuilder {
 
@@ -48,10 +46,9 @@ public class SqlBuilder {
     private Map<String, Object> maps;
     private List<String> nonColumn;
 
-    private String COUNT_QUERY = "COUNT(*)";
-
+    private final String COUNT_QUERY = "COUNT(*)";
     /* DISTINCT(a.id) as 'id2d', a.*  */
-    private String SELECT_QUERY = "*";
+    private final String SELECT_QUERY = "*";
 
     public static SqlBuilder init(String query) {
         var instances = new SqlBuilder();
@@ -175,7 +172,8 @@ public class SqlBuilder {
 
     public SqlBuilder like(String column, String value) {
         if(StringUtils.isNotEmpty(column) && value != null) {
-            maps.put(" AND ".concat(column), " LIKE '%" + value + "%'");
+            String valueEscape = escapeSqlLiteral(value);
+            maps.put(" AND ".concat(column), " LIKE '%" + valueEscape + "%'");
         }
         return this;
     }
@@ -247,7 +245,8 @@ public class SqlBuilder {
 
     public SqlBuilder addStringEquals(String column, String value) {
         if(StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
-            maps.put(" AND ".concat(column).concat(" = "), "'" + value + "'");
+            String valueEscape = escapeSqlLiteral(value);
+            maps.put(" AND ".concat(column).concat(" = "), "'" + valueEscape + "'");
         }
         return this;
     }
@@ -283,11 +282,6 @@ public class SqlBuilder {
         return this;
     }
 
-    public void removeMapKey(String key) {
-        maps.remove(key);
-    }
-
-    @SuppressWarnings("unchecked")
     public <T> List<T> getListOfNativeQuery(Query query, Class<T> type){
         return (List<T>) query.getResultList();
     }
@@ -302,5 +296,9 @@ public class SqlBuilder {
         }
         BigDecimal result = (BigDecimal) object;
         return Optional.ofNullable(result).map(BigDecimal::longValue).orElse(0L);
+    }
+
+    private String escapeSqlLiteral(String s) {
+        return s.replace("'", "''");
     }
 }

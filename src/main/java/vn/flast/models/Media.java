@@ -38,7 +38,6 @@ import lombok.Setter;
 public class Media {
 
     public static final Integer NOT_ACTIVE = 0;
-
     public static final Integer ACTIVE = 1;
 
     @Id

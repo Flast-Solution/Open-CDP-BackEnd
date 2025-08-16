@@ -20,9 +20,6 @@ package vn.flast.utils;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

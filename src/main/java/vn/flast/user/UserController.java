@@ -110,14 +110,12 @@ public class UserController {
 
     @PostMapping("/uploads-file")
     public MyResponse<?> multiFileUpload(
-        @RequestParam Long sessionId,
-        @RequestParam(defaultValue = "0") Integer userId,
         @RequestParam(value = "file") MultipartFile multipartFile
     ) throws Exception {
         if (multipartFile.isEmpty()) {
             throw new RuntimeException("File not Empty");
         }
-        var response = userService.uploadFile(multipartFile, sessionId, userId);
+        var response = userService.uploadFile(multipartFile);
         return MyResponse.response(response);
     }
 

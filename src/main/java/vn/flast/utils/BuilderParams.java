@@ -20,9 +20,6 @@ package vn.flast.utils;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import java.util.HashMap;
 import java.util.Map;
 

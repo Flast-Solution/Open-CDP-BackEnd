@@ -20,9 +20,7 @@ package vn.flast.utils;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,6 +29,8 @@ public abstract class ActionThread {
     public static final long NO_SLEEP = -1L;
     public static final long EXCEPTION_SLEEP_TIME = 10000L;
     private Thread thread = null;
+
+    @Getter
     private String name;
 
     public ActionThread(String name) {
@@ -39,10 +39,6 @@ public abstract class ActionThread {
 
     public ActionThread() {
         this.name = null;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     public void setName(String name) {

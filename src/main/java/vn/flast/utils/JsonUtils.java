@@ -20,9 +20,6 @@ package vn.flast.utils;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import java.util.*;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.core.JsonProcessingException;

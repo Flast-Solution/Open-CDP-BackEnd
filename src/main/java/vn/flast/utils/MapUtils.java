@@ -20,9 +20,6 @@ package vn.flast.utils;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
