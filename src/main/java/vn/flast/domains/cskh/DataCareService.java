@@ -152,7 +152,9 @@ public class DataCareService extends BaseController {
         int LIMIT = filter.getLimit();
         int OFFSET = filter.page() * LIMIT;
 
-        final String totalSQL = "FROM `customer_order` d left join `data_care` r on d.id = r.object_id AND r.object_type = 'cohoi'";
+        String totalSQL = "FROM `customer_order` d left join `data_care` r on d.id = r.object_id ";
+        totalSQL = totalSQL.concat("AND r.object_type = '").concat(filter.getType()).concat("'");
+
         SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
         sqlBuilder.addIsEmpty("r.object_id");
         sqlBuilder.addIntegerEquals("d.user_create_id", filter.getUserId());
