@@ -50,7 +50,6 @@ public class Common {
             .replace("\r", "\\r")
             .replace("\f", "\\f")
             .replace("\"", "\\\"")
-            .replace("_", "\\_")
             .replace(";", "\\;")
             .replace("--", "\\--")
             .replace("#", "\\#")

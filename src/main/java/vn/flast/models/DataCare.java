@@ -20,16 +20,15 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import vn.flast.entities.lead.Lead3Day;
+
 import java.util.Date;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -68,8 +67,8 @@ public class DataCare implements Cloneable {
     @Column(name = "priority")
     private String priority;
 
-    @Column(name = "note")
-    private String note;
+    @Column(name = "action")
+    private String action;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -87,4 +86,8 @@ public class DataCare implements Cloneable {
             return null;
         }
     }
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Lead3Day lead3Day;
 }

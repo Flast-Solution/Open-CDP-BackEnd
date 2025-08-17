@@ -22,20 +22,32 @@ public class CsController extends BaseController {
     private DataCareService dataCareService;
 
     @GetMapping("/3day-fetch")
-    public MyResponse<?> findNotTakenCare(NoOrderFilter filter){
+    public MyResponse<?> find3day(NoOrderFilter filter){
         var data = dataCareService.fetchLead3Day(filter);
         return MyResponse.response(data);
     }
 
-    @GetMapping("/3day-ready")
-    public MyResponse<?> findTakenCare(LeadCareFilter filter){
-        var data = dataCareService.fetchLead3DayReady(filter);
+    @GetMapping("/ready")
+    public MyResponse<?> ready(LeadCareFilter filter){
+        var data = dataCareService.fetch(filter);
         return MyResponse.response(data);
     }
 
     @PostMapping("/3day-update")
     public MyResponse<?> update(@RequestBody DataCare input){
-        var data = dataCareService.update(input);
+        var data = dataCareService.update3Day(input);
+        return MyResponse.response(data, "Cập nhật LEAD 3 ngày thành công !");
+    }
+
+    @GetMapping("/co-hoi-order-fetch")
+    public MyResponse<?> find7day(NoOrderFilter filter){
+        var data = dataCareService.fetchCoHoiOrder(filter);
         return MyResponse.response(data);
+    }
+
+    @PostMapping("/order-update")
+    public MyResponse<?> updateOrder(@RequestBody DataCare input){
+        var data = dataCareService.updatedOrder(input);
+        return MyResponse.response(data, "Cập nhật Cơ hội / Đơn hàng thành công !");
     }
 }

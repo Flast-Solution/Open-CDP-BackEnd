@@ -21,7 +21,6 @@ package vn.flast.utils;
 /**************************************************************************/
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -92,27 +91,5 @@ public class DateUtils {
         /* format: yyyy-MM-dd HH:mm:ss */
         DateFormat dateFormat = new SimpleDateFormat(format);
         return dateFormat.format(date);
-    }
-
-    public static Date strToDate(String date, String format) {
-        /* format: yyyy-MM-dd HH:mm:ss */
-        try {
-            if(date == null) {
-                return null;
-            }
-            return new SimpleDateFormat(format == null ? "yyyy-MM-dd HH:mm:ss" : format).parse(date);
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
-    public static String getMonthYearCode() {
-        Date currentDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMyyyy");
-        return dateFormat.format(currentDate);
-    }
-
-    public static int dateToInt() {
-        return (int) (new Date().getTime()/1000);
     }
 }

@@ -20,9 +20,6 @@ package vn.flast.entities.lead;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import lombok.Getter;
 import lombok.Setter;
 import vn.flast.models.Data;

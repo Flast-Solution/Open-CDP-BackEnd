@@ -1,6 +1,6 @@
 package vn.flast.models;
 /**************************************************************************/
-/*  app.java                                                              */
+/*  vn.flast.models.CustomerOrder.java                                    */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -19,9 +19,6 @@ package vn.flast.models;
 /* Đội ngũ phát triển mong rằng phần mềm được sử dụng đúng mục đích và    */
 /* có trách nghiệm                                                        */
 /**************************************************************************/
-
-
-
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
@@ -51,9 +48,6 @@ public class CustomerOrder implements Cloneable {
 
     public static String TYPE_CO_HOI = "cohoi";
     public static String TYPE_ORDER = "order";
-
-    public static int CLASSIFICATION_BAN_LE = 1;
-    public static int CLASSIFICATION_SAN_XUAT = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -170,9 +164,6 @@ public class CustomerOrder implements Cloneable {
 
     @Column(name = "opportunity_at")
     private Date opportunityAt;
-
-    @Column(name = "classification")
-    private Integer classification = CLASSIFICATION_SAN_XUAT;
 
     @CreationTimestamp
     @Column(name = "created_at")

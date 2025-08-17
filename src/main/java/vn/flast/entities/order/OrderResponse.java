@@ -1,6 +1,6 @@
 package vn.flast.entities.order;
 /**************************************************************************/
-/*  app.java                                                              */
+/*  vn.flast.entities.order.orderResponse.java                            */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -19,9 +19,6 @@ package vn.flast.entities.order;
 /* Đội ngũ phát triển mong rằng phần mềm được sử dụng đúng mục đích và    */
 /* có trách nghiệm                                                        */
 /**************************************************************************/
-
-
-
 
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderDetail;

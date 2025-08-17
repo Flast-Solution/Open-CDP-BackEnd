@@ -146,13 +146,13 @@ public class SqlBuilder {
     }
 
     private void mapToStringBuilder(StringBuilder stringBuilder) {
-        int index = 0;
+        boolean isFirst = false;
         for(var entry : maps.entrySet()) {
             var key = entry.getKey();
             var value = entry.getValue();
-            index ++;
-            if(index == 1) {
+            if(!isFirst) {
                 stringBuilder.append(" WHERE ").append(stripFirst(key)).append(value);
+                isFirst = true;
                 continue;
             }
             if(value instanceof Integer intVal) {
