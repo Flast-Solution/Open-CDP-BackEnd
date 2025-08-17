@@ -28,6 +28,7 @@ import vn.flast.utils.NumberUtils;
 public record OrderFilter(
     Integer page,
     Integer limit,
+    Integer paidStatus,
     String code,
     String type,
     Integer status,

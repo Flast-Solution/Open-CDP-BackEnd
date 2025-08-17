@@ -226,6 +226,7 @@ public class OrderService  implements Publisher, Serializable {
         et.like("customerName", filter.customerName())
             .integerEqualsTo("customerId", filter.customerId())
             .integerEqualsTo("status", filter.status())
+            .integerEqualsTo("paidStatus", filter.paidStatus())
             .stringEqualsTo("customerMobile", filter.customerPhone())
             .stringEqualsTo("customerEmail", filter.customerEmail())
             .stringEqualsTo("code", filter.code())

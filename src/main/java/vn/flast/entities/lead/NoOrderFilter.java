@@ -31,6 +31,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class NoOrderFilter {
 
+    private String orderCode;
     private String phone;
     private String type;
     private Integer source;
@@ -44,7 +45,6 @@ public class NoOrderFilter {
     private Date to;
 
     private Integer page;
-    private String orderCode;
     private Integer limit;
 
     public Integer page() {

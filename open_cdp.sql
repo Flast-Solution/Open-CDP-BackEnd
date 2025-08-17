@@ -320,6 +320,7 @@ CREATE TABLE `customer_order` (
   `vat` tinyint DEFAULT '0',
   `fee_import` int DEFAULT '0',
   `paid` bigint unsigned DEFAULT '0',
+  `paid_status` int DEFAULT NULL,
   `shipping_status` enum('na','danggiao','dagiao','giaoloi') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT 'na',
   `cancel_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -331,7 +332,6 @@ CREATE TABLE `customer_order` (
   `status` int unsigned DEFAULT '0',
   `type` enum('order','cohoi') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT 'cohoi',
   `opportunity_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `fee_sale_other` int DEFAULT NULL,
   `classification` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `enterprise_id` (`enterprise_id`),
@@ -350,7 +350,7 @@ CREATE TABLE `customer_order` (
 
 LOCK TABLES `customer_order` WRITE;
 /*!40000 ALTER TABLE `customer_order` DISABLE KEYS */;
-INSERT INTO `customer_order` VALUES (34002,33,5,NULL,NULL,NULL,'OFBG2625OWC',NULL,22,'Hà NAm',NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,720000,0,NULL,NULL,NULL,NULL,NULL,NULL,720000,0,NULL,0,NULL,NULL,'2025-07-19 00:16:17','2025-07-19 00:16:17',NULL,2,'admin',NULL,1,'cohoi','2025-07-19 00:16:17',0,2),(34003,33,5,51,'CÔNG TY TNHH TRUNG TÂM DẠY THÊM NHD',NULL,'OPJV2625QTK',NULL,22,'Hà NAm',NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,2800000,0,NULL,NULL,30000,NULL,NULL,NULL,3054000,8,NULL,2054000,NULL,NULL,'2025-07-19 14:34:27','2025-07-21 13:57:07',NULL,2,'admin',NULL,1,'order','2025-07-19 00:20:27',0,2),(34004,34,1,NULL,NULL,NULL,'OWLD2725IWD',NULL,23,'Pép DiaLa','CT07',216,1,'098545555',NULL,NULL,950000,0,NULL,NULL,20000,NULL,NULL,NULL,1046000,8,NULL,200000,NULL,NULL,'2025-07-20 12:31:48','2025-08-10 04:46:39',NULL,2,'Administrator',NULL,1,'order','2025-07-20 12:21:50',0,2),(34005,34,1,NULL,NULL,NULL,'OCFY2925YUX',NULL,23,'Pép DiaLa',NULL,NULL,NULL,'098545555',NULL,NULL,5600000,0,NULL,NULL,NULL,NULL,NULL,NULL,5600000,0,NULL,0,NULL,NULL,'2025-07-22 04:11:40','2025-07-22 10:56:30',NULL,2,'Administrator',NULL,2,'cohoi','2025-07-22 04:11:40',0,2),(34006,33,5,NULL,NULL,NULL,'OQMA3025SET',NULL,22,'Hà NAm',NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,2900000,0,NULL,NULL,NULL,NULL,NULL,NULL,2900000,0,NULL,0,NULL,NULL,'2025-07-23 09:08:46','2025-07-23 09:08:46',NULL,2,'Administrator',NULL,1,'cohoi','2025-07-23 09:08:46',0,2),(34007,34,1,NULL,NULL,NULL,'OCSN2025UBD',NULL,23,'Pép DiaLa',NULL,NULL,NULL,'098545555',NULL,NULL,1900000,0,NULL,NULL,NULL,NULL,NULL,NULL,1900000,0,NULL,1000000,NULL,NULL,'2025-08-12 08:13:24','2025-08-12 08:13:24',NULL,2,'Administrator',NULL,1,'order','2025-08-12 08:12:33',0,2);
+INSERT INTO `customer_order` VALUES (34002,33,5,NULL,NULL,NULL,'OFBG2625OWC',NULL,22,'Hà NAm',NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,720000,0,NULL,NULL,NULL,NULL,NULL,NULL,720000,0,NULL,0,0,NULL,NULL,'2025-07-19 00:16:17','2025-07-19 00:16:17',NULL,2,'admin',NULL,1,'cohoi','2025-07-19 00:16:17',2),(34003,33,5,51,'CÔNG TY TNHH TRUNG TÂM DẠY THÊM NHD',NULL,'OPJV2625QTK',NULL,22,'Hà NAm',NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,2800000,0,NULL,NULL,30000,NULL,NULL,NULL,3054000,8,NULL,2054000,0,NULL,NULL,'2025-07-19 14:34:27','2025-07-21 13:57:07',NULL,2,'admin',NULL,1,'order','2025-07-19 00:20:27',2),(34004,34,1,NULL,NULL,NULL,'OWLD2725IWD',NULL,23,'Pép DiaLa','CT07',216,1,'098545555',NULL,NULL,950000,0,NULL,NULL,20000,NULL,NULL,NULL,1046000,8,NULL,200000,0,NULL,NULL,'2025-07-20 12:31:48','2025-08-10 04:46:39',NULL,2,'Administrator',NULL,1,'order','2025-07-20 12:21:50',2),(34005,34,1,NULL,NULL,NULL,'OCFY2925YUX',NULL,23,'Pép DiaLa',NULL,NULL,NULL,'098545555',NULL,NULL,5600000,0,NULL,NULL,NULL,NULL,NULL,NULL,5600000,0,NULL,0,0,NULL,NULL,'2025-07-22 04:11:40','2025-07-22 10:56:30',NULL,2,'Administrator',NULL,2,'cohoi','2025-07-22 04:11:40',2),(34006,33,5,NULL,NULL,NULL,'OQMA3025SET',NULL,22,'Hà NAm',NULL,NULL,NULL,'0974260540','manvtk32@gmail.com',NULL,2900000,0,NULL,NULL,NULL,NULL,NULL,NULL,2900000,0,NULL,0,0,NULL,NULL,'2025-07-23 09:08:46','2025-07-23 09:08:46',NULL,2,'Administrator',NULL,1,'cohoi','2025-07-23 09:08:46',2),(34007,34,1,NULL,NULL,NULL,'OCSN2025UBD',NULL,23,'Pép DiaLa',NULL,NULL,NULL,'098545555',NULL,NULL,1900000,0,NULL,NULL,NULL,NULL,NULL,NULL,1900000,0,NULL,1000000,0,NULL,NULL,'2025-08-12 08:13:24','2025-08-12 08:13:24',NULL,2,'Administrator',NULL,1,'order','2025-08-12 08:12:33',2);
 /*!40000 ALTER TABLE `customer_order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -630,7 +630,7 @@ CREATE TABLE `data_care` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `customer_id` (`customer_id`) USING BTREE,
   KEY `data_id_Idx` (`object_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -639,7 +639,7 @@ CREATE TABLE `data_care` (
 
 LOCK TABLES `data_care` WRITE;
 /*!40000 ALTER TABLE `data_care` DISABLE KEYS */;
-INSERT INTO `data_care` VALUES (9,'Administrator',24,35,'lead','Chờ duyệt','{\"issues\":[\"product\"],\"rating\":9,\"satisfactionPercent\":90,\"newFeatures\":\"\",\"supportRequest\":\"\"}','Khách đợi 2 ngày chưa liên lạc lại, cần liên hệ trong hôm nay.','cao',0,'2025-08-17 04:58:44','2025-08-17 04:58:44'),(10,'Administrator',22,34002,'cohoi','Đang trao đổi ','{\"issues\":[\"product\",\"service\"],\"rating\":9,\"satisfactionPercent\":95,\"newFeatures\":\"\",\"supportRequest\":\"\"}','Đang trình phương án, sự kiến tuần sau sẽ chốt, yêu cầu sale tương tác thêm','cao',0,'2025-08-17 10:22:07','2025-08-17 10:22:07');
+INSERT INTO `data_care` VALUES (9,'Administrator',24,35,'lead','Chờ duyệt','{\"issues\":[\"product\"],\"rating\":9,\"satisfactionPercent\":90,\"newFeatures\":\"\",\"supportRequest\":\"\"}','Khách đợi 2 ngày chưa liên lạc lại, cần liên hệ trong hôm nay.','cao',0,'2025-08-17 04:58:44','2025-08-17 04:58:44'),(10,'Administrator',22,34002,'cohoi','Đang trao đổi ','{\"issues\":[\"product\",\"service\"],\"rating\":9,\"satisfactionPercent\":95,\"newFeatures\":\"\",\"supportRequest\":\"\"}','Đang trình phương án, sự kiến tuần sau sẽ chốt, yêu cầu sale tương tác thêm','cao',0,'2025-08-17 10:22:07','2025-08-17 10:22:07'),(11,'Administrator',23,34007,'order','Tư vấn lại','{\"issues\":[],\"rating\":9,\"satisfactionPercent\":80,\"newFeatures\":\"\",\"supportRequest\":\"\"}','Sale chưa tư vấn đầy đủ thông tin, đơn hàng chậm tiến độ','thap',0,'2025-08-17 10:52:47','2025-08-17 10:52:47');
 /*!40000 ALTER TABLE `data_care` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1549,4 +1549,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-17 17:28:45
+-- Dump completed on 2025-08-17 21:33:25

@@ -20,9 +20,6 @@ package vn.flast.domains.payments;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -35,14 +32,11 @@ import vn.flast.entities.payment.PaymentFilter;
 import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.CustomerOrder;
 import vn.flast.models.CustomerOrderPayment;
-import vn.flast.repositories.CustomerOrderDetailRepository;
+import vn.flast.pagination.Ipage;
 import vn.flast.repositories.CustomerOrderPaymentRepository;
-import vn.flast.repositories.CustomerOrderStatusRepository;
-import vn.flast.utils.Common;
-import vn.flast.utils.CopyProperty;
-import vn.flast.utils.EntityQuery;
-import vn.flast.utils.NumberUtils;
+import vn.flast.utils.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -58,12 +52,6 @@ public class PayService {
     private CustomerOrderPaymentRepository paymentRepository;
 
     @Autowired
-    private CustomerOrderStatusRepository statusOrderRepository;
-
-    @Autowired
-    private CustomerOrderDetailRepository detailRepository;
-
-    @Autowired
     private EntityManager entityManager;
 
     @Transactional(rollbackFor = Exception.class)
@@ -77,7 +65,7 @@ public class PayService {
         }
         model.setCode(orderResponse.getCode());
         model.setConfirmTime(info.date());
-        model.setIsConfirm(OrderUtils.PAYMENT_IS_CONFIRM);
+        model.setIsConfirm(info.getConfirm());
         model.setSsoId(Common.getSsoId());
         model.setContent(info.content());
         paymentRepository.save(model);
@@ -117,28 +105,46 @@ public class PayService {
         paymentRepository.delete(model);
     }
 
-    public List<CustomerOrderPayment> listByOrderId(Long orderId){
+    public List<CustomerOrderPayment> listByOrderId(Long orderId) {
         var order = orderService.view(orderId);
         return paymentRepository.findCodes(order.getCode());
     }
 
-    public List<OrderPayment>listOrderPayment(PaymentFilter filter) {
-        var et = EntityQuery.create(entityManager, CustomerOrder.class);
-        et.stringEqualsTo("code", filter.getCode());
-        et.like("customerMobilePhone", filter.getPhone());
-        et.like("customerEmail", filter.getEmail());
-        et.integerEqualsTo("userCreateId", filter.getSaleId());
-        et.between("createdTime", filter.getFrom(), filter.getTo());
-        et.addDescendingOrderBy("id");
-        et.setMaxResults(filter.getLimit()).setFirstResult(filter.getLimit() * filter.page());
-        var listsOrder = et.list();
-        return listsOrder.stream().map(order -> {
-            OrderPayment op = new OrderPayment();
-            CopyProperty.CopyIgnoreNull(order, op);
-            List<CustomerOrderPayment> payments = listByOrderId(order.getId());
-            op.setPayments(payments);
-            return op;
-        }).toList();
+    public Ipage<?>listOrderPayment(PaymentFilter filter) {
+
+        int LIMIT = filter.getLimit();
+        int PAGE = filter.page();
+        int OFFSET = (filter.page()) * LIMIT;
+
+        final String totalSQL = "FROM customer_order c left join customer_order_payment p on p.code = c.code";
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+        sqlBuilder.addStringEquals("c.customer_mobile_phone", filter.getPhone());
+
+        sqlBuilder.addIntegerEquals("p.is_confirm", 0);
+        sqlBuilder.addStringEquals("p.code", filter.getCode());
+        sqlBuilder.addDateBetween("p.in_time", filter.getFrom(), filter.getTo());
+        sqlBuilder.addOrderByDesc("p.id");
+
+        String finalQuery = sqlBuilder.builder();
+        var countQuery = entityManager.createNativeQuery(sqlBuilder.countQueryString());
+        Long count = sqlBuilder.countOrSumQuery(countQuery);
+
+        var nativeQuery = entityManager.createNativeQuery("SELECT c.* " + finalQuery, CustomerOrder.class);
+        nativeQuery.setMaxResults(LIMIT);
+        nativeQuery.setFirstResult(OFFSET);
+
+        var lists = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        List<CustomerOrder> orders = orderService.transformDetails(lists);
+
+        List<OrderPayment> payments = new ArrayList<>();
+        for(CustomerOrder order : orders) {
+            OrderPayment orderPayment = new OrderPayment();
+            CopyProperty.CopyIgnoreNull(order, orderPayment);
+            List<CustomerOrderPayment> payment = listByOrderId(order.getId());
+            orderPayment.setPayments(payment);
+            payments.add(orderPayment);
+        }
+        return  Ipage.generator(LIMIT, count, PAGE, payments);
     }
 
     @Transactional(rollbackFor = Exception.class)

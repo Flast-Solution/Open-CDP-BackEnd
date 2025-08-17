@@ -21,15 +21,7 @@ package vn.flast.models;
 /**************************************************************************/
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -135,8 +127,8 @@ public class CustomerOrder implements Cloneable {
     @Column(name = "paid")
     private Double paid;
 
-    @Column(name = "fee_sale_other", columnDefinition = "integer default 0")
-    private Integer feeSaleOther = 0;
+    @Column(name = "paid_status", columnDefinition = "integer default 0")
+    private Integer paidStatus = 0;
 
     @Column(name = "shipping_status")
     private Long shippingStatus;
@@ -208,6 +200,14 @@ public class CustomerOrder implements Cloneable {
     public void beforeSave() {
         if(NumberUtils.isNull(status)) {
             status = 0;
+        }
+        paidStatus = 0;
+    }
+
+    @PreUpdate
+    public void beforeUpdate() {
+        if(paid >= total) {
+            paidStatus = 1;
         }
     }
 

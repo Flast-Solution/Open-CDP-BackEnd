@@ -20,9 +20,6 @@ package vn.flast.domains.payments;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import org.apache.commons.lang3.StringUtils;
 import vn.flast.models.CustomerOrderPayment;
 import vn.flast.utils.NumberUtils;
@@ -35,6 +32,7 @@ public record OrderPaymentInfo(
     Date date,
     String content,
     Integer vat,
+    Integer isNeedConfirm,
     Integer shippingCost
 ) {
     public void transformPayment(CustomerOrderPayment payment) {
@@ -50,5 +48,9 @@ public record OrderPaymentInfo(
             return false;
         }
         return NumberUtils.gteZero(amount);
+    }
+
+    public Integer getConfirm() {
+        return NumberUtils.isNull(isNeedConfirm) ? 1 : 0;
     }
 }
