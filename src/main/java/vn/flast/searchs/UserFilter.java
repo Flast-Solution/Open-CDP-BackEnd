@@ -20,9 +20,6 @@ package vn.flast.searchs;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import vn.flast.utils.NumberUtils;
 
 public record UserFilter(

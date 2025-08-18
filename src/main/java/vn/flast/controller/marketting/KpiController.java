@@ -1,4 +1,4 @@
-package vn.flast.entities;
+package vn.flast.controller.marketting;
 /**************************************************************************/
 /*  app.java                                                              */
 /**************************************************************************/
@@ -20,36 +20,36 @@ package vn.flast.entities;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import vn.flast.controller.BaseController;
+import vn.flast.entities.MyResponse;
+import vn.flast.entities.KpiInput;
 import vn.flast.models.UserKpi;
+import vn.flast.pagination.Ipage;
+import vn.flast.searchs.KPIFilter;
+import vn.flast.service.marketting.KpiService;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+@RestController
+@RequestMapping("/kpi")
+public class KpiController extends BaseController {
 
-@Setter
-@Getter
-public class SaleKpiProperty {
-    private Integer id;
-    private int userId = 0;
-    private int type = 0;
-    private int kpiTotal;
-    private int kpiRevenue = 0;
-    private int fee = 0;
-    private List<FreeOfChannel> listFee = new ArrayList<>();
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
-    private Date inTime = new Date();
-    private int department = 0;
+    @Autowired
+    private KpiService kpiService;
 
-    public Long calculatorTotalFee () {
-        if(listFee.isEmpty()) {
-            return 0L;
-        }
-        return listFee.stream().reduce(0L, (partialFeeResult, item) -> partialFeeResult + item.fee, Long::sum);
+    @GetMapping(value = "/fetch")
+    public MyResponse<?> listKpi(KPIFilter filter) {
+        Ipage<UserKpi> iPage = kpiService.listKpi(filter);
+        return MyResponse.response(iPage);
+    }
+
+    @PostMapping(value = "/create")
+    public MyResponse<?> setData(@RequestBody KpiInput input){
+        var data = kpiService.save(input);
+        return MyResponse.response(data);
     }
 }

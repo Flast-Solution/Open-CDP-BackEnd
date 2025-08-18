@@ -1,6 +1,6 @@
 package vn.flast.searchs;
 /**************************************************************************/
-/*  app.java                                                              */
+/*  vn.flast.searchs.KPIFilter.java                                       */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -21,20 +21,22 @@ package vn.flast.searchs;
 /**************************************************************************/
 
 import vn.flast.utils.NumberUtils;
-import java.util.Date;
+import java.util.List;
 
-public record ShipFilter (
-    String orderCode,
-    String detailCode,
-    Integer transporterId,
-    String transporterCode,
+public record KPIFilter(
     Integer page,
-    Integer status,
-    Date from,
-    Date to
+    Integer limit,
+    Integer month,
+    Integer year,
+    List<String> userIds
 ) {
     @Override
     public Integer page() {
         return NumberUtils.isNull(page) ? 1 : (page - 1);
+    }
+
+    @Override
+    public Integer limit() {
+        return NumberUtils.isNull(limit) ? 20 : (limit > 200 ? 200 : limit);
     }
 }

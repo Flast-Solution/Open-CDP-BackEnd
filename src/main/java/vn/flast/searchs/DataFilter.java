@@ -20,9 +20,6 @@ package vn.flast.searchs;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,21 +43,16 @@ public class DataFilter {
     private String filterOrderType;
     private String orderCode;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date from;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date to;
+
     private Integer page;
-    private Boolean ofDaily;
+    private Integer limit;
 
     public Integer page() {
         return NumberUtils.isNull(page) ? 0 : (page - 1);
-    }
-
-    private Integer limit;
-
-    public Boolean ofDaily() {
-        return ofDaily != null && ofDaily;
     }
 }

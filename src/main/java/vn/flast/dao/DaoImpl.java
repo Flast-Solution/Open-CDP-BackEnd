@@ -20,14 +20,9 @@ package vn.flast.dao;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 public abstract class DaoImpl<K, E> implements InterfaceDao<K, E>{
@@ -42,14 +37,14 @@ public abstract class DaoImpl<K, E> implements InterfaceDao<K, E>{
         entityManager.flush();
     }
 
-    public DaoImpl() {
-        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
-        this.entityClass = (Class<E>) genericSuperclass.getActualTypeArguments()[1];
+    public DaoImpl(Class<E> entityClass) {
+        this.entityClass = entityClass;
     }
 
     @Transactional
-    public void persist(E entity) {
+    public E persist(E entity) {
         entityManager.persist(entity);
+        return entity;
     }
 
     @Transactional

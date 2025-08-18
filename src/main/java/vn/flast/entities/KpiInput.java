@@ -20,11 +20,19 @@ package vn.flast.entities;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+@Setter @Getter
+public class KpiInput {
+    private Integer id;
+    private List<Kpi> listKpi = new ArrayList<>();
 
-public class FreeOfChannel {
-    public FreeOfChannel(){}
-    public Integer channel;
-    public Long fee;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private Date inTime = new Date();
 }

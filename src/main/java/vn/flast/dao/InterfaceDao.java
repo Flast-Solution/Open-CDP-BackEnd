@@ -20,14 +20,11 @@ package vn.flast.dao;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import java.util.List;
 
 public interface InterfaceDao <K, E> {
     void flush();
-    void persist(E entity);
+    E persist(E entity);
     E merge(E entity);
     void remove(E entity);
     E findById(K id);

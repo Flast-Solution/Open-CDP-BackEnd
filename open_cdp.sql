@@ -1279,15 +1279,10 @@ DROP TABLE IF EXISTS `user_kpi`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_kpi` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `department` int DEFAULT '0',
-  `type` int DEFAULT '0',
+  `content` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `user_id` int NOT NULL DEFAULT '0',
-  `kpi_total` int NOT NULL DEFAULT '0',
-  `kpi_revenue` int NOT NULL DEFAULT '0',
   `month` int NOT NULL DEFAULT '0',
   `year` int DEFAULT '0',
-  `fee` int DEFAULT NULL,
-  `list_fee` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1021 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1549,4 +1544,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-17 21:33:25
+-- Dump completed on 2025-08-18 22:23:55

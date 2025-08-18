@@ -20,9 +20,6 @@ package vn.flast.dao;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import org.springframework.stereotype.Repository;
 import vn.flast.models.User;
 import vn.flast.models.UserProfile;
@@ -35,7 +32,9 @@ import java.util.Set;
 @Repository("userProfileDao")
 public class UserProfileDaoImpl extends DaoImpl<Long, UserProfile> implements UserProfileDao {
 
-    public static final String DESIGNER = "thietke";
+    public UserProfileDaoImpl() {
+        super(UserProfile.class);
+    }
 
     @Override
     public UserProfile findByType(String type) {

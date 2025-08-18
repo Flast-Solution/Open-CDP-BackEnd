@@ -1,4 +1,4 @@
-package vn.flast.searchs;
+package vn.flast.entities;
 /**************************************************************************/
 /*  app.java                                                              */
 /**************************************************************************/
@@ -20,21 +20,13 @@ package vn.flast.searchs;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import vn.flast.utils.NumberUtils;
-import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
 
-public record ShipFilter (
-    String orderCode,
-    String detailCode,
-    Integer transporterId,
-    String transporterCode,
-    Integer page,
-    Integer status,
-    Date from,
-    Date to
-) {
-    @Override
-    public Integer page() {
-        return NumberUtils.isNull(page) ? 1 : (page - 1);
-    }
+@Getter @Setter
+public class Kpi {
+    public Kpi(){}
+    private String name;
+    private Long target;
+    private Long current;
 }
