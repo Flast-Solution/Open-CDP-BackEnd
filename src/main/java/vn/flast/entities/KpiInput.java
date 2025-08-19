@@ -31,6 +31,7 @@ import java.util.List;
 @Setter @Getter
 public class KpiInput {
     private Integer id;
+    private Integer userId;
     private List<Kpi> listKpi = new ArrayList<>();
 
     @JsonFormat(pattern="yyyy-MM-dd")

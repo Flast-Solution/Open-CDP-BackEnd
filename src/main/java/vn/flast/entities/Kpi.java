@@ -28,5 +28,5 @@ public class Kpi {
     public Kpi(){}
     private String name;
     private Long target;
-    private Long current;
+    private Long current = 0L;
 }

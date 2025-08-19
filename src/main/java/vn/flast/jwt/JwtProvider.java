@@ -20,9 +20,6 @@ package vn.flast.jwt;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import org.springframework.security.core.GrantedAuthority;
 import vn.flast.security.UserPrinciple;
 import io.jsonwebtoken.Claims;

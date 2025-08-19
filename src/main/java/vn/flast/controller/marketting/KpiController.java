@@ -47,9 +47,9 @@ public class KpiController extends BaseController {
         return MyResponse.response(iPage);
     }
 
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/save")
     public MyResponse<?> setData(@RequestBody KpiInput input){
         var data = kpiService.save(input);
-        return MyResponse.response(data);
+        return MyResponse.response(data, "Tạo mới KPI thành công !");
     }
 }

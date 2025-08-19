@@ -21,6 +21,7 @@ package vn.flast.service.marketting;
 /**************************************************************************/
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.flast.dao.DaoImpl;
 import vn.flast.entities.KpiInput;
 import vn.flast.models.UserKpi;
@@ -57,6 +58,7 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
         return new Ipage<>(LIMIT, Math.toIntExact(countItems), PAGE, results);
     }
 
+    @Transactional
     public UserKpi save(KpiInput input){
         UserKpi data = new UserKpi();
         CopyProperty.CopyIgnoreNull(input, data);

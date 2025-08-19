@@ -20,14 +20,15 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import vn.flast.entities.Kpi;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "user_kpi")
 @Entity
@@ -39,6 +40,7 @@ public class UserKpi {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @JsonIgnore
     @Column(name = "content")
     private String content;
 
@@ -50,4 +52,8 @@ public class UserKpi {
 
     @Column(name = "month")
     private Long month;
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<Kpi> listKpi = new ArrayList<>();
 }
