@@ -284,7 +284,7 @@ public class EntityQuery<E> {
     }
 
     public EntityQuery<E> in(String path, Collection<?> collection) {
-        if (!collection.isEmpty()) {
+        if (Objects.nonNull(collection) && !collection.isEmpty()) {
             predicates.add(criteriaBuilder.in(toJpaPath(path)).value(collection));
         }
         return this;

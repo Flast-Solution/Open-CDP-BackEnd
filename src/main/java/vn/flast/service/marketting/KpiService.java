@@ -20,12 +20,13 @@ package vn.flast.service.marketting;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import vn.flast.dao.DaoImpl;
 import vn.flast.entities.KpiInput;
 import vn.flast.models.UserKpi;
 import vn.flast.pagination.Ipage;
+import vn.flast.repositories.UserKpiRepository;
 import vn.flast.searchs.KPIFilter;
 import vn.flast.utils.CopyProperty;
 import vn.flast.utils.DateUtils;
@@ -40,6 +41,9 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
     public KpiService() {
         super(UserKpi.class);
     }
+
+    @Autowired
+    private UserKpiRepository kpiRepository;
 
     public Ipage<UserKpi> listKpi(KPIFilter filter) {
 
@@ -59,7 +63,6 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
         return Ipage.generator(LIMIT, countItems, PAGE, results);
     }
 
-    @Transactional
     public UserKpi save(KpiInput input){
         UserKpi data = new UserKpi();
         CopyProperty.CopyIgnoreNull(input, data);
@@ -69,6 +72,6 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
         if(!input.getListKpi().isEmpty()) {
             data.setContent(JsonUtils.toJson(input.getListKpi()));
         }
-        return this.persist(data);
+        return kpiRepository.save(data);
     }
 }

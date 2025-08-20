@@ -32,7 +32,7 @@ public record KPIFilter(
 ) {
     @Override
     public Integer page() {
-        return NumberUtils.isNull(page) ? 1 : (page - 1);
+        return NumberUtils.isNull(page) ? 0 : (page - 1);
     }
 
     @Override
