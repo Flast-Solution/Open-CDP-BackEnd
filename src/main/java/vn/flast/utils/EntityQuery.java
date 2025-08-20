@@ -340,12 +340,12 @@ public class EntityQuery<E> {
         return this;
     }
 
-    public EntityQuery<E> dateIsNotNull(String path) {
+    public EntityQuery<E> dataIsNotNull(String path) {
         predicates.add(criteriaBuilder.isNotNull(toJpaPath(path)));
         return this;
     }
 
-    public EntityQuery<E> dateIsNull(String path) {
+    public EntityQuery<E> dataIsNull(String path) {
         predicates.add(criteriaBuilder.isNull(toJpaPath(path)));
         return this;
     }
@@ -368,7 +368,7 @@ public class EntityQuery<E> {
         return this;
     }
 
-    public Ipage<?> toPage() {
+    public Ipage<E> toPage() {
         int page = this.firstResult / this.maxResults;
         List<E> lists = this.list();
         return Ipage.generator(this.maxResults, this.count(), page, lists);

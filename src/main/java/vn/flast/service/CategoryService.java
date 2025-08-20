@@ -19,11 +19,6 @@ package vn.flast.service;
 /* Đội ngũ phát triển mong rằng phần mềm được sử dụng đúng mục đích và    */
 /* có trách nghiệm                                                        */
 /**************************************************************************/
-
-
-
-
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +46,7 @@ public class CategoryService {
 
     public Category updated(Category input) {
         var category = categoryRepository.findById(input.getId()).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         CopyProperty.CopyIgnoreNull(input, category);
         return categoryRepository.save(category);
@@ -69,7 +64,7 @@ public class CategoryService {
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long id){
         var data = categoryRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi không tồn tại !")
         );
         categoryRepository.delete(data);
     }
