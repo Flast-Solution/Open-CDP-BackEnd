@@ -97,7 +97,7 @@ public class DataCareService extends BaseController {
         return new Ipage<>(filter.getLimit(), Math.toIntExact(count), PAGE, listRet);
     }
 
-    public Ipage<?> fetchLead3Day(NoOrderFilter filter){
+    public Ipage<Data> fetchLead3Day(NoOrderFilter filter){
         int LIMIT = filter.getLimit();
         int OFFSET = filter.page() * LIMIT;
 
@@ -148,7 +148,7 @@ public class DataCareService extends BaseController {
         return model;
     }
 
-    public Ipage<?> fetchCoHoiOrder(NoOrderFilter filter){
+    public Ipage<CustomerOrder> fetchCoHoiOrder(NoOrderFilter filter){
         int LIMIT = filter.getLimit();
         int OFFSET = filter.page() * LIMIT;
 

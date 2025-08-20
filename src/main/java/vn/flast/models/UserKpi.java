@@ -26,6 +26,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import vn.flast.entities.Kpi;
+import vn.flast.utils.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,4 +57,8 @@ public class UserKpi {
     @Transient
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<Kpi> listKpi = new ArrayList<>();
+
+    public void assignKPI() {
+        listKpi = JsonUtils.Json2ListObject(content, Kpi.class);
+    }
 }

@@ -51,7 +51,7 @@ public class Ipage <T> {
         this.setPage();
     }
 
-    public static Ipage<?> generator(int size, long totalElements, int currentPage, List<?> embedded) {
+    public static <E> Ipage<E> generator(int size, long totalElements, int currentPage, List<E> embedded) {
         return new Ipage<>(size, totalElements, currentPage, embedded);
     }
 

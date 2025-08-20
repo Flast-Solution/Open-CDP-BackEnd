@@ -55,7 +55,8 @@ public class KpiService extends DaoImpl<Integer, UserKpi> {
 
         long countItems = et.count();
         List<UserKpi> results = et.list();
-        return new Ipage<>(LIMIT, Math.toIntExact(countItems), PAGE, results);
+        results.forEach(UserKpi::assignKPI);
+        return Ipage.generator(LIMIT, countItems, PAGE, results);
     }
 
     @Transactional
