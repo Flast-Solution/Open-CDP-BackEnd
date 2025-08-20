@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: localhost    Database: open_cdp
 -- ------------------------------------------------------
--- Server version	8.0.43
+-- Server version	8.0.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -644,6 +644,48 @@ INSERT INTO `data_care` VALUES (9,'Administrator',24,35,'lead','Chờ duyệt','
 UNLOCK TABLES;
 
 --
+-- Table structure for table `data_collection`
+--
+
+DROP TABLE IF EXISTS `data_collection`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `data_collection` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `profile_id` varchar(50) DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  `full_name` varchar(512) DEFAULT NULL,
+  `profile_link` varchar(512) DEFAULT NULL,
+  `service` varchar(512) DEFAULT NULL,
+  `address` varchar(512) DEFAULT NULL,
+  `image_src` varchar(512) DEFAULT NULL,
+  `group_id` varchar(500) DEFAULT NULL,
+  `group_name` varchar(512) DEFAULT NULL,
+  `profile_type` varchar(512) DEFAULT NULL,
+  `status` int DEFAULT '0',
+  `number` varchar(50) DEFAULT NULL,
+  `receive_time_new` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `channel` varchar(100) DEFAULT NULL,
+  `product` varchar(255) DEFAULT NULL,
+  `note` text,
+  `email` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `p_idx` (`profile_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+/*!50100 PARTITION BY HASH (`id`)
+PARTITIONS 100 */;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `data_collection`
+--
+
+LOCK TABLES `data_collection` WRITE;
+/*!40000 ALTER TABLE `data_collection` DISABLE KEYS */;
+/*!40000 ALTER TABLE `data_collection` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `data_media`
 --
 
@@ -1014,7 +1056,7 @@ CREATE TABLE `product_type` (
 
 LOCK TABLES `product_type` WRITE;
 /*!40000 ALTER TABLE `product_type` DISABLE KEYS */;
-INSERT INTO `product_type` VALUES (10008,'Software'),(10009,'Hardware'),(10010,'Co.Center'),(10011,'hâhh'),(10012,'hâhh'),(10013,'hâhh'),(10014,'Phòng làm việc'),(10015,'Checkgo'),(10016,'Checkgo'),(10017,'Checkgo');
+INSERT INTO `product_type` VALUES (10008,'Software'),(10009,'Hardware'),(10010,'Co.Center'),(10014,'Phòng làm việc'),(10015,'Tools');
 /*!40000 ALTER TABLE `product_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1234,7 +1276,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (2,'Administrator','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','fqSSpT_mou2h1B_ygwekc1:APA91bE3xxIiIMzFivcG6liPBlW-6CspSPwAo4yQ6bXY8h4Y_Y9XdoITmRF-URsXm8KUhS71f6km37Kx8JnDeIJ8e2E21-4Wt9X-e7p2aL6YnIPTAmgRnv4qF16aR6vBrxQNtuZ6WIRc','UserLayout','Administrator','0987938491','flast.vn@gmail.com',1,NULL,NULL),(67,'LongHuu','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','Hữu Long','0987938491','long.huu.100@gmail.com',1,NULL,NULL),(1638,'thanhtrung','$2a$10$i06JFYyA/3sIzdo32Fo3uumAOUGYoYDSupXvUPRemL3VByp6XZAyu',NULL,'SaleLayout','Thành Trung','03435223731','thanhtrung@gmail.com',1,NULL,NULL),(1639,'hungdb123','$2a$10$ua0R48oisKWrAhkzAd9IO.hlWcmzyTumo7QTqWzGFf309e6skp8s.',NULL,'saleLayout','Bùi Đức Hùng','09634','hungbd271276@gmail.com',1,NULL,NULL),(1640,'hungdb456','$2a$10$CPJbgDJht52uPbEhizn4be1hSGK6EmewbEGrFUvqm2U1yXRyKUHJG',NULL,'saleLayout','Bùi Đức Hùng','0987654321','hungbd2712767@gmail.com',1,NULL,NULL),(1643,'Sale2AI','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','saleAI','','saleai@gmail.com',1,NULL,NULL);
+INSERT INTO `user` VALUES (2,'Administrator','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','fqSSpT_mou2h1B_ygwekc1:APA91bE3xxIiIMzFivcG6liPBlW-6CspSPwAo4yQ6bXY8h4Y_Y9XdoITmRF-URsXm8KUhS71f6km37Kx8JnDeIJ8e2E21-4Wt9X-e7p2aL6YnIPTAmgRnv4qF16aR6vBrxQNtuZ6WIRc','UserLayout','Administrator','0987938491','flast.vn@gmail.com',1,NULL,NULL),(67,'LongHuu','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','Hữu Long','0987938491','long.huu.100@gmail.com',1,NULL,NULL),(1638,'Thanhtrung','$2a$10$i06JFYyA/3sIzdo32Fo3uumAOUGYoYDSupXvUPRemL3VByp6XZAyu',NULL,'SaleLayout','Thành Trung','03435223731','thanhtrung@gmail.com',1,NULL,NULL),(1639,'HungDB','$2a$10$ua0R48oisKWrAhkzAd9IO.hlWcmzyTumo7QTqWzGFf309e6skp8s.',NULL,'saleLayout','Bùi Đức Hùng','09634','hungbd271276@gmail.com',1,NULL,NULL),(1643,'AgentA2A','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','AiAgent','','saleai@gmail.com',1,NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1284,7 +1326,7 @@ CREATE TABLE `user_kpi` (
   `month` int NOT NULL DEFAULT '0',
   `year` int DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1021 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1025 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1293,6 +1335,7 @@ CREATE TABLE `user_kpi` (
 
 LOCK TABLES `user_kpi` WRITE;
 /*!40000 ALTER TABLE `user_kpi` DISABLE KEYS */;
+INSERT INTO `user_kpi` VALUES (1021,'[{\"name\":\"doanhso\",\"target\":200000000,\"current\":0},{\"name\":\"sql\",\"target\":300,\"current\":0}]',67,8,2025),(1022,'[{\"name\":\"doanhso\",\"target\":500000000,\"current\":0},{\"name\":\"sql\",\"target\":500,\"current\":0}]',1638,8,2025),(1023,'[{\"name\":\"trafic\",\"target\":1000000,\"current\":0},{\"name\":\"sql\",\"target\":50,\"current\":0}]',1639,8,2025),(1024,'[{\"name\":\"sql\",\"target\":300,\"current\":0},{\"name\":\"trafic\",\"target\":200000,\"current\":0}]',1643,8,2025);
 /*!40000 ALTER TABLE `user_kpi` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1319,7 +1362,7 @@ CREATE TABLE `user_link_profile` (
 
 LOCK TABLES `user_link_profile` WRITE;
 /*!40000 ALTER TABLE `user_link_profile` DISABLE KEYS */;
-INSERT INTO `user_link_profile` VALUES (67,1),(1638,1),(2,2),(67,2),(1639,2),(1638,5),(1639,5),(1640,5),(1643,5),(67,13),(67,16),(1640,16);
+INSERT INTO `user_link_profile` VALUES (67,1),(1638,1),(2,2),(67,2),(1639,2),(1638,5),(1639,5),(1643,5),(67,13),(67,16);
 /*!40000 ALTER TABLE `user_link_profile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1530,10 +1573,6 @@ LOCK TABLES `warehouse_stock` WRITE;
 INSERT INTO `warehouse_stock` VALUES (1,'Kho Trung Hòa','100m2','0345223731','Trung Hòa, Cầu Giấy, Hà Nội',1),(4,'Kho Trung Hòa 3','100m2','0345223732','Trung Hòa, Cầu Giấy, Hà Nội',1),(5,'kho Nam Từ Liêm','200m','0963484761','Nam Từ Liêm Hà Nội 2',1),(6,'kho Nam Từ Liêm 4','300m','0963484766','Nam Từ Liêm Hà Nội 4',1),(7,'kho Nam Từ Liêm5','300m','0963484764','Nam Từ Liêm Hà Nội 5',1);
 /*!40000 ALTER TABLE `warehouse_stock` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'open_cdp'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1544,4 +1583,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-18 22:23:55
+-- Dump completed on 2025-08-20 16:17:08

@@ -20,9 +20,6 @@ package vn.flast.controller.product;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;

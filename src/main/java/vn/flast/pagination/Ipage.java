@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Ipage <T> {
-    
+
     @Getter
     private PageDetail page;
 
@@ -55,8 +55,8 @@ public class Ipage <T> {
         return new Ipage<>(size, totalElements, currentPage, embedded);
     }
 
-    public static Ipage<?> empty() {
-        return new Ipage<>(0, 0, 1, new ArrayList<>());
+    public static <E> Ipage<E> empty() {
+        return new Ipage<>(10, 0, 1, new ArrayList<>());
     }
 
     private void setPage() {

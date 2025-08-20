@@ -20,9 +20,6 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,6 +41,6 @@ public class ProductType {
     private Long id;
 
     @Column(name = "name", nullable = false)
-    @NotNull(message = "Kiểu sản phẩm không được bỏ trống")
+    @NotNull(message = "Loại sản phẩm không được bỏ trống")
     private String name;
 }
