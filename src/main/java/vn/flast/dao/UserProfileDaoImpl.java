@@ -27,6 +27,7 @@ import vn.flast.utils.EntityQuery;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Repository("userProfileDao")
@@ -54,10 +55,9 @@ public class UserProfileDaoImpl extends DaoImpl<Long, UserProfile> implements Us
     }
 
     @Override
-    public Set<User> findUsers(String role) {
+    public Set<User> findUserByRole(String role) {
         UserProfile userProfile = findByType(role);
-        Set<User> listUsers = new HashSet<>();
-        return userProfile == null ? listUsers : userProfile.getUsers();
+        return Objects.isNull(userProfile) ? new HashSet<>() : userProfile.getUsers();
     }
 
     @Override
