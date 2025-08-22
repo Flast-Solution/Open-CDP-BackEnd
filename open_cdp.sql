@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
 -- Host: localhost    Database: open_cdp
 -- ------------------------------------------------------
--- Server version	8.0.42
+-- Server version	8.0.43
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -663,15 +663,15 @@ CREATE TABLE `data_collection` (
   `group_name` varchar(512) DEFAULT NULL,
   `profile_type` varchar(512) DEFAULT NULL,
   `status` int DEFAULT '0',
-  `number` varchar(50) DEFAULT NULL,
+  `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `receive_time_new` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `channel` varchar(100) DEFAULT NULL,
-  `product` varchar(255) DEFAULT NULL,
+  `product_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `note` text,
   `email` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `p_idx` (`profile_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 /*!50100 PARTITION BY HASH (`id`)
 PARTITIONS 100 */;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -682,6 +682,7 @@ PARTITIONS 100 */;
 
 LOCK TABLES `data_collection` WRITE;
 /*!40000 ALTER TABLE `data_collection` DISABLE KEYS */;
+INSERT INTO `data_collection` VALUES (6,NULL,NULL,'Takala',NULL,'2','123 Xô Viết Nghệ Tĩnh',NULL,NULL,NULL,NULL,0,'0987938491','2025-08-20 14:55:02','1','776',NULL,'long.huu.100@gmail.com');
 /*!40000 ALTER TABLE `data_collection` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1573,6 +1574,10 @@ LOCK TABLES `warehouse_stock` WRITE;
 INSERT INTO `warehouse_stock` VALUES (1,'Kho Trung Hòa','100m2','0345223731','Trung Hòa, Cầu Giấy, Hà Nội',1),(4,'Kho Trung Hòa 3','100m2','0345223732','Trung Hòa, Cầu Giấy, Hà Nội',1),(5,'kho Nam Từ Liêm','200m','0963484761','Nam Từ Liêm Hà Nội 2',1),(6,'kho Nam Từ Liêm 4','300m','0963484766','Nam Từ Liêm Hà Nội 4',1),(7,'kho Nam Từ Liêm5','300m','0963484764','Nam Từ Liêm Hà Nội 5',1);
 /*!40000 ALTER TABLE `warehouse_stock` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'open_cdp'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1583,4 +1588,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-20 16:17:08
+-- Dump completed on 2025-08-20 22:56:33
