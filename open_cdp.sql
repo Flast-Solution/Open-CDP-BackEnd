@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: localhost    Database: open_cdp
 -- ------------------------------------------------------
--- Server version	8.0.43
+-- Server version	8.0.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -663,15 +663,15 @@ CREATE TABLE `data_collection` (
   `group_name` varchar(512) DEFAULT NULL,
   `profile_type` varchar(512) DEFAULT NULL,
   `status` int DEFAULT '0',
-  `mobile` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `number` varchar(50) DEFAULT NULL,
   `receive_time_new` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `channel` varchar(100) DEFAULT NULL,
-  `product_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `product` varchar(255) DEFAULT NULL,
   `note` text,
   `email` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `p_idx` (`profile_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 /*!50100 PARTITION BY HASH (`id`)
 PARTITIONS 100 */;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -682,7 +682,6 @@ PARTITIONS 100 */;
 
 LOCK TABLES `data_collection` WRITE;
 /*!40000 ALTER TABLE `data_collection` DISABLE KEYS */;
-INSERT INTO `data_collection` VALUES (6,NULL,NULL,'Takala',NULL,'2','123 Xô Viết Nghệ Tĩnh',NULL,NULL,NULL,NULL,0,'0987938491','2025-08-20 14:55:02','1','776',NULL,'long.huu.100@gmail.com');
 /*!40000 ALTER TABLE `data_collection` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -771,6 +770,80 @@ CREATE TABLE `flast_note` (
 LOCK TABLES `flast_note` WRITE;
 /*!40000 ALTER TABLE `flast_note` DISABLE KEYS */;
 /*!40000 ALTER TABLE `flast_note` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `flast_projects_list`
+--
+
+DROP TABLE IF EXISTS `flast_projects_list`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `flast_projects_list` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) NOT NULL,
+  `description` text,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `status` enum('Not Started','In Progress','Completed','On Hold') DEFAULT 'Not Started',
+  `budget` decimal(15,2) DEFAULT '0.00',
+  `priority` enum('Low','Medium','High') DEFAULT 'Medium',
+  `department_id` int DEFAULT NULL,
+  `manager_id` bigint NOT NULL,
+  `members` json NOT NULL,
+  `progress` int DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `manager_id` (`manager_id`),
+  CONSTRAINT `flast_projects_list_ibfk_1` FOREIGN KEY (`manager_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `flast_projects_list`
+--
+
+LOCK TABLES `flast_projects_list` WRITE;
+/*!40000 ALTER TABLE `flast_projects_list` DISABLE KEYS */;
+/*!40000 ALTER TABLE `flast_projects_list` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `flast_projects_tasks`
+--
+
+DROP TABLE IF EXISTS `flast_projects_tasks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `flast_projects_tasks` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `project_id` int NOT NULL,
+  `name` varchar(200) NOT NULL,
+  `description` text,
+  `assigned_to` int DEFAULT NULL,
+  `status` enum('To Do','In Progress','Done','Cancelled') DEFAULT 'To Do',
+  `priority` enum('Low','Medium','High') DEFAULT 'Medium',
+  `start_date` date DEFAULT NULL,
+  `completed_date` date DEFAULT NULL,
+  `user_created_id` bigint NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`),
+  KEY `user_created_id` (`user_created_id`),
+  CONSTRAINT `flast_projects_tasks_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `flast_projects_list` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `flast_projects_tasks_ibfk_2` FOREIGN KEY (`user_created_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `flast_projects_tasks`
+--
+
+LOCK TABLES `flast_projects_tasks` WRITE;
+/*!40000 ALTER TABLE `flast_projects_tasks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `flast_projects_tasks` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1574,10 +1647,6 @@ LOCK TABLES `warehouse_stock` WRITE;
 INSERT INTO `warehouse_stock` VALUES (1,'Kho Trung Hòa','100m2','0345223731','Trung Hòa, Cầu Giấy, Hà Nội',1),(4,'Kho Trung Hòa 3','100m2','0345223732','Trung Hòa, Cầu Giấy, Hà Nội',1),(5,'kho Nam Từ Liêm','200m','0963484761','Nam Từ Liêm Hà Nội 2',1),(6,'kho Nam Từ Liêm 4','300m','0963484766','Nam Từ Liêm Hà Nội 4',1),(7,'kho Nam Từ Liêm5','300m','0963484764','Nam Từ Liêm Hà Nội 5',1);
 /*!40000 ALTER TABLE `warehouse_stock` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'open_cdp'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1588,4 +1657,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-20 22:56:33
+-- Dump completed on 2025-08-22 17:27:58

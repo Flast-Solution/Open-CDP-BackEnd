@@ -5,10 +5,6 @@
 Dự án Open-Cdp được phát triển và duy trì bởi đội ngũ: Công ty Cổ Phần Flast-Solution 
 (FS) [https://flast.vn].
 
-## Kiến trúc Database [https://flast.vn/architectrue/database]
-## Kiến trúc Backend [https://flast.vn/architectrue/java]
-## Kiến trúc Frontend [https://flast.vn/architectrue/react-js]
-
 ## Build Source ##
 ``` sh
 mvn package
