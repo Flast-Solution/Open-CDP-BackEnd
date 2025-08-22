@@ -1,6 +1,6 @@
 package vn.flast.entities;
 /**************************************************************************/
-/*  app.java                                                              */
+/*  WorkResponse.java                                                     */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -20,17 +20,16 @@ package vn.flast.entities;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.flast.models.FlastProjectList;
+import vn.flast.models.FlastProjectTask;
+import java.util.List;
 
 @Getter @Setter
-@NoArgsConstructor
-public class ImagesProduct {
-    private Integer productid;
-    private String fileName;
-    private Boolean isSlideshow;
+@AllArgsConstructor
+public class WorkResponse {
+    private FlastProjectList workItem;
+    private List<FlastProjectTask> tasks;
 }

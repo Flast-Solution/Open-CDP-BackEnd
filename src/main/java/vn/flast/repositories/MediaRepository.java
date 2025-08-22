@@ -20,13 +20,9 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import vn.flast.models.Media;
-
 import java.util.List;
 import java.util.Optional;
 

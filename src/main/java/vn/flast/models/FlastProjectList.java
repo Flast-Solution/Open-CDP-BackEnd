@@ -18,7 +18,7 @@ package vn.flast.models;
 /*                                                                        */
 /* Đội ngũ phát triển mong rằng phần mềm được sử dụng đúng mục đích và    */
 /* có trách nghiệm                                                        */
-/**************************************************************************/
+/*************************************************************************/
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

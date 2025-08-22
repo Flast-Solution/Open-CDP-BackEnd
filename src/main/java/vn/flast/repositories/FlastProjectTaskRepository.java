@@ -20,9 +20,7 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import vn.flast.models.FlastProjectTask;
 
-public interface FlastProjectTaskRepository extends JpaRepository<FlastProjectTask, Long>, JpaSpecificationExecutor<FlastProjectTask> {
+public interface FlastProjectTaskRepository extends GenericRepository<FlastProjectTask, Long> {
 }
