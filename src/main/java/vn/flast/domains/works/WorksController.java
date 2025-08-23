@@ -28,13 +28,13 @@ public class WorksController {
 
     @PostMapping("/save")
     public MyResponse<?> save(@RequestBody FlastProjectList model) {
-        var iPage = workService.save(model);
-        return MyResponse.response(iPage);
+        var data = workService.save(model);
+        return MyResponse.response(data);
     }
 
     @PostMapping("/save/task")
     public MyResponse<?> saveTask(@RequestBody FlastProjectTask model) {
-        var iPage = workService.saveTask(model);
-        return MyResponse.response(iPage);
+        var data = workService.saveTask(model);
+        return MyResponse.response(data);
     }
 }

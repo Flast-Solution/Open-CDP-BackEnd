@@ -13,7 +13,7 @@ import vn.flast.repositories.FlastProjectListRepository;
 import vn.flast.repositories.FlastProjectTaskRepository;
 import vn.flast.searchs.WorkFilter;
 import vn.flast.utils.EntityQuery;
-
+import vn.flast.utils.JsonUtils;
 import java.util.List;
 
 @Service
@@ -37,10 +37,15 @@ public class WorkService {
         et.setFirstResult(LIMIT * PAGE);
 
         var lists = et.list();
+        lists.forEach(FlastProjectList::fitMEmber);
         return Ipage.generator(LIMIT, et.count(), PAGE, lists);
     }
 
     public FlastProjectList save(FlastProjectList model) {
+        if(model.getListMember().isEmpty()) {
+            throw new RuntimeException("Thành viên dự án chưa được khởi tạo !");
+        }
+        model.setMembers(JsonUtils.toJson(model.getListMember()));
         return flastProjectListRepository.save(model);
     }
 

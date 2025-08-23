@@ -797,7 +797,7 @@ CREATE TABLE `flast_projects_list` (
   PRIMARY KEY (`id`),
   KEY `manager_id` (`manager_id`),
   CONSTRAINT `flast_projects_list_ibfk_1` FOREIGN KEY (`manager_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -806,6 +806,7 @@ CREATE TABLE `flast_projects_list` (
 
 LOCK TABLES `flast_projects_list` WRITE;
 /*!40000 ALTER TABLE `flast_projects_list` DISABLE KEYS */;
+INSERT INTO `flast_projects_list` VALUES (3,'Nông sản hợp tác xã Vải Thiều','Chiến dịch quảng cáo và tiếp thị quý 2','2025-08-01','2025-08-31','Not Started',200000000.00,'High',2,2,'[\"Thanhtrung\", \"HungDB\", \"AgentA2A\", \"LongHuu\"]',NULL,'2025-08-23 04:53:00','2025-08-23 04:53:00');
 /*!40000 ALTER TABLE `flast_projects_list` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1382,7 +1383,7 @@ CREATE TABLE `user_group` (
 
 LOCK TABLES `user_group` WRITE;
 /*!40000 ALTER TABLE `user_group` DISABLE KEYS */;
-INSERT INTO `user_group` VALUES (16,'SAM - TrangBTH',13,'[2, 67]','TrangBTH',50,1,'2020-02-04 03:25:50',1),(18,'SAM - LuuHT',2,'[43]','LuuHT',43,1,'2020-02-04 03:25:50',1),(19,'team 1',3,'[1638]','Name',1,1,'2025-05-15 03:34:34',1),(20,'Kevin',3,'[67, 1638, 1639]','Kevin2',1639,1,'2025-05-18 04:24:58',1);
+INSERT INTO `user_group` VALUES (16,'SAM - TrangBTH',13,'[2, 67]','TrangBTH',50,1,'2020-02-04 03:25:50',1),(18,'SAM - LuuHT',2,'[43]','LuuHT',43,1,'2020-02-04 03:25:50',1),(19,'SALE - HaNoi',3,'[1638]','Name',1,1,'2025-05-15 03:34:34',1),(20,'Kevin',3,'[67, 1638, 1639]','Kevin2',1639,1,'2025-05-18 04:24:58',1);
 /*!40000 ALTER TABLE `user_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1657,4 +1658,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-22 17:27:58
+-- Dump completed on 2025-08-23 11:54:43

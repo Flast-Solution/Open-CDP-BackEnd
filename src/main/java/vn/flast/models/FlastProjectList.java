@@ -20,19 +20,27 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /*************************************************************************/
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import java.util.Date;
+import vn.flast.utils.JsonUtils;
+import vn.flast.utils.StringUtils;
 
-@Table(name = "flast_note")
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+@Table(name = "flast_projects_list")
 @Entity
 @Getter @Setter
 public class FlastProjectList {
@@ -58,7 +66,7 @@ public class FlastProjectList {
     private String status;
 
     @Column(name = "budget")
-    private Long budget;
+    private Double budget;
 
     @Column(name = "priority")
     private String priority;
@@ -69,6 +77,7 @@ public class FlastProjectList {
     @Column(name = "manager_id")
     private Long managerId;
 
+    @JsonIgnore
     @Column(name = "members")
     private String members;
 
@@ -82,4 +91,17 @@ public class FlastProjectList {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @PrePersist
+    public void beforeSave() {
+        if(StringUtils.isNull(status)) {
+            status = "Not Started";
+        }
+    }
+
+    @Transient
+    List<String> listMember = new ArrayList<>();
+    public void fitMEmber() {
+        listMember = JsonUtils.Json2ListObject(members, String.class);
+    }
 }
