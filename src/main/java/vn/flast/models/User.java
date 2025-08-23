@@ -20,9 +20,6 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
@@ -52,13 +49,9 @@ import java.util.Set;
 public class User {
 
     public static final String RULE_ADMIN = "ADMIN";
-    public static final String RULE_PERCHARING = "PERCHARGING";
-    public static final String RULE_KHO = "WAREHOUSE";
     public static final String RULE_MANAGER = "SALE_MANAGER";
     public static final String RULE_SALE_LEADER = "SALE_LEADER";
-    public static final String RULE_SALE_MENBER = "SALE";
-    public static final String RULE_PARTNER = "PARTNER";
-    public static final String RULE_CSKH = "DBA";
+    public static final String RULE_SALE_MEMBER = "SALE";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -95,8 +88,8 @@ public class User {
     @Column(name = "status")
     private Integer status;
 
-    @Column(name = "avartar")
-    private String avartar;
+    @Column(name = "avatar")
+    private String avatar;
 
     @Column(name = "address")
     private String address;
@@ -111,7 +104,6 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "user_profile_id", nullable = false)
     )
     private Set<UserProfile> userProfiles = new HashSet<>();
-
 
     @Override
     public User clone() {
@@ -143,13 +135,5 @@ public class User {
 
     public boolean ruleSaleManager() {
         return this.checkRule(RULE_MANAGER);
-    }
-
-    public boolean ruleKho() {
-        return this.checkRule(RULE_KHO);
-    }
-
-    public boolean ruleCskh() {
-        return this.checkRule(RULE_CSKH);
     }
 }

@@ -20,13 +20,9 @@ package vn.flast.controller;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import vn.flast.security.UserPrinciple;
-
 import java.util.Optional;
 
 @Component

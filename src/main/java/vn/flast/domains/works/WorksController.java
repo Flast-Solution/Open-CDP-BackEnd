@@ -2,17 +2,22 @@ package vn.flast.domains.works;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import vn.flast.controller.BaseController;
 import vn.flast.entities.MyResponse;
+import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.FlastProjectList;
 import vn.flast.models.FlastProjectTask;
+import vn.flast.repositories.FlastProjectListRepository;
 import vn.flast.searchs.WorkFilter;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/works")
 @RequiredArgsConstructor
-public class WorksController {
+public class WorksController extends BaseController {
 
     private final WorkService workService;
+    private final FlastProjectListRepository flastProjectListRepository;
 
     @GetMapping("/fetch")
     public MyResponse<?> fetch(WorkFilter filter) {
@@ -26,10 +31,22 @@ public class WorksController {
         return MyResponse.response(data);
     }
 
+    @PostMapping("/delete/{id}")
+    public MyResponse<?> delete(@PathVariable Integer id) {
+        var data = flastProjectListRepository.findById(id).orElseThrow(
+            () -> new ResourceNotFoundException("Not found !")
+        );
+        if(!Objects.equals(data.getManagerId(), getUserId())) {
+            throw new RuntimeException("Not delete !");
+        }
+        flastProjectListRepository.delete(data);
+        return MyResponse.response(200, "Xóa dự án thành công !");
+    }
+
     @PostMapping("/save")
     public MyResponse<?> save(@RequestBody FlastProjectList model) {
         var data = workService.save(model);
-        return MyResponse.response(data);
+        return MyResponse.response(data, "Cập nhật dự án thành công !");
     }
 
     @PostMapping("/save/task")

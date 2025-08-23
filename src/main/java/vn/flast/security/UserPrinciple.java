@@ -20,15 +20,10 @@ package vn.flast.security;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serial;
 import java.util.Collection;
-
 import lombok.Getter;
-import lombok.Setter;
 import vn.flast.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,17 +31,23 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.List;
 import java.util.Objects;
 
-
 public class UserPrinciple implements UserDetails {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @Getter
     private final Integer id;
+
+    @Getter
     private final String ssoId;
+
     private final String username;
 
-    private String name;
+    @Getter
+    private final String name;
+
+    @Getter
     private final String email;
 
     @JsonIgnore
@@ -72,7 +73,7 @@ public class UserPrinciple implements UserDetails {
     }
 
     public static UserPrinciple build(User user) {
-        
+
         List<SimpleGrantedAuthority> authorities = user.getUserProfiles().stream()
             .map(role -> new SimpleGrantedAuthority(role.getType())).toList();
 
@@ -84,22 +85,6 @@ public class UserPrinciple implements UserDetails {
             user.getFullName(),
             authorities
         );
-    }
-    
-    public Integer getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getSsoId() {
-        return ssoId;
     }
 
     @Override

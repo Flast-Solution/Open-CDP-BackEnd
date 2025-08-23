@@ -72,10 +72,10 @@ public class FlastProjectList {
     private String priority;
 
     @Column(name = "department_id")
-    private String departmentId;
+    private Integer departmentId;
 
     @Column(name = "manager_id")
-    private Long managerId;
+    private Integer managerId;
 
     @JsonIgnore
     @Column(name = "members")

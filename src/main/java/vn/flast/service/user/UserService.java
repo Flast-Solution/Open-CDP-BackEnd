@@ -121,7 +121,7 @@ public class UserService {
     }
 
     public boolean isSaleMember(User user) {
-        return user.checkRule(User.RULE_SALE_MENBER);
+        return user.checkRule(User.RULE_SALE_MEMBER);
     }
 
     public void changePass(ChangPass changPass) {
