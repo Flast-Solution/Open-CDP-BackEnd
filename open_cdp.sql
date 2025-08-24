@@ -819,6 +819,7 @@ DROP TABLE IF EXISTS `flast_projects_task`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `flast_projects_task` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `task_identity` varchar(100) NOT NULL,
   `project_id` int NOT NULL,
   `title` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `description` text,
@@ -826,8 +827,8 @@ CREATE TABLE `flast_projects_task` (
   `status` enum('To Do','In Progress','Done','Cancelled') DEFAULT 'To Do',
   `priority` enum('Low','Medium','High') DEFAULT 'Medium',
   `color` varchar(100) DEFAULT '#1890ff',
-  `start` date NOT NULL,
-  `end` date NOT NULL,
+  `start` datetime DEFAULT NULL,
+  `end` datetime DEFAULT NULL,
   `progress` int DEFAULT '0',
   `user_created_id` bigint NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -835,9 +836,10 @@ CREATE TABLE `flast_projects_task` (
   PRIMARY KEY (`id`),
   KEY `project_id` (`project_id`),
   KEY `user_created_id` (`user_created_id`),
+  KEY `index_indentity` (`task_identity`),
   CONSTRAINT `flast_projects_task_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `flast_projects_list` (`id`) ON DELETE CASCADE,
   CONSTRAINT `flast_projects_task_ibfk_2` FOREIGN KEY (`user_created_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -846,7 +848,7 @@ CREATE TABLE `flast_projects_task` (
 
 LOCK TABLES `flast_projects_task` WRITE;
 /*!40000 ALTER TABLE `flast_projects_task` DISABLE KEYS */;
-INSERT INTO `flast_projects_task` VALUES (1,4,'Deadline báo cáo','Hạn chót nộp báo cáo quý','LongHuu','In Progress','Medium','#ff4d4f','2025-08-20','2025-08-21',80,2,'2025-08-24 04:53:35','2025-08-24 04:55:49');
+INSERT INTO `flast_projects_task` VALUES (5,'1746032451289',4,'Dự án công','Chuyển đổi số cảng Chu Lai','Thanhtrung','In Progress','Medium','#8c1c1c','2025-08-05 17:00:00','2025-08-05 23:30:00',51,2,'2025-08-24 05:29:01','2025-08-24 10:49:35'),(6,'1746032531834',4,'Code giao diện trang Lead',NULL,'LongHuu','In Progress','Medium','#158985','2025-08-06 10:00:00','2025-08-07 11:00:00',40,2,'2025-08-24 09:14:00','2025-08-24 11:27:13'),(10,'1756033628173',4,'Họp dự án Quản lý công việc','Dự án trọng điểm chuyển đổi số tỉnh','HungDB','To Do','Medium','#930c0c','2025-08-07 08:30:00','2025-08-07 11:30:00',42,2,'2025-08-24 11:07:08','2025-08-24 11:07:08'),(11,'1756033731350',4,'Hẹn khách hàng demo. Sử dụng Tailwind CSS (nếu bạn dùng Tailwind)','Demo dự án Chuyển đổi số văn phòng','LongHuu','In Progress','Medium','#1a1251','2025-08-12 09:00:00','2025-08-12 14:00:00',38,2,'2025-08-24 11:08:51','2025-08-24 11:34:37');
 /*!40000 ALTER TABLE `flast_projects_task` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1665,4 +1667,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-24 11:56:16
+-- Dump completed on 2025-08-24 18:55:59

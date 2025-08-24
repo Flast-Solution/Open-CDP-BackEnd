@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vn.flast.components.RecordNotFoundException;
 import vn.flast.entities.WorkResponse;
+import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.FlastProjectList;
 import vn.flast.models.FlastProjectTask;
 import vn.flast.pagination.Ipage;
@@ -57,8 +58,8 @@ public class WorkService {
             () -> new RecordNotFoundException("Not Found")
         );
         FlastProjectTask model = Optional.of(input)
-            .map(FlastProjectTask::getId)
-            .map(flastProjectTaskRepository::findById)
+            .map(FlastProjectTask::getTaskIdentity)
+            .map(flastProjectTaskRepository::findByIdentity)
             .filter(Optional::isPresent)
             .map(Optional::get)
             .orElseGet(FlastProjectTask::new);
@@ -77,5 +78,15 @@ public class WorkService {
             .isEqual("projectId", flastWork.getId())
             .findAll(0, 200);
         return new WorkResponse(flastWork, taskList);
+    }
+
+    public void deleteTaskById(String identityId) {
+        var task = flastProjectTaskRepository.findByIdentity(identityId).orElseThrow(
+            () -> new ResourceNotFoundException("Record not found !")
+        );
+        if(!task.getUserCreatedId().equals(Common.getUserId())) {
+            throw new RuntimeException("Delete not permit !");
+        }
+        flastProjectTaskRepository.deleteById(task.getId());
     }
 }

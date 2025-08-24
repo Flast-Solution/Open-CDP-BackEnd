@@ -65,4 +65,10 @@ public class WorksController extends BaseController {
         var data = workService.saveTask(model);
         return MyResponse.response(data, "Cập nhật công việc thành công !");
     }
+
+    @PostMapping("/delete/task/{id}")
+    public MyResponse<?> deleteTask(@PathVariable String id) {
+        workService.deleteTaskById(id);
+        return MyResponse.response(200, "Xóa công việc thành công !");
+    }
 }

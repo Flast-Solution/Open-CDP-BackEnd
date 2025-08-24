@@ -20,7 +20,11 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
+import org.springframework.data.jpa.repository.Query;
 import vn.flast.models.FlastProjectTask;
+import java.util.Optional;
 
 public interface FlastProjectTaskRepository extends GenericRepository<FlastProjectTask, Integer> {
+    @Query("FROM FlastProjectTask d WHERE d.taskIdentity = :taskIdentity")
+    Optional<FlastProjectTask> findByIdentity(String taskIdentity);
 }

@@ -39,6 +39,9 @@ public class FlastProjectTask {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @Column(name ="task_identity", nullable = false)
+    private String taskIdentity;
+
     @Column(name = "project_id", nullable = false)
     private Integer projectId;
 

@@ -20,13 +20,9 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import vn.flast.models.Config;
 
 public interface ConfigRepository extends JpaRepository<Config, Integer> {
-
     Config findByKey(String key);
 }
