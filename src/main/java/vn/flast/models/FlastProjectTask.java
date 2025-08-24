@@ -92,4 +92,11 @@ public class FlastProjectTask {
             priority = "Medium";
         }
     }
+
+    @PreUpdate
+    public void beforeUpdate() {
+        if(StringUtils.isNull(priority)) {
+            priority = "Medium";
+        }
+    }
 }

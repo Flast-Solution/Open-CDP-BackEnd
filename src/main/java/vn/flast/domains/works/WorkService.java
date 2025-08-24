@@ -13,9 +13,11 @@ import vn.flast.repositories.FlastProjectListRepository;
 import vn.flast.repositories.FlastProjectTaskRepository;
 import vn.flast.searchs.WorkFilter;
 import vn.flast.utils.Common;
+import vn.flast.utils.CopyProperty;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,10 +52,18 @@ public class WorkService {
         return flastProjectListRepository.save(model);
     }
 
-    public FlastProjectTask saveTask(FlastProjectTask model) {
-        flastProjectListRepository.findById(model.getProjectId()).orElseThrow(
+    public FlastProjectTask saveTask(FlastProjectTask input) {
+        flastProjectListRepository.findById(input.getProjectId()).orElseThrow(
             () -> new RecordNotFoundException("Not Found")
         );
+        FlastProjectTask model = Optional.of(input)
+            .map(FlastProjectTask::getId)
+            .map(flastProjectTaskRepository::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .orElseGet(FlastProjectTask::new);
+
+        CopyProperty.CopyIgnoreNull(input, model);
         model.setUserCreatedId(Common.getUserId());
         return flastProjectTaskRepository.save(model);
     }

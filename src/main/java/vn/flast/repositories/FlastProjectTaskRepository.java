@@ -22,5 +22,5 @@ package vn.flast.repositories;
 
 import vn.flast.models.FlastProjectTask;
 
-public interface FlastProjectTaskRepository extends GenericRepository<FlastProjectTask, Long> {
+public interface FlastProjectTaskRepository extends GenericRepository<FlastProjectTask, Integer> {
 }
