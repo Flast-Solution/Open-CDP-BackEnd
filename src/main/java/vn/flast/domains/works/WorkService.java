@@ -12,6 +12,7 @@ import vn.flast.pagination.Ipage;
 import vn.flast.repositories.FlastProjectListRepository;
 import vn.flast.repositories.FlastProjectTaskRepository;
 import vn.flast.searchs.WorkFilter;
+import vn.flast.utils.Common;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.JsonUtils;
 import java.util.List;
@@ -53,6 +54,7 @@ public class WorkService {
         flastProjectListRepository.findById(model.getProjectId()).orElseThrow(
             () -> new RecordNotFoundException("Not Found")
         );
+        model.setUserCreatedId(Common.getUserId());
         return flastProjectTaskRepository.save(model);
     }
 
@@ -60,6 +62,7 @@ public class WorkService {
         var flastWork = flastProjectListRepository.findById(id).orElseThrow(
             () -> new RecordNotFoundException("Not Found")
         );
+        flastWork.fitMEmber();
         List<FlastProjectTask> taskList = flastProjectTaskRepository
             .isEqual("projectId", flastWork.getId())
             .findAll(0, 200);

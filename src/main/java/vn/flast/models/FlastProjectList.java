@@ -94,6 +94,7 @@ public class FlastProjectList {
 
     @PrePersist
     public void beforeSave() {
+        createdAt = new Date();
         if(StringUtils.isNull(status)) {
             status = "Not Started";
         }

@@ -1,6 +1,8 @@
 package vn.flast.domains.works;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import vn.flast.controller.BaseController;
 import vn.flast.entities.MyResponse;
@@ -9,6 +11,7 @@ import vn.flast.models.FlastProjectList;
 import vn.flast.models.FlastProjectTask;
 import vn.flast.repositories.FlastProjectListRepository;
 import vn.flast.searchs.WorkFilter;
+import vn.flast.validator.ValidationErrorBuilder;
 import java.util.Objects;
 
 @RestController
@@ -44,14 +47,22 @@ public class WorksController extends BaseController {
     }
 
     @PostMapping("/save")
-    public MyResponse<?> save(@RequestBody FlastProjectList model) {
+    public MyResponse<?> save(@Valid @RequestBody FlastProjectList model, Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+        }
         var data = workService.save(model);
         return MyResponse.response(data, "Cập nhật dự án thành công !");
     }
 
     @PostMapping("/save/task")
-    public MyResponse<?> saveTask(@RequestBody FlastProjectTask model) {
+    public MyResponse<?> saveTask(@Valid @RequestBody FlastProjectTask model, Errors errors) {
+        if(errors.hasErrors()) {
+            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
+            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
+        }
         var data = workService.saveTask(model);
-        return MyResponse.response(data);
+        return MyResponse.response(data, "Cập nhật công việc thành công !");
     }
 }

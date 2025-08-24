@@ -20,16 +20,13 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import vn.flast.utils.StringUtils;
 import java.util.Date;
 
 @Table(name = "flast_projects_task")
@@ -45,14 +42,14 @@ public class FlastProjectTask {
     @Column(name = "project_id", nullable = false)
     private Integer projectId;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "title")
+    private String title;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "assigned_to", nullable = false)
-    private Integer assignedTo;
+    @Column(name = "sso_id", nullable = false)
+    private String ssoId;
 
     @Column(name = "status")
     private String status;
@@ -60,14 +57,22 @@ public class FlastProjectTask {
     @Column(name = "priority")
     private String priority;
 
-    @Column(name = "start_date")
-    private Date startDate;
+    @Column(name = "progress")
+    private Integer progress;
 
-    @Column(name = "completed_date")
-    private Date completedDate;
+    @Column(name = "color")
+    private String color;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name = "start")
+    private Date start;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name = "end")
+    private Date end;
 
     @Column(name = "user_created_id")
-    private Date userCreatedId;
+    private Integer userCreatedId;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -76,4 +81,15 @@ public class FlastProjectTask {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @PrePersist
+    public void beforeSave() {
+        createdAt = new Date();
+        if(StringUtils.isNull(status)) {
+            status = "Not Started";
+        }
+        if(StringUtils.isNull(priority)) {
+            priority = "Medium";
+        }
+    }
 }
