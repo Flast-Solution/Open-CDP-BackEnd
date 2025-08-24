@@ -50,6 +50,9 @@ public class WorkService {
     }
 
     public FlastProjectTask saveTask(FlastProjectTask model) {
+        flastProjectListRepository.findById(model.getProjectId()).orElseThrow(
+            () -> new RecordNotFoundException("Not Found")
+        );
         return flastProjectTaskRepository.save(model);
     }
 
