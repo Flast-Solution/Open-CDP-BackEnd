@@ -70,7 +70,13 @@ public class CustomerPersonalService extends Subscriber {
     private DataOwnerRepository dataOwnerRepository;
 
     public CustomerPersonal save(CustomerPersonal entity) {
-        return customerPersonalRepository.save(entity);
+        customerPersonalRepository.save(entity);
+        var listAddress = entity.getCustomerAddress();
+        if(Objects.nonNull(listAddress)) {
+            listAddress.forEach(address -> address.setCustomerPersonal(entity));
+            listAddress.forEach(address -> address.setCustomerId(entity.getId()));
+        }
+        return entity;
     }
 
     public List<CustomerPersonal> find(CustomerFilter filter) {
