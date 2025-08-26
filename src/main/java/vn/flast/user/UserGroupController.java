@@ -20,9 +20,6 @@ package vn.flast.user;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -43,23 +40,13 @@ public class UserGroupController {
     @Autowired
     private UserGroupService userGroupService;
 
-    @PostMapping("/created")
-    public MyResponse<?> created(@Valid @RequestBody UserGroup input, Errors errors) {
-        if(errors.hasErrors()) {
-            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
-            return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
-        }
-        var data = userGroupService.createGroup(input);
-        return MyResponse.response(data, "Tạo mới team thành công .!");
-    }
-
-    @PostMapping("/update")
+    @PostMapping("/save")
     public MyResponse<?> update(@Valid @RequestBody UserGroup input, Errors errors) {
         if(errors.hasErrors()) {
             var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
-        var data = userGroupService.update(input);
+        var data = userGroupService.save(input);
         return MyResponse.response(data, "update thông tin team thành công .!");
     }
 

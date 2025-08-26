@@ -20,82 +20,59 @@ package vn.flast.service.user;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import vn.flast.controller.BaseController;
 import vn.flast.models.UserGroup;
 import vn.flast.repositories.UserGroupRepository;
+import vn.flast.utils.Common;
+import vn.flast.utils.CopyProperty;
 import vn.flast.utils.JsonUtils;
-
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UserGroupService extends BaseController {
+@RequiredArgsConstructor
+public class UserGroupService {
 
-    @Autowired
-    private UserGroupRepository userGroupRepository;
+    private final UserGroupRepository userGroupRepository;
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
+    public UserGroup save(UserGroup input) {
 
-    public UserGroup createGroup(UserGroup input) {
-        var userCreate = getInfo();
-        var userAdmin = userService.findById(userCreate.getId());
-        if (userService.isAdmin(userAdmin.getId())) {
-            if (userGroupRepository.existsByLeaderId(input.getLeaderId())) {
-                throw new IllegalArgumentException("Group với leader này đã tồn tại.");
-            }
-            input.setMemberNumber(input.getListMember().size());
-            input.setMemberList(JsonUtils.toJson(input.getListMember()));
-            return userGroupRepository.save(input);
+        var model = Optional.of(input)
+            .map(UserGroup::getId)
+            .map(userGroupRepository::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .orElseGet(UserGroup::new);
+
+        var userAdmin = userService.findById(Common.getUserId());
+        boolean isPermit = userService.isAdmin(userAdmin.getId())
+            || userService.isSaleManager(userAdmin.getId());
+        if(!isPermit) {
+            throw new SecurityException("Người dùng không có quyền cập nhật group.");
         }
-        throw new SecurityException("Người dùng không có quyền tạo group."); // Nếu không phải Admin
+
+        CopyProperty.CopyIgnoreNull(input, model);
+        model.setMemberList(JsonUtils.toJson(input.getListMember()));
+        model.setMemberNumber(model.getListMember().size());
+
+        var leader = userService.findById(model.getLeaderId());
+        model.setLeaderName(leader.getSsoId());
+        return userGroupRepository.save(model);
     }
 
-    public UserGroup update(UserGroup input){
-        var userCreate = getInfo();
-        var userAdmin = userService.findById(userCreate.getId());
-        if (userService.isAdmin(userAdmin.getId()) || userService.isSaleManager(userAdmin.getId())) {
-            var groupOld = userGroupRepository.findById(input.getId()).orElseThrow(
-                    () -> new RuntimeException("no record exists!")
-            );
-            groupOld.setListMember(JsonUtils.Json2ListObject(groupOld.getMemberList(), Integer.class));
-            var groupType = userGroupRepository.findAllByType(input.getType(), input.getId());
-
-            if (groupOld.getListMember() != null) {
-                for (UserGroup group : groupType) {
-                    group.setListMember(JsonUtils.Json2ListObject(group.getMemberList(), Integer.class));
-                    if (group.getListMember() != null) {
-                        boolean hasDuplicate = input.getListMember().stream()
-                                .anyMatch(id -> group.getListMember().contains(id));
-                        if (hasDuplicate) {
-                            throw new RuntimeException("Duplicate member ID found!");
-                        }
-                    }
-                }
-            }
-            input.setMemberList(JsonUtils.toJson(input.getListMember()));
-            input.setMemberNumber(input.getListMember().size());
-
-            return userGroupRepository.save(input);
+    public List<UserGroup> fetchGroup() {
+        var userAdmin = userService.findById(Common.getUserId());
+        boolean isPermit = userService.isAdmin(userAdmin.getId())
+            || userService.isSaleManager(userAdmin.getId());
+        if(!isPermit) {
+            throw new SecurityException("Người dùng không có quyền cập nhật group.");
         }
-        throw new SecurityException("Người dùng không có quyền cập nhật group."); // Nếu không phải Admin
-    }
-
-    public List<UserGroup> fetchGroup(){
-        var userCreate = getInfo();
-        var userAdmin = userService.findById(userCreate.getId());
-        if (userService.isAdmin(userAdmin.getId()) || userService.isSaleManager(userAdmin.getId())) {
-             var userGroups = userGroupRepository.findAllByStatus();
-             for(UserGroup userGroup : userGroups){
-                 userGroup.setListMember(JsonUtils.Json2ListObject(userGroup.getMemberList(), Integer.class));
-             }
-             return userGroups;
+        var userGroups = userGroupRepository.findAllByStatus();
+        for(UserGroup userGroup : userGroups){
+            userGroup.setListMember(JsonUtils.Json2ListObject(userGroup.getMemberList(), Integer.class));
         }
-        throw new SecurityException("Người dùng không có quyền.");
+        return userGroups;
     }
-
 }

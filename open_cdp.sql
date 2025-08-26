@@ -1372,10 +1372,10 @@ CREATE TABLE `user_group` (
   `member_number` int DEFAULT '0',
   `member_list` json NOT NULL,
   `leader_name` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `department` varchar(100) NOT NULL,
   `leader_id` int DEFAULT '0',
   `status` tinyint(1) DEFAULT '0',
   `in_time` timestamp NULL DEFAULT NULL,
-  `type` int DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `leader_id` (`leader_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb3;
@@ -1387,7 +1387,7 @@ CREATE TABLE `user_group` (
 
 LOCK TABLES `user_group` WRITE;
 /*!40000 ALTER TABLE `user_group` DISABLE KEYS */;
-INSERT INTO `user_group` VALUES (16,'SAM - TrangBTH',13,'[2, 67]','TrangBTH',50,1,'2020-02-04 03:25:50',1),(18,'SAM - LuuHT',2,'[43]','LuuHT',43,1,'2020-02-04 03:25:50',1),(19,'SALE - HaNoi',3,'[1638]','Name',1,1,'2025-05-15 03:34:34',1),(20,'Kevin',3,'[67, 1638, 1639]','Kevin2',1639,1,'2025-05-18 04:24:58',1);
+INSERT INTO `user_group` VALUES (16,'SAM - TrangBTH',2,'[2, 67]','LongHuu','Kinhdoanh',67,1,'2020-02-04 03:25:50'),(18,'SAM - LuuHT',3,'[1638, 1643, 1639]','Administrator','Kinhdoanh',2,2,'2020-02-04 03:25:50'),(19,'SALE - HaNoi',1,'[1638]','Name','Kinhdoanh',1,2,'2025-05-15 03:34:34'),(20,'Kevin',3,'[67, 1638, 1639]','Kevin2','Kinhdoanh',1639,1,'2025-05-18 04:24:58');
 /*!40000 ALTER TABLE `user_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1666,4 +1666,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-26 13:06:12
+-- Dump completed on 2025-08-26 19:10:30
