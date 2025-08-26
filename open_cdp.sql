@@ -1355,7 +1355,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (2,'Administrator','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','fqSSpT_mou2h1B_ygwekc1:APA91bE3xxIiIMzFivcG6liPBlW-6CspSPwAo4yQ6bXY8h4Y_Y9XdoITmRF-URsXm8KUhS71f6km37Kx8JnDeIJ8e2E21-4Wt9X-e7p2aL6YnIPTAmgRnv4qF16aR6vBrxQNtuZ6WIRc','UserLayout','Administrator','0987938491','flast.vn@gmail.com',1,NULL,NULL),(67,'LongHuu','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','Hữu Long','0987938491','long.huu.100@gmail.com',1,NULL,NULL),(1638,'Thanhtrung','$2a$10$i06JFYyA/3sIzdo32Fo3uumAOUGYoYDSupXvUPRemL3VByp6XZAyu',NULL,'SaleLayout','Thành Trung','03435223731','thanhtrung@gmail.com',1,NULL,NULL),(1639,'HungDB','$2a$10$ua0R48oisKWrAhkzAd9IO.hlWcmzyTumo7QTqWzGFf309e6skp8s.',NULL,'saleLayout','Bùi Đức Hùng','09634','hungbd271276@gmail.com',1,NULL,NULL),(1643,'AgentA2A','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','AiAgent','','saleai@gmail.com',1,NULL,NULL);
+INSERT INTO `user` VALUES (2,'Administrator','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','fqSSpT_mou2h1B_ygwekc1:APA91bE3xxIiIMzFivcG6liPBlW-6CspSPwAo4yQ6bXY8h4Y_Y9XdoITmRF-URsXm8KUhS71f6km37Kx8JnDeIJ8e2E21-4Wt9X-e7p2aL6YnIPTAmgRnv4qF16aR6vBrxQNtuZ6WIRc','UserLayout','Administrator','0987938491','flast.vn@gmail.com',1,NULL,NULL),(67,'LongHuu','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','Hữu Long','0987938491','long.huu.100@gmail.com',1,NULL,NULL),(1638,'ThanhTrung','$2a$10$i06JFYyA/3sIzdo32Fo3uumAOUGYoYDSupXvUPRemL3VByp6XZAyu',NULL,'SaleLayout','Thành Trung','03435223731','thanhtrung@gmail.com',1,NULL,NULL),(1639,'HungDB','$2a$10$ua0R48oisKWrAhkzAd9IO.hlWcmzyTumo7QTqWzGFf309e6skp8s.',NULL,'saleLayout','Bùi Đức Hùng','09634','hungbd271276@gmail.com',1,NULL,NULL),(1643,'AgentA2A','$2a$10$GhyjCt8X1xA/staPlqAMFOOqqbMB3qKVAkSI56GJf8PT/txXARC8.','d-y-L_k6plm_7iOjoPY--v:APA91bHNtUmk-Yitl0xGIc3lRCgzQRH7ySXFhV5IhTunuk6vbeYFtuDpiGMdqTW8rtWJxZgFDjyJpGHPhKhG5g33KNOH7IafbPp8S9MFIGruIU0ZJaW5VpNJ6jToBIKyj4JNM8BROxqv','SaleLayout','AiAgent','','saleai@gmail.com',1,NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1387,7 +1387,7 @@ CREATE TABLE `user_group` (
 
 LOCK TABLES `user_group` WRITE;
 /*!40000 ALTER TABLE `user_group` DISABLE KEYS */;
-INSERT INTO `user_group` VALUES (16,'SAM - TrangBTH',2,'[2, 67]','LongHuu','Kinhdoanh',67,1,'2020-02-04 03:25:50'),(18,'SAM - LuuHT',3,'[1638, 1643, 1639]','Administrator','Kinhdoanh',2,2,'2020-02-04 03:25:50'),(19,'SALE - HaNoi',1,'[1638]','Name','Kinhdoanh',1,2,'2025-05-15 03:34:34'),(20,'Kevin',3,'[67, 1638, 1639]','Kevin2','Kinhdoanh',1639,1,'2025-05-18 04:24:58');
+INSERT INTO `user_group` VALUES (16,'SAM - TrangBTH',2,'[2, 67]','LongHuu','Kinhdoanh',67,1,'2020-02-04 03:25:50'),(18,'SAM - LuuHT',3,'[1638, 1643, 1639]','Administrator','Kinhdoanh',2,2,'2020-02-04 03:25:50'),(19,'SALE - HaNoi',2,'[1638, 1643]','ThanhTrung','Kinhdoanh',1638,2,'2025-05-15 03:34:34'),(20,'Kevin',3,'[67, 1638, 1639]','Kevin2','Kinhdoanh',1639,1,'2025-05-18 04:24:58');
 /*!40000 ALTER TABLE `user_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1666,4 +1666,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-26 19:10:30
+-- Dump completed on 2025-08-26 21:59:46

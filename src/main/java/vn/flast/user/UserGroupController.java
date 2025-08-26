@@ -47,7 +47,7 @@ public class UserGroupController {
             return MyResponse.response(newErrors, "Lỗi tham số đầu vào");
         }
         var data = userGroupService.save(input);
-        return MyResponse.response(data, "update thông tin team thành công .!");
+        return MyResponse.response(data, "Cập nhật thông tin nhóm thành công .!");
     }
 
     @GetMapping("/fetch")

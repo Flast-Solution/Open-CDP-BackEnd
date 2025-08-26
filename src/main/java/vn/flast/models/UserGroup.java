@@ -35,6 +35,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -77,5 +78,5 @@ public class UserGroup {
     private Integer status;
 
     @Transient
-    private List<Integer> listMember;
+    private List<Integer> listMember = new ArrayList<>();
 }
