@@ -20,20 +20,17 @@ package vn.flast.service.customer;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.flast.domains.order.OrderService;
-import vn.flast.entities.customer.CustomerFilter;
 import vn.flast.entities.customer.CustomerReport;
 import vn.flast.models.*;
 import vn.flast.records.CustomerSummary;
 import vn.flast.repositories.*;
 import vn.flast.pagination.Ipage;
+import vn.flast.searchs.CustomerFilter;
 import vn.flast.utils.EntityQuery;
 import vn.flast.utils.SqlBuilder;
 import java.util.*;
@@ -124,25 +121,27 @@ public class CustomerServiceGlobal {
 
     public Ipage<?> fetchCustomerPersonal(CustomerFilter filter){
         EntityQuery<CustomerPersonal> et = EntityQuery.create(entityManager, CustomerPersonal.class);
-        et.setMaxResults(filter.getLimit()).setFirstResult(filter.page() * filter.getLimit());
-        et.integerEqualsTo("level",filter.getLevel());
-        et.integerEqualsTo("saleId", filter.getSaleId());
-        et.stringEqualsTo("email", filter.getEmail());
-        et.stringEqualsTo("mobilePhone", filter.getPhone());
+        et.setMaxResults(filter.limit()).setFirstResult(filter.page() * filter.limit());
+        et.integerEqualsTo("level",filter.level());
+        et.integerEqualsTo("saleId", filter.saleId());
+        et.stringEqualsTo("email", filter.email());
+        et.stringEqualsTo("mobilePhone", filter.mobile());
         et.addDescendingOrderBy("id");
         List<CustomerPersonal> lists = et.list();
-        return Ipage.generator(filter.getLimit(), et.count(), filter.page(), lists);
+        return Ipage.generator(filter.limit(), et.count(), filter.page(), lists);
     }
 
     public Ipage<?> fetchCustomerEnterprise(CustomerFilter filter){
-        int LIMIT = filter.getLimit();
+        int LIMIT = filter.limit();
         int OFFSET = filter.page() * LIMIT;
+
         final String totalSQL = "FROM `customer_enterprise` e left join `customer_order` c on e.id = c.enterprise_id";
-        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);;
-        sqlBuilder.addStringEquals("e.email", filter.getEmail());
-        sqlBuilder.addStringEquals("e.mobile_phone", filter.getPhone());
-        sqlBuilder.addStringEquals("e.tax_code", filter.getTaxCode());
-        sqlBuilder.addStringEquals("c.code", filter.getCode());
+        SqlBuilder sqlBuilder = SqlBuilder.init(totalSQL);
+
+        sqlBuilder.addStringEquals("e.email", filter.email());
+        sqlBuilder.addStringEquals("e.mobile_phone", filter.mobile());
+        sqlBuilder.addStringEquals("e.tax_code", filter.taxCode());
+        sqlBuilder.addStringEquals("c.code", filter.code());
         sqlBuilder.addNotNUL("e.id");
         sqlBuilder.addOrderByDesc("e.id");
 

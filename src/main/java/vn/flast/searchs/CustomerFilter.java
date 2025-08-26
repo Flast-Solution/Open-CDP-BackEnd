@@ -20,13 +20,15 @@ package vn.flast.searchs;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import vn.flast.utils.NumberUtils;
 
 public record CustomerFilter(
     String name,
+    String email,
+    Integer level,
+    Integer saleId,
+    String taxCode,
+    String code,
     String mobile,
     Integer page,
     Integer limit

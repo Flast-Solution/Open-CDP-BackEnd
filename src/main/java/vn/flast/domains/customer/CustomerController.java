@@ -106,13 +106,13 @@ public class CustomerController {
     }
 
     @GetMapping("/fetch-customer-personal")
-    public MyResponse<?> fetchCustomerPersonal(vn.flast.entities.customer.CustomerFilter filter){
+    public MyResponse<?> fetchCustomerPersonal(CustomerFilter filter){
         var data = customerServiceGlobal.fetchCustomerPersonal(filter);
         return MyResponse.response(data);
     }
 
     @GetMapping("/fetch-customer-enterprise")
-    public MyResponse<?> fetchCustomerEnterPrise(vn.flast.entities.customer.CustomerFilter filter){
+    public MyResponse<?> fetchCustomerEnterPrise(CustomerFilter filter){
         var data = customerServiceGlobal.fetchCustomerEnterprise(filter);
         return MyResponse.response(data);
     }
