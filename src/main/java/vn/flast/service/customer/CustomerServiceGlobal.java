@@ -28,10 +28,12 @@ import vn.flast.domains.order.OrderService;
 import vn.flast.entities.customer.CustomerReport;
 import vn.flast.models.*;
 import vn.flast.records.CustomerSummary;
+import vn.flast.records.EnterpriseCountOrder;
 import vn.flast.repositories.*;
 import vn.flast.pagination.Ipage;
 import vn.flast.searchs.CustomerFilter;
 import vn.flast.utils.EntityQuery;
+import vn.flast.utils.MapUtils;
 import vn.flast.utils.SqlBuilder;
 import java.util.*;
 
@@ -153,7 +155,25 @@ public class CustomerServiceGlobal {
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
 
-        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerEnterprise.class);
+        var listData = EntityQuery.<CustomerEnterprise>getListOfNativeQuery(nativeQuery);
+        if(listData.isEmpty()) {
+            return Ipage.generator(LIMIT, count, filter.page(), listData);
+        }
+
+        /* Thêm số lượng đơn hàng và tổng tiền đơn hàng */
+        var eIds = listData.stream().map(CustomerEnterprise::getId).toList();
+        String queryCountOrder = """
+            SELECT enterprise_id as eId , COUNT(*) AS count
+            FROM customer_order where enterprise_id IN(:listIds)
+            GROUP BY eId
+        """;
+        var queryCount = entityManager.createNativeQuery(queryCountOrder, EnterpriseCountOrder.class);
+        queryCount.setParameter("listIds", eIds);
+        var listCounts = EntityQuery.<EnterpriseCountOrder>getListOfNativeQuery(queryCount);
+        var mList = MapUtils.mapKeyValue(listCounts, EnterpriseCountOrder::getEId, EnterpriseCountOrder::getCount);
+        for(CustomerEnterprise enterprise : listData) {
+            enterprise.setNumOfOrder(mList.get(enterprise.getId()));
+        }
         return Ipage.generator(LIMIT, count, filter.page(), listData);
     }
 }

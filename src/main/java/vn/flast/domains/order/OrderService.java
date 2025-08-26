@@ -207,7 +207,7 @@ public class OrderService  implements Publisher, Serializable {
         String finalQuery = sqlBuilder.builder();
         var nativeQuery = entityManager.createNativeQuery("SELECT c.* " + finalQuery , CustomerOrder.class);
         nativeQuery.setMaxResults(LIMIT);
-        var orders = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        var orders = EntityQuery.<CustomerOrder>getListOfNativeQuery(nativeQuery);
         return transformDetails(orders);
     }
 
@@ -225,6 +225,7 @@ public class OrderService  implements Publisher, Serializable {
         et.integerEqualsTo("userCreateId", userCreateId);
         et.like("customerName", filter.customerName())
             .integerEqualsTo("customerId", filter.customerId())
+            .integerEqualsTo("enterpriseId", filter.enterpriseId())
             .integerEqualsTo("status", filter.status())
             .integerEqualsTo("paidStatus", filter.paidStatus())
             .stringEqualsTo("customerMobile", filter.customerPhone())

@@ -133,7 +133,7 @@ public class PayService {
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
 
-        var lists = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        List<CustomerOrder> lists = EntityQuery.getListOfNativeQuery(nativeQuery);
         List<CustomerOrder> orders = orderService.transformDetails(lists);
 
         List<OrderPayment> payments = new ArrayList<>();

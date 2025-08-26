@@ -20,10 +20,6 @@ package vn.flast.service;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
@@ -38,7 +34,6 @@ import java.util.Optional;
 
 @Service
 public class DataWorkService {
-
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -66,6 +61,6 @@ public class DataWorkService {
         var nativeQuery = entityManager.createNativeQuery("SELECT d.* " + finalQuery + "  ORDER BY d.in_time DESC", DataWork.class);
         nativeQuery.setMaxResults(limit);
         nativeQuery.setFirstResult(offset);
-        return EntityQuery.getListOfNativeQuery(nativeQuery, DataWork.class);
+        return EntityQuery.getListOfNativeQuery(nativeQuery);
     }
 }

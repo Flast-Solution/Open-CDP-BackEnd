@@ -234,7 +234,7 @@ public class ProductService {
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
 
-        var lists = EntityQuery.getListOfNativeQuery(nativeQuery, Product.class);
+        List<Product> lists = EntityQuery.getListOfNativeQuery(nativeQuery);
         List<SaleProduct> listSaleProduct = lists.stream().map(product -> {
             SaleProduct saleProduct = new SaleProduct();
             CopyProperty.CopyIgnoreNull(product, saleProduct);

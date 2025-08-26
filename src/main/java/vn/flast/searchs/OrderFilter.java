@@ -20,9 +20,6 @@ package vn.flast.searchs;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import vn.flast.utils.NumberUtils;
 
 public record OrderFilter(
@@ -35,7 +32,7 @@ public record OrderFilter(
     String customerName,
     String customerEmail,
     Integer customerId,
-    Integer companyId,
+    Integer enterpriseId,
     Integer saleId,
     String customerPhone
 ) {

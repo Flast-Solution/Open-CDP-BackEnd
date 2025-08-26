@@ -388,11 +388,11 @@ public class EntityQuery<E> {
         return jpaPath;
     }
 
-    public static <T> List<T> getListOfNativeQuery(Query query, Class<T> type){
+    public static <T> List<T> getListOfNativeQuery(Query query){
         return (List<T>) query.getResultList();
     }
 
-    public static <T> T getFirstOfNativeQuery(Query query, Class<T> type){
+    public static <T> T getFirstOfNativeQuery(Query query){
         return (T) query.getSingleResult();
     }
 

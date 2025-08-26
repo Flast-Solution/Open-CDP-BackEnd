@@ -20,9 +20,6 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -85,4 +82,8 @@ public class CustomerEnterprise {
     @Transient
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<MultipartFile> contracts = new ArrayList<>();
+
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer numOfOrder = 0;
 }

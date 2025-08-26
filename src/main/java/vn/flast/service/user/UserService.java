@@ -152,7 +152,7 @@ public class UserService {
         sqlBuilder.addIn("p.user_profile_id", List.of("5","13"));
         String finalQuery = sqlBuilder.builder();
         var users = entityManager.createNativeQuery("SELECT u.* " + finalQuery, User.class);
-        return EntityQuery.getListOfNativeQuery(users, User.class);
+        return EntityQuery.getListOfNativeQuery(users);
     }
 
     public String uploadFile(MultipartFile multipartFile) throws IOException {

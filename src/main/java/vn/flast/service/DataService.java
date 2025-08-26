@@ -273,7 +273,7 @@ public class DataService extends Subscriber implements Publisher {
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
 
-        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, Data.class);
+        var listData = EntityQuery.<Data>getListOfNativeQuery(nativeQuery);
         return Ipage.generator(LIMIT, count, filter.page(), listData);
     }
 

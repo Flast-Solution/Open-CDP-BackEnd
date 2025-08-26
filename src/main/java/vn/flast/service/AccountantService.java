@@ -67,7 +67,7 @@ public class AccountantService {
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
 
-        var lists = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        var lists = EntityQuery.<CustomerOrder>getListOfNativeQuery(nativeQuery);
         var orders = orderService.transformDetails(lists);
         return  Ipage.generator(LIMIT, count, PAGE, orders);
     }

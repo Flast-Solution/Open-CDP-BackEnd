@@ -82,7 +82,7 @@ public class DataCareService extends BaseController {
             return Ipage.empty();
         }
 
-        var listDataCare = EntityQuery.getListOfNativeQuery(nativeQuery, DataCare.class);
+        var listDataCare = EntityQuery.<DataCare>getListOfNativeQuery(nativeQuery);
         var listIds = listDataCare.stream().map(DataCare::getObjectId).toList();
         var leads = dataRepository.fetchDataIds(listIds);
         Map<Long, Data> mLeads = MapUtils.toIdentityMap(leads, Data::getId);
@@ -121,7 +121,7 @@ public class DataCareService extends BaseController {
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
 
-        var listData = EntityQuery.getListOfNativeQuery(nativeQuery, Data.class);
+        var listData = EntityQuery.<Data>getListOfNativeQuery(nativeQuery);
         return Ipage.generator(LIMIT, count, filter.page(), listData);
     }
 
@@ -174,7 +174,7 @@ public class DataCareService extends BaseController {
         nativeQuery.setMaxResults(LIMIT);
         nativeQuery.setFirstResult(OFFSET);
 
-        var listOrders = EntityQuery.getListOfNativeQuery(nativeQuery, CustomerOrder.class);
+        List<CustomerOrder> listOrders = EntityQuery.getListOfNativeQuery(nativeQuery);
         List<CustomerOrder> orders = orderService.transformDetails(listOrders);
         return Ipage.generator(LIMIT, count, filter.page(), orders);
     }
