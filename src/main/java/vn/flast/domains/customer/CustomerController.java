@@ -72,7 +72,7 @@ public class CustomerController {
             return MyResponse.response(newErrors, "Input invalid .!");
         }
         var customer = customerPersonalService.save(entity);
-        return MyResponse.response(customer);
+        return MyResponse.response(customer, "Cập nhật khách hàng thành công !");
     }
 
     @GetMapping("/find")
@@ -143,5 +143,11 @@ public class CustomerController {
             contractRepository.saveAll(contracts);
         }
         return MyResponse.response(data, "Cập nhật thông tin công ty thành công !");
+    }
+
+    @GetMapping("/find-address")
+    public MyResponse<?> find(@RequestParam Integer id) {
+        var customers = customerPersonalService.findAddress(id);
+        return MyResponse.response(customers);
     }
 }

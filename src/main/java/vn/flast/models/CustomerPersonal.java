@@ -114,6 +114,7 @@ public class CustomerPersonal {
     private Integer numOfOrder = 0;
 
     @Column(name = "date_of_birth")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dateOfBirth;
 
     @CreationTimestamp

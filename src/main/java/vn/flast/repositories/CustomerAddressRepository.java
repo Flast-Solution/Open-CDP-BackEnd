@@ -20,11 +20,12 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import vn.flast.models.CustomerAddress;
+import java.util.List;
 
 public interface CustomerAddressRepository extends JpaRepository<CustomerAddress, Long> {
+    @Query("FROM CustomerAddress p WHERE p.customerId =:customerId")
+    List<CustomerAddress> findCustomerId(Integer customerId);
 }

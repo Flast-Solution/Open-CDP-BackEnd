@@ -20,13 +20,10 @@ package vn.flast.domains.customer;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.flast.models.*;
@@ -36,47 +33,59 @@ import vn.flast.orchestration.Subscriber;
 import vn.flast.repositories.*;
 
 import vn.flast.searchs.CustomerFilter;
-import vn.flast.utils.DateUtils;
-import vn.flast.utils.EntityQuery;
-import vn.flast.utils.NumberUtils;
-import vn.flast.utils.StringUtils;
+import vn.flast.utils.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service("customerPersonalService")
+@RequiredArgsConstructor
 public class CustomerPersonalService extends Subscriber {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private CustomerTagsRepository tagsRepository;
+    private final CustomerTagsRepository tagsRepository;
+    private final CustomerOrderRepository customerOrderRepository;
+    private final CustomerPersonalRepository customerPersonalRepository;
+    private final CustomerActivitiesRepository customerActivitiesRepository;
+    private final CustomerEnterpriseRepository enterpriseRepository;
+    private final DataOwnerRepository dataOwnerRepository;
+    private final CustomerAddressRepository addressRepository;
 
-    @Autowired
-    private CustomerOrderRepository customerOrderRepository;
+    public CustomerPersonal save(CustomerPersonal input) {
+        var model = Optional.ofNullable(input)
+            .map(CustomerPersonal::getId)
+            .map(customerPersonalRepository::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .orElseGet(CustomerPersonal::new);
 
-    @Autowired
-    private CustomerPersonalRepository customerPersonalRepository;
-
-    @Autowired
-    private CustomerActivitiesRepository customerActivitiesRepository;
-
-    @Autowired
-    private CustomerEnterpriseRepository enterpriseRepository;
-
-    @Autowired
-    private DataOwnerRepository dataOwnerRepository;
-
-    public CustomerPersonal save(CustomerPersonal entity) {
-        customerPersonalRepository.save(entity);
-        var listAddress = entity.getCustomerAddress();
+        CopyProperty.CopyIgnoreNull(input, model);
+        var listAddress = model.getCustomerAddress();
         if(Objects.nonNull(listAddress)) {
-            listAddress.forEach(address -> address.setCustomerPersonal(entity));
-            listAddress.forEach(address -> address.setCustomerId(entity.getId()));
+            listAddress.forEach(address -> address.setCustomerPersonal(model));
+            listAddress.forEach(address -> address.setCustomerId(model.getId()));
         }
-        return entity;
+        var savedModel = customerPersonalRepository.save(model);
+        updateDefaultAddress(savedModel);
+        return savedModel;
+    }
+
+    private void updateDefaultAddress(CustomerPersonal customerPersonal) {
+        if(Objects.isNull(customerPersonal.getCustomerAddress())) {
+            return;
+        }
+        customerPersonal.getCustomerAddress().stream()
+        .filter(address -> Boolean.TRUE.equals(address.getIsDefault()))
+        .findFirst()
+        .ifPresent(defaultAddress -> {
+            customerPersonal.setAddress(defaultAddress.getAddress());
+            customerPersonal.setProvinceId(defaultAddress.getProvinceId());
+            customerPersonal.setWardId(defaultAddress.getWardId());
+            customerPersonalRepository.save(customerPersonal);
+        });
     }
 
     public List<CustomerPersonal> find(CustomerFilter filter) {
@@ -208,5 +217,9 @@ public class CustomerPersonalService extends Subscriber {
         .orElse(Collections.emptyList())
         .stream()
         .collect(Collectors.groupingBy(CustomerTags::getCustomerId));
+    }
+
+    public List<CustomerAddress> findAddress(Integer customerId) {
+        return addressRepository.findCustomerId(customerId);
     }
 }

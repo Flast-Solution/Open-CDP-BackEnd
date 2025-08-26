@@ -198,18 +198,16 @@ DROP TABLE IF EXISTS `customer_address`;
 CREATE TABLE `customer_address` (
   `id` int NOT NULL AUTO_INCREMENT,
   `customer_id` int unsigned DEFAULT '0',
-  `name_address` varchar(255) DEFAULT NULL,
   `receiver_name` varchar(100) DEFAULT '',
   `address` varchar(255) DEFAULT NULL,
   `ward_id` int unsigned DEFAULT '0',
-  `district_id` int unsigned DEFAULT '0',
   `province_id` int unsigned DEFAULT '0',
   `mobile_phone` varchar(20) DEFAULT NULL,
   `is_default` tinyint unsigned DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8204 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=8213 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,6 +216,7 @@ CREATE TABLE `customer_address` (
 
 LOCK TABLES `customer_address` WRITE;
 /*!40000 ALTER TABLE `customer_address` DISABLE KEYS */;
+INSERT INTO `customer_address` VALUES (8212,24,'Hà Nam','123 Đường 5',218,1,'0985155445',1,'2025-08-26 02:33:13','2025-08-26 02:33:13');
 /*!40000 ALTER TABLE `customer_address` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -493,7 +492,7 @@ CREATE TABLE `customer_personal` (
   KEY `mobile_index` (`mobile`),
   KEY `saleId_index` (`sale_id`),
   KEY `token_idx` (`token_confirm`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -502,7 +501,7 @@ CREATE TABLE `customer_personal` (
 
 LOCK TABLES `customer_personal` WRITE;
 /*!40000 ALTER TABLE `customer_personal` DISABLE KEYS */;
-INSERT INTO `customer_personal` VALUES (22,NULL,'2','other',1,NULL,NULL,'Hà NAm',NULL,NULL,'Hà Nội',NULL,NULL,NULL,'manvtk32@gmail.com',NULL,'0974260540',NULL,NULL,NULL,NULL,'2025-07-18 08:14:46','2025-07-18 08:14:46',NULL,0),(23,NULL,'67','other',1,NULL,NULL,'Pép DiaLa',NULL,NULL,'Hà Nội',NULL,NULL,NULL,NULL,NULL,'098545555',NULL,NULL,NULL,NULL,'2025-07-20 12:09:50','2025-07-20 15:07:55',NULL,0),(24,NULL,'2','other',2,NULL,NULL,'Bal Fing',NULL,NULL,'Tuyên Quang',NULL,NULL,NULL,'',NULL,'0984554774',NULL,NULL,NULL,NULL,'2025-07-24 15:27:31','2025-07-24 15:27:31',NULL,0);
+INSERT INTO `customer_personal` VALUES (22,NULL,'2','other',1,NULL,NULL,'Hà NAm',NULL,NULL,'Hà Nội',NULL,NULL,NULL,'manvtk32@gmail.com',NULL,'0974260540',NULL,NULL,NULL,NULL,'2025-07-18 08:14:46','2025-07-18 08:14:46',NULL,0),(23,NULL,'67','other',1,NULL,NULL,'Pép DiaLa',NULL,NULL,'Hà Nội',NULL,NULL,NULL,NULL,NULL,'098545555',NULL,NULL,NULL,NULL,'2025-07-20 12:09:50','2025-07-20 15:07:55',NULL,0),(24,NULL,'2','other',2,NULL,NULL,'Bal Fing',1,218,'123 Đường 5',NULL,NULL,NULL,'hns-01@gmail.com',NULL,'0984554774',NULL,NULL,NULL,'1990-08-26 00:00:00','2025-07-24 15:27:31','2025-08-26 03:08:15',NULL,0);
 /*!40000 ALTER TABLE `customer_personal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -806,7 +805,7 @@ CREATE TABLE `flast_projects_list` (
 
 LOCK TABLES `flast_projects_list` WRITE;
 /*!40000 ALTER TABLE `flast_projects_list` DISABLE KEYS */;
-INSERT INTO `flast_projects_list` VALUES (4,'Chuyến đổi số công ty vận hành cảng ChuLai','Dự án kéo dài 2 năm, 30 module chức năng','2025-08-01','2025-08-31','In Progress',200000000.00,'High',1,1638,'[\"LongHuu\", \"Thanhtrung\", \"HungDB\", \"AgentA2A\"]',15,'2025-08-24 02:00:30','2025-08-24 04:21:14');
+INSERT INTO `flast_projects_list` VALUES (4,'Chuyến đổi số công ty vận hành cảng ChuLai','Dự án kéo dài 2 năm, 30 module chức năng','2025-08-01','2025-08-31','In Progress',200000000.00,'High',1,1638,'[\"LongHuu\", \"Thanhtrung\", \"HungDB\", \"AgentA2A\"]',45,'2025-08-24 02:00:30','2025-08-25 14:52:16');
 /*!40000 ALTER TABLE `flast_projects_list` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1667,4 +1666,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-24 18:55:59
+-- Dump completed on 2025-08-26 10:11:13
