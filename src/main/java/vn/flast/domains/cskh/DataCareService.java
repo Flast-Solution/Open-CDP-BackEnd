@@ -110,7 +110,7 @@ public class DataCareService extends BaseController {
         sqlBuilder.addDateBetween("d.in_time", filter.getFrom(), filter.getTo());
         sqlBuilder.addNotIn("d.status", DataService.DATA_STATUS.THANH_CO_HOI.getStatusCode());
 
-        Date dayBefore = DateUtils.addDays(new Date(), -7);
+        Date dayBefore = DateUtils.addDays(new Date(), -3);
         sqlBuilder.addDateLessThan("d.in_time", dayBefore);
 
         String finalQuery = sqlBuilder.builder();
