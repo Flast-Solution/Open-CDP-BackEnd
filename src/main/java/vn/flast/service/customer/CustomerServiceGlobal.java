@@ -79,8 +79,8 @@ public class CustomerServiceGlobal {
         );
         info.notes = findNotes(customer);
         info.activities = customerActivitiesRepository.findByCustomerId(customer.getId());
-        info.orders = findCustomerOrder(customerId, CustomerOrder.TYPE_ORDER);
-        info.opportunities = findCustomerOrder(customerId, CustomerOrder.TYPE_CO_HOI);
+        info.orders = findCustomerOrder(customerId, CustomerOrder.TYPE_ORDER, 5);
+        info.opportunities = findCustomerOrder(customerId, CustomerOrder.TYPE_CO_HOI, 20);
         info.saleName = saleTakeCare(customer.getSaleId());
         info.summary = summary(customer.getMobile());
         info.tags = tagsRepository.findByCustomerId(customerId);
@@ -109,8 +109,8 @@ public class CustomerServiceGlobal {
         return (CustomerSummary) nativeQuery.getSingleResult();
     }
 
-    private List<CustomerOrder> findCustomerOrder(Long customerId, String type) {
-        var orders = customerOrderRepository.findByCustomerId(customerId, type);
+    private List<CustomerOrder> findCustomerOrder(Long customerId, String type, Integer limit) {
+        var orders = customerOrderRepository.findByCustomerId(customerId, type, limit);
         return orderService.transformDetails(orders);
     }
 

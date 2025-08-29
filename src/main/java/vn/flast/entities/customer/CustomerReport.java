@@ -20,9 +20,6 @@ package vn.flast.entities.customer;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import vn.flast.models.*;
 import vn.flast.records.CustomerSummary;
 import java.util.List;
