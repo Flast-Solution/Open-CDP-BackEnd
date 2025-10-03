@@ -1,6 +1,6 @@
-package vn.flast.security;
+package vn.flast.models;
 /**************************************************************************/
-/*  app.java                                                              */
+/*  MaterialOutbound.java                                                 */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -20,28 +20,48 @@ package vn.flast.security;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.stereotype.Component;
-import vn.flast.entities.MyResponse;
-import vn.flast.utils.JsonUtils;
-import java.io.IOException;
+import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 
-@Component("customAuthenticationEntryPoint")
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+import jakarta.persistence.*;
+import java.math.BigDecimal;
 
-    @Override
-    public void commence(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        AuthenticationException authException
-    ) throws IOException {
-        MyResponse<?> ret = MyResponse.response(401, authException.getMessage());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write(JsonUtils.toJson(ret));
-    }
+@DynamicInsert
+@Entity
+@Table(name = "material_outbound")
+@Setter @Getter
+@NoArgsConstructor
+public class MaterialOutbound {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "material_id", nullable = false)
+    private Long materialId;
+
+    @Column(name = "warehouse_id", nullable = false)
+    private Integer warehouseId;
+
+    @Positive(message = "Quantity phải lớn hơn 0")
+    @Column(name = "quantity")
+    private BigDecimal quantity;
+
+    @Column(name = "width")
+    private BigDecimal width;
+
+    @Column(name = "height")
+    private BigDecimal height;
+
+    @Column(name = "sso_id")
+    private String ssoId;
+
+    @CreationTimestamp
+    @Column(name = "date")
+    private String date;
 }
