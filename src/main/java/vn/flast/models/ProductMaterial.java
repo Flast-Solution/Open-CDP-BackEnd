@@ -1,6 +1,6 @@
 package vn.flast.models;
 /**************************************************************************/
-/*  Materials.java                                                        */
+/*  ProductMaterial.java                                                  */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -20,45 +20,44 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
-import vn.flast.domains.material.UnitType;
+
 import java.math.BigDecimal;
 
-@DynamicInsert
+@Table(name = "product_material")
 @Entity
-@Table(name = "materials")
-@Setter @Getter
-@NoArgsConstructor
-public class Materials {
+@Getter @Setter
+public class ProductMaterial {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "product_id")
+    private Long productId;
 
-    @Column(name = "unit_type", nullable = false)
-    private UnitType unitType;
+    @Column(name = "material_id")
+    private Long materialId;
 
-    @Column(name = "unit", nullable = false)
-    private String unit;
+    @Positive(message = "Quantity phải lớn hơn 0")
+    @Column(name = "quantity")
+    private BigDecimal quantity;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "width")
+    private BigDecimal width;
 
-    @Positive(message = "Giá phải lớn hơn 0")
-    @Column(name = "price_per_unit")
-    private BigDecimal pricePerUnit;
+    @Column(name = "height")
+    private BigDecimal height;
 
-    @CreationTimestamp
-    @Column(name = "created_at")
-    private String createdAt;
+    @Column(name = "price")
+    private BigDecimal price;
 }

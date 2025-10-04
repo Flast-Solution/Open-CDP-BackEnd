@@ -45,6 +45,9 @@ public class MaterialOutbound {
     @Column(name = "material_id", nullable = false)
     private Long materialId;
 
+    @Column(name = "product_material_id", nullable = false)
+    private Long productMaterialId;
+
     @Column(name = "warehouse_id", nullable = false)
     private Integer warehouseId;
 

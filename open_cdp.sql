@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: localhost    Database: open_cdp
 -- ------------------------------------------------------
--- Server version	8.0.43
+-- Server version	8.0.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -852,6 +852,43 @@ INSERT INTO `flast_projects_task` VALUES (5,'1746032451289',4,'Triển khai Data
 UNLOCK TABLES;
 
 --
+-- Table structure for table `flast_projects_tasks`
+--
+
+DROP TABLE IF EXISTS `flast_projects_tasks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `flast_projects_tasks` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `project_id` int NOT NULL,
+  `name` varchar(200) NOT NULL,
+  `description` text,
+  `assigned_to` int DEFAULT NULL,
+  `status` enum('To Do','In Progress','Done','Cancelled') DEFAULT 'To Do',
+  `priority` enum('Low','Medium','High') DEFAULT 'Medium',
+  `start_date` date DEFAULT NULL,
+  `completed_date` date DEFAULT NULL,
+  `user_created_id` bigint NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`),
+  KEY `user_created_id` (`user_created_id`),
+  CONSTRAINT `flast_projects_tasks_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `flast_projects_list` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `flast_projects_tasks_ibfk_2` FOREIGN KEY (`user_created_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `flast_projects_tasks`
+--
+
+LOCK TABLES `flast_projects_tasks` WRITE;
+/*!40000 ALTER TABLE `flast_projects_tasks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `flast_projects_tasks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `material_inbound`
 --
 
@@ -945,8 +982,9 @@ DROP TABLE IF EXISTS `material_outbound`;
 CREATE TABLE `material_outbound` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `material_id` bigint DEFAULT NULL,
-  `warehouse_id` int DEFAULT NULL,
+  `product_material_id` bigint NOT NULL,
   `quantity` decimal(15,2) NOT NULL,
+  `warehouse_id` int DEFAULT NULL,
   `width` decimal(15,2) DEFAULT NULL,
   `height` decimal(15,2) DEFAULT NULL,
   `date` datetime NOT NULL,
@@ -1177,6 +1215,38 @@ CREATE TABLE `product_image` (
 LOCK TABLES `product_image` WRITE;
 /*!40000 ALTER TABLE `product_image` DISABLE KEYS */;
 /*!40000 ALTER TABLE `product_image` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `product_material`
+--
+
+DROP TABLE IF EXISTS `product_material`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `product_material` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `material_id` bigint NOT NULL,
+  `product_id` int unsigned NOT NULL,
+  `quantity` decimal(15,2) NOT NULL,
+  `width` decimal(15,2) DEFAULT NULL,
+  `height` decimal(15,2) DEFAULT NULL,
+  `price` decimal(15,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_product_id` (`product_id`),
+  KEY `idx-cmp-material_id` (`material_id`),
+  CONSTRAINT `fk_product_material_material_id` FOREIGN KEY (`material_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_product_material_product_id` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=308 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product_material`
+--
+
+LOCK TABLES `product_material` WRITE;
+/*!40000 ALTER TABLE `product_material` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product_material` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1828,10 +1898,6 @@ LOCK TABLES `warehouse_stock` WRITE;
 INSERT INTO `warehouse_stock` VALUES (1,'Kho Trung Hòa','100m2','0345223731','Trung Hòa, Cầu Giấy, Hà Nội',1),(4,'Kho Trung Hòa 3','100m2','0345223732','Trung Hòa, Cầu Giấy, Hà Nội',1),(5,'kho Nam Từ Liêm','200m','0963484761','Nam Từ Liêm Hà Nội 2',1),(6,'kho Nam Từ Liêm 4','300m','0963484766','Nam Từ Liêm Hà Nội 4',1),(7,'kho Nam Từ Liêm5','300m','0963484764','Nam Từ Liêm Hà Nội 5',1);
 /*!40000 ALTER TABLE `warehouse_stock` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'open_cdp'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1842,4 +1908,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-03 22:34:17
+-- Dump completed on 2025-10-04  9:29:45
