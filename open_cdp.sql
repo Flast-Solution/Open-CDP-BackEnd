@@ -1232,6 +1232,8 @@ CREATE TABLE `product_material` (
   `width` decimal(15,2) DEFAULT NULL,
   `height` decimal(15,2) DEFAULT NULL,
   `price` decimal(15,2) DEFAULT NULL,
+  `sso_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `note` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_product_id` (`product_id`),
   KEY `idx-cmp-material_id` (`material_id`),
@@ -1908,4 +1910,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-04  9:29:45
+-- Dump completed on 2025-10-06 10:09:48

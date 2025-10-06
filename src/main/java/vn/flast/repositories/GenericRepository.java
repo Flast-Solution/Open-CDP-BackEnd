@@ -25,7 +25,9 @@ import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,6 +38,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @NoRepositoryBean
 public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
@@ -66,23 +70,19 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
         }
 
         public SpecificationBuilder<T> isEqual(String fieldName, Object value) {
-            Specification<T> spec = (root, query, cb) -> {
-                if (value == null) {
-                    return cb.isNull(getFieldPath(root, fieldName));
-                }
-                return cb.equal(getFieldPath(root, fieldName), value);
-            };
+            if(Objects.isNull(value)) {
+                return this;
+            }
+            Specification<T> spec = (root, query, cb) -> cb.equal(getFieldPath(root, fieldName), value);
             addToCurrentScope(spec);
             return this;
         }
 
         public SpecificationBuilder<T> like(String fieldName, String value) {
-            Specification<T> spec = (root, query, cb) -> {
-                if (value == null) {
-                    return cb.conjunction();
-                }
-                return cb.like(cb.lower(getFieldPath(root, fieldName)), "%" + value.toLowerCase() + "%");
-            };
+            if(Objects.isNull(value)) {
+                return this;
+            }
+            Specification<T> spec = (root, query, cb) -> cb.like(cb.lower(getFieldPath(root, fieldName)), "%" + value.toLowerCase() + "%");
             addToCurrentScope(spec);
             return this;
         }
@@ -224,12 +224,24 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
             return repository.findAll(buildSpecification());
         }
 
+        public Optional<T> findOne() {
+            return repository.findOne(buildSpecification());
+        }
+
         public List<T> findAll(int offset, int limit) {
             return repository.findAll(buildSpecification(), repository.createPageRequest(offset, limit)).getContent();
         }
 
         public List<T> findAll(int offset, int limit, Sort sort) {
             return repository.findAll(buildSpecification(), repository.createPageRequest(offset, limit, sort)).getContent();
+        }
+
+        public Page<T> toPage(int offset, int limit, Sort sort) {
+            if (offset < 0 || limit <= 0) {
+                throw new IllegalArgumentException("Offset must be non-negative and limit must be positive");
+            }
+            Pageable pageable = PageRequest.of(offset / limit, limit, sort);
+            return repository.findAll(buildSpecification(), pageable);
         }
 
         public long countItem() {

@@ -29,7 +29,6 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.math.BigDecimal;
 
 @Table(name = "product_material")
@@ -60,4 +59,10 @@ public class ProductMaterial {
 
     @Column(name = "price")
     private BigDecimal price;
+
+    @Column(name = "note")
+    private String note;
+
+    @Column(name = "sso_id")
+    private String ssoId;
 }

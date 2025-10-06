@@ -20,9 +20,6 @@ package vn.flast.domains.stock;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-
-
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -192,7 +189,7 @@ public class WarehouseService {
 
     public WarehouseProduct findById(Integer id) {
         return wareHouseRepository.findById(id).orElseThrow(
-            () -> new RuntimeException("Bản ghi không tồn tại !")
+            () -> new RuntimeException("Bản ghi kho không tồn tại !")
         );
     }
 
