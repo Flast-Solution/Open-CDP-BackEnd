@@ -61,7 +61,7 @@ public class ProductMaterialController extends BaseController {
     }
 
     @PostMapping("/delete/:id")
-    public MyResponse<?> create(@PathVariable Long id) {
+    public MyResponse<?> delete(@PathVariable Long id) {
         productMaterialRepository.deleteById(id);
         return MyResponse.response("Oki", "Xóa định mức sản phẩm thành công !");
     }
