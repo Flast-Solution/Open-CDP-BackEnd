@@ -20,11 +20,16 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
+import lombok.Setter;
+import org.hibernate.query.Query;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +55,9 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
         private final List<Specification<T>> specifications;
         private boolean useOr = false;
         private SpecificationBuilder<T> currentGroup = null;
+
+        @Setter
+        private Class<T> entityClass;
 
         @SuppressWarnings("rawtypes")
         private final Map<String, Join> joins;
@@ -246,6 +254,33 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
 
         public long countItem() {
             return repository.count(buildSpecification());
+        }
+
+        /**
+         * Lấy câu SQL string từ Specification (với placeholder ?)
+         * @param entityManager EntityManager để build query
+         * @param specification Specification cần trích xuất
+         * @return SQL string (ví dụ: "SELECT ... WHERE name LIKE ? AND age > ?")
+         */
+        @SuppressWarnings("rawtypes")
+        public String getSqlQuery(EntityManager entityManager, Specification<T> specification) {
+            if(Objects.isNull(entityClass)) {
+                throw new RuntimeException("Can't get Query with null entityClass !");
+            }
+
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+            Root<T> root = criteriaQuery.from(entityClass);
+
+            /* Áp dụng Specification để lấy Predicate */
+            Predicate predicate = specification.toPredicate(root, criteriaQuery, criteriaBuilder);
+            criteriaQuery.where(predicate);
+            criteriaQuery.select(root); /* SELECT * mặc định */
+
+            /* Unwrap thành Hibernate Query để lấy SQL */
+            jakarta.persistence.Query jpQuery = entityManager.createQuery(criteriaQuery);
+            Query hibernateQuery = jpQuery.unwrap(Query.class);
+            return hibernateQuery.getQueryString();
         }
     }
 
