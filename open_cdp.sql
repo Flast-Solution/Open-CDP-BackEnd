@@ -981,14 +981,13 @@ DROP TABLE IF EXISTS `material_outbound`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `material_outbound` (
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `manufacture_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `material_id` bigint DEFAULT NULL,
-  `product_material_id` bigint NOT NULL,
   `quantity` decimal(15,2) NOT NULL,
   `warehouse_id` int DEFAULT NULL,
   `width` decimal(15,2) DEFAULT NULL,
   `height` decimal(15,2) DEFAULT NULL,
   `date` datetime NOT NULL,
-  `purpose` varchar(255) DEFAULT NULL,
   `sso_id` varchar(19) NOT NULL,
   `notes` text,
   PRIMARY KEY (`id`),
@@ -1215,6 +1214,39 @@ CREATE TABLE `product_image` (
 LOCK TABLES `product_image` WRITE;
 /*!40000 ALTER TABLE `product_image` DISABLE KEYS */;
 /*!40000 ALTER TABLE `product_image` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `product_manufacture`
+--
+
+DROP TABLE IF EXISTS `product_manufacture`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `product_manufacture` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `code` varchar(255) NOT NULL,
+  `product_id` int unsigned NOT NULL,
+  `date_start` datetime NOT NULL,
+  `date_end` datetime NOT NULL,
+  `target` int unsigned NOT NULL,
+  `achieved` int unsigned NOT NULL,
+  `sso_id` varchar(200) NOT NULL,
+  `status` int DEFAULT '0',
+  `in_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`id`),
+  KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product_manufacture`
+--
+
+LOCK TABLES `product_manufacture` WRITE;
+/*!40000 ALTER TABLE `product_manufacture` DISABLE KEYS */;
+/*!40000 ALTER TABLE `product_manufacture` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1910,4 +1942,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-06 10:09:48
+-- Dump completed on 2025-10-15 18:07:55
