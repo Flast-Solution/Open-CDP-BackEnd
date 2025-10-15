@@ -1,6 +1,6 @@
 package vn.flast.repositories;
 /**************************************************************************/
-/*  app.java                                                              */
+/*  ProductManufactureRepository.java                                     */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -21,15 +21,7 @@ package vn.flast.repositories;
 /**************************************************************************/
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import vn.flast.models.Product;
-import java.util.List;
+import vn.flast.models.ProductManufacture;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
-
-    @Query("FROM Product p WHERE p.code = :code")
-    Product findByCode(String code);
-
-    @Query("FROM Product p WHERE p.id IN (:ids)")
-    List<Product> findByListId(List<Long> ids);
+public interface ProductManufactureRepository extends JpaRepository<ProductManufacture, Long> {
 }

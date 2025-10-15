@@ -1,6 +1,6 @@
-package vn.flast.repositories;
+package vn.flast.models;
 /**************************************************************************/
-/*  app.java                                                              */
+/*  ProductManufacture.java                                               */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -20,16 +20,57 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import vn.flast.models.Product;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import java.util.Date;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+@DynamicInsert
+@Table(name = "product_manufacture")
+@Entity
+@Getter @Setter
+public class ProductManufacture {
 
-    @Query("FROM Product p WHERE p.code = :code")
-    Product findByCode(String code);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    @Query("FROM Product p WHERE p.id IN (:ids)")
-    List<Product> findByListId(List<Long> ids);
+    @Column(name = "product_id")
+    private Long productId;
+
+    @Column(name = "code")
+    private String code;
+
+    @Column(name = "date_start")
+    private Date dateStart;
+
+    @Column(name = "date_end")
+    private Date dateEnd;
+
+    @Column(name = "target")
+    private Integer target;
+
+    @Column(name = "achieved")
+    private Integer achieved;
+
+    @Column(name = "note")
+    private String note;
+
+    @Column(name = "sso_id")
+    private String ssoId;
+
+    @Column(name = "status")
+    private Integer status = 0;
+
+    @CreationTimestamp
+    @Column(name = "in_time")
+    private String inTime;
 }
