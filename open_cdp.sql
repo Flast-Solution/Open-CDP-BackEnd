@@ -911,7 +911,7 @@ CREATE TABLE `material_inbound` (
   KEY `warehouse_id` (`warehouse_id`),
   CONSTRAINT `material_inbound_ibfk_1` FOREIGN KEY (`material_id`) REFERENCES `materials` (`id`),
   CONSTRAINT `material_inbound_ibfk_2` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse_stock` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -920,6 +920,7 @@ CREATE TABLE `material_inbound` (
 
 LOCK TABLES `material_inbound` WRITE;
 /*!40000 ALTER TABLE `material_inbound` DISABLE KEYS */;
+INSERT INTO `material_inbound` VALUES (1,1,1,100.00,10.00,10.00,'2025-10-16 00:00:00','Bãi Bằng','Administrator',NULL);
 /*!40000 ALTER TABLE `material_inbound` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -954,13 +955,12 @@ CREATE TABLE `material_inventory` (
   `material_id` bigint DEFAULT NULL,
   `warehouse_id` int DEFAULT NULL,
   `quantity` decimal(15,2) DEFAULT '0.00',
-  `min_stock` decimal(15,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `material_id` (`material_id`),
   KEY `warehouse_id` (`warehouse_id`),
   CONSTRAINT `material_inventory_ibfk_1` FOREIGN KEY (`material_id`) REFERENCES `materials` (`id`),
   CONSTRAINT `material_inventory_ibfk_2` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse_stock` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -969,6 +969,7 @@ CREATE TABLE `material_inventory` (
 
 LOCK TABLES `material_inventory` WRITE;
 /*!40000 ALTER TABLE `material_inventory` DISABLE KEYS */;
+INSERT INTO `material_inventory` VALUES (1,1,1,100.00);
 /*!40000 ALTER TABLE `material_inventory` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -981,10 +982,10 @@ DROP TABLE IF EXISTS `material_outbound`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `material_outbound` (
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `warehouse_id` int DEFAULT NULL,
   `manufacture_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `material_id` bigint DEFAULT NULL,
   `quantity` decimal(15,2) NOT NULL,
-  `warehouse_id` int DEFAULT NULL,
   `width` decimal(15,2) DEFAULT NULL,
   `height` decimal(15,2) DEFAULT NULL,
   `date` datetime NOT NULL,
@@ -1052,7 +1053,7 @@ CREATE TABLE `materials` (
   `price_per_unit` decimal(15,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1061,6 +1062,7 @@ CREATE TABLE `materials` (
 
 LOCK TABLES `materials` WRITE;
 /*!40000 ALTER TABLE `materials` DISABLE KEYS */;
+INSERT INTO `materials` VALUES (1,'Kẽm','DIMENSION','1','Tính theo một m2',1200000.00,'2025-10-16 04:42:09');
 /*!40000 ALTER TABLE `materials` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1233,6 +1235,8 @@ CREATE TABLE `product_manufacture` (
   `achieved` int unsigned NOT NULL,
   `sso_id` varchar(200) NOT NULL,
   `status` int DEFAULT '0',
+  `material_standard` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `material_real` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `in_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   PRIMARY KEY (`id`),
@@ -1259,6 +1263,7 @@ DROP TABLE IF EXISTS `product_material`;
 CREATE TABLE `product_material` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `material_id` bigint NOT NULL,
+  `material_unit` varchar(100) DEFAULT NULL,
   `product_id` int unsigned NOT NULL,
   `quantity` decimal(15,2) NOT NULL,
   `width` decimal(15,2) DEFAULT NULL,
@@ -1942,4 +1947,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-15 18:07:55
+-- Dump completed on 2025-10-16 17:03:18

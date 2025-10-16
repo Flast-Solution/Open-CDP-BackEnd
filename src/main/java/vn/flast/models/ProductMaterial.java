@@ -47,6 +47,9 @@ public class ProductMaterial {
     @Column(name = "material_id")
     private Long materialId;
 
+    @Column(name = "material_unit")
+    private Long materialUnit;
+
     @Positive(message = "Quantity phải lớn hơn 0")
     @Column(name = "quantity")
     private BigDecimal quantity;

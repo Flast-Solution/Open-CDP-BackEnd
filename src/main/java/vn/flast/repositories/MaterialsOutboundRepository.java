@@ -21,7 +21,12 @@ package vn.flast.repositories;
 /**************************************************************************/
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import vn.flast.models.MaterialOutbound;
 
 public interface MaterialsOutboundRepository extends JpaRepository<MaterialOutbound, Long> {
+    @Modifying
+    @Query("DELETE FROM MaterialOutbound m WHERE m.materialId =:materialId")
+    void deleteByMaterialId(Long materialId);
 }

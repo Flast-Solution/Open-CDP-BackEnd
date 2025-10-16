@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum UnitType {
-    QUANTITY("quantity"),
-    DIMENSION("dimension"),
-    WEIGHT("weight");
+    QUANTITY("QUANTITY"),
+    DIMENSION("DIMENSION"),
+    WEIGHT("WEIGHT");
     private final String value;
 }

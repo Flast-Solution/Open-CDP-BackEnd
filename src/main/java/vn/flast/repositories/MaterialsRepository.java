@@ -20,8 +20,7 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import vn.flast.models.Materials;
 
-public interface MaterialsRepository extends JpaRepository<Materials, Long> {
+public interface MaterialsRepository extends GenericRepository<Materials, Long> {
 }

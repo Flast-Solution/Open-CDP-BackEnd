@@ -1,31 +1,6 @@
 package vn.flast.repositories;
-/**************************************************************************/
-/*  GenericRepository.java                                                */
-/**************************************************************************/
-/*                       Tệp này là một phần của:                         */
-/*                             Open CDP                                   */
-/*                        https://flast.vn                                */
-/**************************************************************************/
-/* Bản quyền (c) 2025 - này thuộc về các cộng tác viên Flast Solution     */
-/* (xem AUTHORS.md).                                                      */
-/* Bản quyền (c) 2024-2025 Long Huu, Thành Trung                          */
-/*                                                                        */
-/* Bạn được quyền sử dụng phần mềm này miễn phí cho bất kỳ mục đích nào,  */
-/* bao gồm sao chép, sửa đổi, phân phối, bán lại…                         */
-/*                                                                        */
-/* Chỉ cần giữ nguyên thông tin bản quyền và nội dung giấy phép này trong */
-/* các bản sao.                                                           */
-/*                                                                        */
-/* Đội ngũ phát triển mong rằng phần mềm được sử dụng đúng mục đích và    */
-/* có trách nghiệm                                                        */
-/**************************************************************************/
 
-import lombok.Setter;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,13 +9,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import vn.flast.pagination.Ipage;
+import java.util.*;
 
 @NoRepositoryBean
 public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
@@ -52,29 +22,28 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
         private boolean useOr = false;
         private SpecificationBuilder<T> currentGroup = null;
 
-        @Setter
-        private Class<T> entityClass;
-
-        @SuppressWarnings("rawtypes")
-        private final Map<String, Join> joins;
+        private final List<String> joinAttributes;
+        private final List<String> fetchAttributes;
 
         private SpecificationBuilder(GenericRepository<T, ?> repository) {
             this.repository = repository;
             this.specifications = new ArrayList<>();
-            this.joins = new HashMap<>();
+            this.joinAttributes = new ArrayList<>();
+            this.fetchAttributes = new ArrayList<>();
         }
 
         public SpecificationBuilder<T> join(String attribute) {
-            joins.computeIfAbsent(attribute, key -> ((Root<?>) getCurrentRoot()).join(key, JoinType.LEFT));
+            joinAttributes.add(attribute);
             return this;
         }
 
-        private Object getCurrentRoot() {
-            return currentGroup != null ? currentGroup : this;
+        public SpecificationBuilder<T> fetch(String attribute) {
+            fetchAttributes.add(attribute);
+            return this;
         }
 
         public SpecificationBuilder<T> isEqual(String fieldName, Object value) {
-            if(Objects.isNull(value)) {
+            if (Objects.isNull(value)) {
                 return this;
             }
             Specification<T> spec = (root, query, cb) -> cb.equal(getFieldPath(root, fieldName), value);
@@ -83,7 +52,7 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
         }
 
         public SpecificationBuilder<T> like(String fieldName, String value) {
-            if(Objects.isNull(value)) {
+            if (Objects.isNull(value)) {
                 return this;
             }
             Specification<T> spec = (root, query, cb) -> cb.like(cb.lower(getFieldPath(root, fieldName)), "%" + value.toLowerCase() + "%");
@@ -172,7 +141,8 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
                 throw new IllegalStateException("Nested groups are not supported");
             }
             currentGroup = new SpecificationBuilder<>(repository);
-            currentGroup.joins.putAll(this.joins); /* Kế thừa các join từ parent */
+            currentGroup.joinAttributes.addAll(this.joinAttributes);
+            currentGroup.fetchAttributes.addAll(this.fetchAttributes);
             return this;
         }
 
@@ -198,8 +168,10 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
             String[] parts = fieldName.split("\\.");
             Path<?> path = root;
             for (String part : parts) {
-                if (joins.containsKey(part)) {
-                    path = joins.get(part);
+                if (joinAttributes.contains(part)) {
+                    path = ((Root<?>) path).join(part, JoinType.LEFT);
+                } else if (fetchAttributes.contains(part)) {
+                    path = ((Root<?>) path).join(part, JoinType.LEFT);
                 } else {
                     path = path.get(part);
                 }
@@ -211,14 +183,24 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
             if (currentGroup != null) {
                 throw new IllegalStateException("Unclosed group detected");
             }
-            if (specifications.isEmpty()) {
+            if (specifications.isEmpty() && joinAttributes.isEmpty() && fetchAttributes.isEmpty()) {
                 return (root, query, cb) -> cb.conjunction();
             }
             return (root, query, cb) -> {
-                /* Áp dụng các join trước khi tạo predicate */
-                joins.forEach((attribute, join) -> root.join(attribute, JoinType.LEFT));
+                /* Apply joins */
+                @SuppressWarnings("rawtypes")
+                Map<String, Join> joins = new HashMap<>();
+                for (String attribute : joinAttributes) {
+                    joins.computeIfAbsent(attribute, key -> root.join(key, JoinType.LEFT));
+                }
+                /* Apply fetches */
+                for (String attribute : fetchAttributes) {
+                    root.fetch(attribute, JoinType.LEFT);
+                }
+                /* Build predicates */
                 Predicate[] predicates = specifications.stream()
                     .map(spec -> spec.toPredicate(root, query, cb))
+                    .filter(Objects::nonNull)
                     .toArray(Predicate[]::new);
                 return useOr ? cb.or(predicates) : cb.and(predicates);
             };
@@ -240,12 +222,13 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
             return repository.findAll(buildSpecification(), repository.createPageRequest(offset, limit, sort)).getContent();
         }
 
-        public Page<T> toPage(int offset, int limit, Sort sort) {
+        public Ipage<T> toPage(int offset, int limit, Sort sort) {
             if (offset < 0 || limit <= 0) {
                 throw new IllegalArgumentException("Offset must be non-negative and limit must be positive");
             }
             Pageable pageable = PageRequest.of(offset / limit, limit, sort);
-            return repository.findAll(buildSpecification(), pageable);
+            Page<T> page = repository.findAll(buildSpecification(), pageable);
+            return Ipage.generator(limit, page.getTotalElements(), page.getNumber(), page.getContent());
         }
 
         public long countItem() {
@@ -291,6 +274,10 @@ public interface GenericRepository<T, ID> extends JpaRepository<T, ID>, JpaSpeci
 
     default SpecificationBuilder<T> join(String attribute) {
         return new SpecificationBuilder<>(this).join(attribute);
+    }
+
+    default SpecificationBuilder<T> fetch(String attribute) {
+        return new SpecificationBuilder<>(this).fetch(attribute);
     }
 
     default PageRequest createPageRequest(int offset, int limit) {

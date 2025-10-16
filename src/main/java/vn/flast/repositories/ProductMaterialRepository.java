@@ -20,7 +20,12 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import vn.flast.models.ProductMaterial;
 
 public interface ProductMaterialRepository extends GenericRepository<ProductMaterial, Long> {
+    @Modifying
+    @Query("DELETE FROM ProductMaterial m WHERE m.materialId =:materialId")
+    void deleteByMaterialId(Long materialId);
 }

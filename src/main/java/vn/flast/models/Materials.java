@@ -45,6 +45,7 @@ public class Materials {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "unit_type", nullable = false)
     private UnitType unitType;
 
@@ -61,4 +62,8 @@ public class Materials {
     @CreationTimestamp
     @Column(name = "created_at")
     private String createdAt;
+
+    /* optional = true Cho phép một Materials không nhất thiết phải có MaterialInventory liên kết */
+    @OneToOne(mappedBy = "material", fetch = FetchType.LAZY, optional = true)
+    private MaterialInventory inventory;
 }

@@ -74,7 +74,11 @@ public class InventoryService {
         return switch (unitType) {
             case QUANTITY, WEIGHT -> dto.getQuantity();
             case DIMENSION -> {
-                if (dto.getWidth() == null || dto.getHeight() == null || dto.getWidth().compareTo(BigDecimal.ZERO) <= 0 || dto.getHeight().compareTo(BigDecimal.ZERO) <= 0) {
+                if (dto.getWidth() == null
+                    || dto.getHeight() == null
+                    || dto.getWidth().compareTo(BigDecimal.ZERO) <= 0
+                    || dto.getHeight().compareTo(BigDecimal.ZERO) <= 0
+                ) {
                     throw new IllegalArgumentException("Width and height must be positive for DIMENSION");
                 }
                 yield dto.getWidth().multiply(dto.getHeight());

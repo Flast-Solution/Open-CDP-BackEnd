@@ -20,6 +20,7 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,9 +42,6 @@ public class MaterialInventory {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "material_id", nullable = false)
-    private Long materialId;
-
     @Column(name = "warehouse_id", nullable = false)
     private Integer warehouseId;
 
@@ -51,7 +49,8 @@ public class MaterialInventory {
     @Column(name = "quantity")
     private BigDecimal quantity;
 
-    @Positive(message = "Min stock phải lớn hơn 0")
-    @Column(name = "min_stock")
-    private BigDecimal minStock;
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "material_id", nullable = false, unique = true)
+    private Materials material;
 }

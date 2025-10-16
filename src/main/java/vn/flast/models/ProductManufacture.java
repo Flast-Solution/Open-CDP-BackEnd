@@ -70,6 +70,12 @@ public class ProductManufacture {
     @Column(name = "status")
     private Integer status = 0;
 
+    @Column(name = "material_standard")
+    private String materialStandard;
+
+    @Column(name = "material_real")
+    private String materialReal;
+
     @CreationTimestamp
     @Column(name = "in_time")
     private String inTime;

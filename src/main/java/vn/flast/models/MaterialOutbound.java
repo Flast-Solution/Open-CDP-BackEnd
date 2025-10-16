@@ -42,14 +42,14 @@ public class MaterialOutbound {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "warehouse_id", nullable = false)
+    private Integer warehouseId;
+
     @Column(name = "manufacture_code")
     private String manufactureCode;
 
     @Column(name = "material_id", nullable = false)
     private Long materialId;
-
-    @Column(name = "warehouse_id", nullable = false)
-    private Integer warehouseId;
 
     @Positive(message = "Quantity phải lớn hơn 0")
     @Column(name = "quantity")
