@@ -22,7 +22,6 @@ package vn.flast.domains.material;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +32,10 @@ import vn.flast.controller.BaseController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.ProductMaterial;
 import vn.flast.repositories.ProductMaterialRepository;
-import vn.flast.validator.ValidationErrorBuilder;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -42,27 +44,37 @@ public class ProductMaterialController extends BaseController {
 
     private final ProductMaterialRepository productMaterialRepository;
 
-    @PostMapping("/save")
-    public MyResponse<?> create(@Valid @RequestBody ProductMaterial entity, Errors errors) {
-        if(errors.hasErrors()) {
-            var newErrors = ValidationErrorBuilder.fromBindingErrors(errors);
-            return MyResponse.response(newErrors, "Input invalid .!");
+    @PostMapping("/save/{productId}")
+    public MyResponse<?> create(
+        @Valid
+        @RequestBody List<ProductMaterial> models,
+        @PathVariable Long productId
+    ) {
+        String ssoId = getUserSsoId();
+        for(ProductMaterial mPMaterial : models) {
+            mPMaterial.setSsoId(ssoId);
         }
 
-        entity.setSsoId(getUserSsoId());
-        ProductMaterial model = productMaterialRepository.save(entity);
-        return MyResponse.response(model, "Cập nhật tồn kho thành công !");
+        Set<Long> incomingIds = models.stream()
+            .map(ProductMaterial::getId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        List<ProductMaterial> existing = productMaterialRepository.findByProductId(productId);
+        List<ProductMaterial> toDelete = existing.stream()
+            .filter(e -> e.getId() != null && !incomingIds.contains(e.getId()))
+            .collect(Collectors.toList());
+        if (!toDelete.isEmpty()) {
+            productMaterialRepository.deleteAll(toDelete);
+        }
+
+        productMaterialRepository.saveAll(models);
+        return MyResponse.response(models, "Cập nhật tồn kho thành công !");
     }
 
     @GetMapping("/find-by-product/{id}")
     public MyResponse<?> findProductId(@PathVariable Long productId) {
        var model =  productMaterialRepository.isEqual("productId", productId).findAll();
         return MyResponse.response(model, "Cập nhật tồn kho thành công !");
-    }
-
-    @PostMapping("/delete/{id}")
-    public MyResponse<?> delete(@PathVariable Long id) {
-        productMaterialRepository.deleteById(id);
-        return MyResponse.response("Oki", "Xóa định mức sản phẩm thành công !");
     }
 }

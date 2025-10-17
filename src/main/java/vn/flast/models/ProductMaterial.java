@@ -25,10 +25,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
+import vn.flast.utils.NumberUtils;
 import java.math.BigDecimal;
 
 @Table(name = "product_material")
@@ -41,14 +43,14 @@ public class ProductMaterial {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "product_id")
+    @Column(name = "product_id", nullable = false)
     private Long productId;
 
-    @Column(name = "material_id")
+    @Column(name = "material_id", nullable = false)
     private Long materialId;
 
     @Column(name = "material_unit")
-    private Long materialUnit;
+    private String materialUnit;
 
     @Positive(message = "Quantity phải lớn hơn 0")
     @Column(name = "quantity")
@@ -60,6 +62,7 @@ public class ProductMaterial {
     @Column(name = "height")
     private BigDecimal height;
 
+    @Positive(message = "Đơn gía phải lớn hơn 0")
     @Column(name = "price")
     private BigDecimal price;
 
@@ -68,4 +71,14 @@ public class ProductMaterial {
 
     @Column(name = "sso_id")
     private String ssoId;
+
+    @PrePersist
+    public void beforePersist() {
+        if(NumberUtils.isNull(width)) {
+            width = BigDecimal.valueOf(0.0);
+        }
+        if(NumberUtils.isNull(height)) {
+            height = BigDecimal.valueOf(0.0);
+        }
+    }
 }

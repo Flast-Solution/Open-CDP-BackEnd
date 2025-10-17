@@ -28,6 +28,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
 import jakarta.persistence.*;
+import vn.flast.utils.NumberUtils;
 import java.math.BigDecimal;
 
 @DynamicInsert
@@ -67,4 +68,14 @@ public class MaterialOutbound {
     @CreationTimestamp
     @Column(name = "date")
     private String date;
+
+    @PrePersist
+    public void beforePersist() {
+        if(NumberUtils.isNull(width)) {
+            width = BigDecimal.valueOf(0.0);
+        }
+        if(NumberUtils.isNull(height)) {
+            height = BigDecimal.valueOf(0.0);
+        }
+    }
 }
