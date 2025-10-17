@@ -66,9 +66,6 @@ public class ProductMaterial {
     @Column(name = "price")
     private BigDecimal price;
 
-    @Column(name = "note")
-    private String note;
-
     @Column(name = "sso_id")
     private String ssoId;
 

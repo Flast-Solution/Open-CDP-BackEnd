@@ -1240,13 +1240,12 @@ CREATE TABLE `product_material` (
   `height` decimal(15,2) DEFAULT NULL,
   `price` decimal(15,2) DEFAULT NULL,
   `sso_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `note` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_product_id` (`product_id`),
   KEY `idx-cmp-material_id` (`material_id`),
   CONSTRAINT `fk_product_material_material_id` FOREIGN KEY (`material_id`) REFERENCES `materials` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_product_material_product_id` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=308 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=309 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1255,6 +1254,7 @@ CREATE TABLE `product_material` (
 
 LOCK TABLES `product_material` WRITE;
 /*!40000 ALTER TABLE `product_material` DISABLE KEYS */;
+INSERT INTO `product_material` VALUES (308,3,'DIMENSION',777,1.00,30.00,40.00,144000.00,'Administrator');
 /*!40000 ALTER TABLE `product_material` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1917,4 +1917,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-17 14:49:47
+-- Dump completed on 2025-10-17 18:10:23
