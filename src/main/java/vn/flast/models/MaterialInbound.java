@@ -28,6 +28,8 @@ import org.hibernate.annotations.DynamicInsert;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import vn.flast.utils.NumberUtils;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -59,6 +61,9 @@ public class MaterialInbound {
     @Column(name = "height")
     private BigDecimal height;
 
+    @Column(name = "source")
+    private String source;
+
     @Column(name = "sso_id")
     private String ssoId;
 
@@ -68,4 +73,14 @@ public class MaterialInbound {
 
     @Column(name = "notes")
     private String note;
+
+    @PrePersist
+    public void beforePersist() {
+        if(NumberUtils.isNull(width)) {
+            width = BigDecimal.valueOf(0.0);
+        }
+        if(NumberUtils.isNull(height)) {
+            height = BigDecimal.valueOf(0.0);
+        }
+    }
 }

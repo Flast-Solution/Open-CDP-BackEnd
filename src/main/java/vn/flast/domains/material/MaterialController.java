@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.flast.controller.BaseController;
 import vn.flast.entities.MyResponse;
 import vn.flast.models.Materials;
+import vn.flast.pagination.Ipage;
 import vn.flast.repositories.GenericRepository;
 import vn.flast.repositories.MaterialsInboundRepository;
 import vn.flast.repositories.MaterialsInventoryRepository;
@@ -73,12 +74,12 @@ public class MaterialController extends BaseController {
             .fetch("inventory")
             .like("name", filter.name())
             .isEqual("inventory.warehouseId", filter.warehouseId());
-        var models = builder.toPage(PAGE * LIMIT, LIMIT, SORT);
-        return MyResponse.response(models);
+        Ipage<Materials> iPage = builder.toPage(PAGE * LIMIT, LIMIT, SORT);
+        return MyResponse.response(iPage);
     }
 
     @Transactional
-    @PostMapping("/delete/:id")
+    @PostMapping("/delete/{id}")
     public MyResponse<?> delete(@PathVariable Long id) {
         inboundRepository.deleteByMaterialId(id);
         outboundRepository.deleteByMaterialId(id);

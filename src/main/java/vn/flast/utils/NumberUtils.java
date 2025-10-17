@@ -18,6 +18,9 @@ package vn.flast.utils;
 /*                                                                        */
 /* Đội ngũ phát triển mong rằng phần mềm được sử dụng đúng mục đích và    */
 /* có trách nghiệm                                                        */
+
+import java.math.BigDecimal;
+
 /**************************************************************************/
 
 public class NumberUtils {
@@ -27,6 +30,10 @@ public class NumberUtils {
     }
 
     public static boolean isNull(Double num) {
+        return null == num;
+    }
+
+    public static boolean isNull(BigDecimal num) {
         return null == num;
     }
 

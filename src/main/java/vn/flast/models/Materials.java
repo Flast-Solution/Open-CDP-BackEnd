@@ -20,6 +20,7 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
@@ -29,6 +30,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import vn.flast.domains.material.UnitType;
 import java.math.BigDecimal;
+import java.util.Collection;
 
 @DynamicInsert
 @Entity
@@ -52,7 +54,7 @@ public class Materials {
     @Column(name = "unit", nullable = false)
     private String unit;
 
-    @Column(name = "description")
+    @Column(name = "`description`")
     private String description;
 
     @Positive(message = "Giá phải lớn hơn 0")
@@ -63,7 +65,7 @@ public class Materials {
     @Column(name = "created_at")
     private String createdAt;
 
-    /* optional = true Cho phép một Materials không nhất thiết phải có MaterialInventory liên kết */
-    @OneToOne(mappedBy = "material", fetch = FetchType.LAZY, optional = true)
-    private MaterialInventory inventory;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
+    private Collection<MaterialInventory> inventory;
 }

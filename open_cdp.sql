@@ -911,7 +911,7 @@ CREATE TABLE `material_inbound` (
   KEY `warehouse_id` (`warehouse_id`),
   CONSTRAINT `material_inbound_ibfk_1` FOREIGN KEY (`material_id`) REFERENCES `materials` (`id`),
   CONSTRAINT `material_inbound_ibfk_2` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse_stock` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -920,21 +920,21 @@ CREATE TABLE `material_inbound` (
 
 LOCK TABLES `material_inbound` WRITE;
 /*!40000 ALTER TABLE `material_inbound` DISABLE KEYS */;
-INSERT INTO `material_inbound` VALUES (1,1,1,100.00,10.00,10.00,'2025-10-16 00:00:00','Bãi Bằng','Administrator',NULL);
+INSERT INTO `material_inbound` VALUES (8,3,4,10.00,32.00,48.00,'2025-10-17 14:04:00','Hoa Dung','Administrator',NULL);
 /*!40000 ALTER TABLE `material_inbound` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = cp850 */ ;
-/*!50003 SET character_set_results = cp850 */ ;
-/*!50003 SET collation_connection  = cp850_general_ci */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `after_inbound_insert` AFTER INSERT ON `material_inbound` FOR EACH ROW BEGIN
-    INSERT INTO material_inventory (material_id, warehouse_id, quantity)
-    VALUES (NEW.material_id, NEW.warehouse_id, NEW.quantity)
+    INSERT INTO material_inventory (material_id, warehouse_id, quantity, width, height)
+    VALUES (NEW.material_id, NEW.warehouse_id, NEW.quantity, NEW.width, NEW.height)
     ON DUPLICATE KEY UPDATE quantity = quantity + NEW.quantity;
 END */;;
 DELIMITER ;
@@ -951,16 +951,15 @@ DROP TABLE IF EXISTS `material_inventory`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `material_inventory` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `material_id` bigint DEFAULT NULL,
-  `warehouse_id` int DEFAULT NULL,
-  `quantity` decimal(15,2) DEFAULT '0.00',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `material_id` int NOT NULL,
+  `warehouse_id` int NOT NULL,
+  `quantity` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `width` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `height` decimal(10,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`id`),
-  KEY `material_id` (`material_id`),
-  KEY `warehouse_id` (`warehouse_id`),
-  CONSTRAINT `material_inventory_ibfk_1` FOREIGN KEY (`material_id`) REFERENCES `materials` (`id`),
-  CONSTRAINT `material_inventory_ibfk_2` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse_stock` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `uk_material_warehouse` (`material_id`,`warehouse_id`,`width`,`height`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -969,7 +968,7 @@ CREATE TABLE `material_inventory` (
 
 LOCK TABLES `material_inventory` WRITE;
 /*!40000 ALTER TABLE `material_inventory` DISABLE KEYS */;
-INSERT INTO `material_inventory` VALUES (1,1,1,100.00);
+INSERT INTO `material_inventory` VALUES (5,3,4,10.00,32.00,48.00);
 /*!40000 ALTER TABLE `material_inventory` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1007,35 +1006,6 @@ LOCK TABLES `material_outbound` WRITE;
 /*!40000 ALTER TABLE `material_outbound` DISABLE KEYS */;
 /*!40000 ALTER TABLE `material_outbound` ENABLE KEYS */;
 UNLOCK TABLES;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = cp850 */ ;
-/*!50003 SET character_set_results = cp850 */ ;
-/*!50003 SET collation_connection  = cp850_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `after_outbound_insert` AFTER INSERT ON `material_outbound` FOR EACH ROW BEGIN
-    DECLARE current_quantity DECIMAL(15,2);
-    SELECT quantity INTO current_quantity
-    FROM material_inventory
-    WHERE material_id = NEW.material_id AND warehouse_id = NEW.warehouse_id;
-    
-    IF current_quantity >= NEW.quantity THEN
-        UPDATE material_inventory
-        SET quantity = quantity - NEW.quantity
-        WHERE material_id = NEW.material_id AND warehouse_id = NEW.warehouse_id;
-    ELSE
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Insufficient stock for outbound transaction';
-    END IF;
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `materials`
@@ -1053,7 +1023,7 @@ CREATE TABLE `materials` (
   `price_per_unit` decimal(15,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1062,7 +1032,7 @@ CREATE TABLE `materials` (
 
 LOCK TABLES `materials` WRITE;
 /*!40000 ALTER TABLE `materials` DISABLE KEYS */;
-INSERT INTO `materials` VALUES (1,'Kẽm','DIMENSION','1','Tính theo một m2',1200000.00,'2025-10-16 04:42:09');
+INSERT INTO `materials` VALUES (3,'Kẽm','DIMENSION','m2','Giá kẽm được tính theo khổ (ví dụ: A3, A2, A1, hoặc khổ theo máy in như 52×74, 64×90, 72×102 cm).',1200000.00,'2025-10-17 07:02:18');
 /*!40000 ALTER TABLE `materials` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1947,4 +1917,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-16 17:03:18
+-- Dump completed on 2025-10-17 14:49:47

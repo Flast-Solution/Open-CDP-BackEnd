@@ -45,12 +45,21 @@ public class MaterialInventory {
     @Column(name = "warehouse_id", nullable = false)
     private Integer warehouseId;
 
+    @Column(name = "material_id", nullable = false)
+    private Integer materialId;
+
     @Positive(message = "Quantity phải lớn hơn 0")
     @Column(name = "quantity")
     private BigDecimal quantity;
 
+    @Column(name = "width")
+    private BigDecimal width;
+
+    @Column(name = "height")
+    private BigDecimal height;
+
     @JsonBackReference
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "material_id", nullable = false, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "material_id",referencedColumnName = "id", insertable=false, updatable=false)
     private Materials material;
 }

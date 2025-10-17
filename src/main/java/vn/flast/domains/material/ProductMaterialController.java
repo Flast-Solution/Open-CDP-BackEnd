@@ -54,13 +54,13 @@ public class ProductMaterialController extends BaseController {
         return MyResponse.response(model, "Cập nhật tồn kho thành công !");
     }
 
-    @GetMapping("/find-by-product/:id")
+    @GetMapping("/find-by-product/{id}")
     public MyResponse<?> findProductId(@PathVariable Long productId) {
        var model =  productMaterialRepository.isEqual("productId", productId).findAll();
         return MyResponse.response(model, "Cập nhật tồn kho thành công !");
     }
 
-    @PostMapping("/delete/:id")
+    @PostMapping("/delete/{id}")
     public MyResponse<?> delete(@PathVariable Long id) {
         productMaterialRepository.deleteById(id);
         return MyResponse.response("Oki", "Xóa định mức sản phẩm thành công !");

@@ -31,6 +31,7 @@ import vn.flast.repositories.MaterialsInboundRepository;
 import vn.flast.repositories.MaterialsInventoryRepository;
 import vn.flast.repositories.MaterialsRepository;
 import vn.flast.searchs.InventoryFilter;
+import vn.flast.utils.Common;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -50,7 +51,7 @@ public class InventoryService {
     @Transactional
     public MaterialInbound saveInbound(MaterialInbound model) {
 
-        warehouseService.findById(model.getWarehouseId());
+        warehouseService.findStockById(model.getWarehouseId());
         Materials material = materialRepository.findById(model.getMaterialId()).orElseThrow(
             () -> new RuntimeException("Material not found")
         );
@@ -59,8 +60,9 @@ public class InventoryService {
         if (calculatedQuantity.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Invalid quantity for unit type: " + material.getUnitType());
         }
-        model.setQuantity(calculatedQuantity);
 
+        model.setQuantity(calculatedQuantity);
+        model.setSsoId(Common.getSsoId());
         inboundRepository.save(model);
         return model;
     }
@@ -71,6 +73,9 @@ public class InventoryService {
     }
 
     private BigDecimal calculateQuantity(MaterialInbound dto, UnitType unitType) {
+        if (dto.getQuantity() == null || dto.getQuantity().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive for DIMENSION");
+        }
         return switch (unitType) {
             case QUANTITY, WEIGHT -> dto.getQuantity();
             case DIMENSION -> {
@@ -81,7 +86,7 @@ public class InventoryService {
                 ) {
                     throw new IllegalArgumentException("Width and height must be positive for DIMENSION");
                 }
-                yield dto.getWidth().multiply(dto.getHeight());
+                yield dto.getQuantity();
             }
             default -> throw new IllegalArgumentException("Unsupported unit type: " + unitType);
         };

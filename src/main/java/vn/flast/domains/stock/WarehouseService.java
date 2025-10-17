@@ -189,7 +189,7 @@ public class WarehouseService {
 
     public WarehouseProduct findById(Integer id) {
         return wareHouseRepository.findById(id).orElseThrow(
-            () -> new RuntimeException("Bản ghi kho không tồn tại !")
+            () -> new RuntimeException("Bản ghi WarehouseProduct không tồn tại !")
         );
     }
 
@@ -238,5 +238,11 @@ public class WarehouseService {
         );
         CopyProperty.CopyIgnoreNull(input, stock);
         warehouseStockRepository.save(stock);
+    }
+
+    public WareHouseStock findStockById(Integer id) {
+        return warehouseStockRepository.findById(id).orElseThrow(
+            () -> new RuntimeException("Bản ghi WareHouseStock không tồn tại !")
+        );
     }
 }
