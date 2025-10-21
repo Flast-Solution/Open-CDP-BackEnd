@@ -30,6 +30,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import vn.flast.domains.material.UnitType;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @DynamicInsert
@@ -37,7 +38,7 @@ import java.util.Collection;
 @Table(name = "materials")
 @Setter @Getter
 @NoArgsConstructor
-public class Materials {
+public class Materials implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,4 +69,15 @@ public class Materials {
     @JsonManagedReference
     @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
     private Collection<MaterialInventory> inventory;
+
+    @Override
+    public Materials clone() {
+        try {
+            Materials model = (Materials) super.clone();
+            model.setInventory(new ArrayList<>());
+            return model;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

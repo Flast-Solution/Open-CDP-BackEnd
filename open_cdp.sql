@@ -1235,6 +1235,7 @@ CREATE TABLE `product_material` (
   `material_id` bigint NOT NULL,
   `material_unit` varchar(100) DEFAULT NULL,
   `product_id` int unsigned NOT NULL,
+  `sku_id` int NOT NULL,
   `quantity` decimal(15,2) NOT NULL,
   `width` decimal(15,2) DEFAULT NULL,
   `height` decimal(15,2) DEFAULT NULL,
@@ -1254,7 +1255,7 @@ CREATE TABLE `product_material` (
 
 LOCK TABLES `product_material` WRITE;
 /*!40000 ALTER TABLE `product_material` DISABLE KEYS */;
-INSERT INTO `product_material` VALUES (308,3,'DIMENSION',777,1.00,30.00,40.00,144000.00,'Administrator');
+INSERT INTO `product_material` VALUES (308,3,'DIMENSION',777,10210,1.00,30.00,40.00,144000.00,'Administrator');
 /*!40000 ALTER TABLE `product_material` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1917,4 +1918,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-17 18:10:23
+-- Dump completed on 2025-10-21 16:46:36

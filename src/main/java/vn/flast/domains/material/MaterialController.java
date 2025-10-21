@@ -30,9 +30,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.flast.controller.BaseController;
 import vn.flast.entities.MyResponse;
+import vn.flast.exception.ResourceNotFoundException;
 import vn.flast.models.Materials;
 import vn.flast.pagination.Ipage;
 import vn.flast.repositories.GenericRepository;
@@ -63,6 +65,14 @@ public class MaterialController extends BaseController {
         }
         Materials model = materialsRepository.save(entity);
         return MyResponse.response(model, "Cập nhật nguyên vật liệu thành công !");
+    }
+
+    @GetMapping("/find-id")
+    public MyResponse<?> list(@RequestParam Long id) {
+        var data = materialsRepository.findById(id).orElseThrow(
+            () -> new ResourceNotFoundException("Không tìm thấy material !")
+        );
+        return MyResponse.response(data.clone());
     }
 
     @GetMapping("/fetch")

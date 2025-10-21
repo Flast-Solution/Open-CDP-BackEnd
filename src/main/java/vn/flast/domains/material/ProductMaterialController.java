@@ -72,9 +72,9 @@ public class ProductMaterialController extends BaseController {
         return MyResponse.response(models, "Cập nhật tồn kho thành công !");
     }
 
-    @GetMapping("/find-by-product/{id}")
+    @GetMapping("/find-by-product/{productId}")
     public MyResponse<?> findProductId(@PathVariable Long productId) {
        var model =  productMaterialRepository.isEqual("productId", productId).findAll();
-        return MyResponse.response(model, "Cập nhật tồn kho thành công !");
+        return MyResponse.response(model, "Danh sách product material");
     }
 }

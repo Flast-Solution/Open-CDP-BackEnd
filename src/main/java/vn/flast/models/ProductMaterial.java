@@ -46,6 +46,9 @@ public class ProductMaterial {
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
+    @Column(name = "sku_id", nullable = false)
+    private Long skuId;
+
     @Column(name = "material_id", nullable = false)
     private Long materialId;
 
