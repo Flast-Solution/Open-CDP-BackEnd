@@ -1,6 +1,6 @@
-package vn.flast.repositories;
+package vn.flast.models;
 /**************************************************************************/
-/*  ProductManufactureRepository.java                                     */
+/*  ProductManufacture.java                                               */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -20,8 +20,66 @@ package vn.flast.repositories;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import vn.flast.models.ProductManufacture;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import java.util.Date;
 
-public interface ProductManufactureRepository extends JpaRepository<ProductManufacture, Long> {
+@DynamicInsert
+@Table(name = "manufacture_product")
+@Entity
+@Getter @Setter
+public class ManufactureProduct {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "product_id")
+    private Long productId;
+
+    @Column(name = "sku_id")
+    private Long skuId;
+
+    @Column(name = "code")
+    private String code;
+
+    @Column(name = "date_start")
+    private Date dateStart;
+
+    @Column(name = "date_end")
+    private Date dateEnd;
+
+    @Column(name = "target")
+    private Integer target;
+
+    @Column(name = "achieved")
+    private Integer achieved;
+
+    @Column(name = "note")
+    private String note;
+
+    @Column(name = "sso_id")
+    private String ssoId;
+
+    @Column(name = "status")
+    private Integer status = 0;
+
+    @Column(name = "material_standard")
+    private String materialStandard;
+
+    @Column(name = "material_real")
+    private String materialReal;
+
+    @CreationTimestamp
+    @Column(name = "in_time")
+    private String inTime;
 }

@@ -1,6 +1,6 @@
-package vn.flast.models;
+package vn.flast.repositories;
 /**************************************************************************/
-/*  ProductManufacture.java                                               */
+/*  ManufactureStatusRepository.java                                      */
 /**************************************************************************/
 /*                       Tệp này là một phần của:                         */
 /*                             Open CDP                                   */
@@ -20,63 +20,7 @@ package vn.flast.models;
 /* có trách nghiệm                                                        */
 /**************************************************************************/
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
-import java.util.Date;
+import vn.flast.models.ManufactureStatus;
 
-@DynamicInsert
-@Table(name = "product_manufacture")
-@Entity
-@Getter @Setter
-public class ProductManufacture {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
-
-    @Column(name = "product_id")
-    private Long productId;
-
-    @Column(name = "code")
-    private String code;
-
-    @Column(name = "date_start")
-    private Date dateStart;
-
-    @Column(name = "date_end")
-    private Date dateEnd;
-
-    @Column(name = "target")
-    private Integer target;
-
-    @Column(name = "achieved")
-    private Integer achieved;
-
-    @Column(name = "note")
-    private String note;
-
-    @Column(name = "sso_id")
-    private String ssoId;
-
-    @Column(name = "status")
-    private Integer status = 0;
-
-    @Column(name = "material_standard")
-    private String materialStandard;
-
-    @Column(name = "material_real")
-    private String materialReal;
-
-    @CreationTimestamp
-    @Column(name = "in_time")
-    private String inTime;
+public interface ManufactureStatusRepository extends GenericRepository<ManufactureStatus, Integer> {
 }

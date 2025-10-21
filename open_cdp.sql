@@ -889,6 +889,65 @@ LOCK TABLES `flast_projects_tasks` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `manufacture_product`
+--
+
+DROP TABLE IF EXISTS `manufacture_product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `manufacture_product` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `code` varchar(255) NOT NULL,
+  `product_id` int unsigned NOT NULL,
+  `sku_id` int NOT NULL,
+  `date_start` datetime NOT NULL,
+  `date_end` datetime NOT NULL,
+  `target` int unsigned NOT NULL,
+  `achieved` int unsigned NOT NULL,
+  `sso_id` varchar(200) NOT NULL,
+  `status` int DEFAULT '0',
+  `material_standard` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `material_real` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `in_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`id`),
+  KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `manufacture_product`
+--
+
+LOCK TABLES `manufacture_product` WRITE;
+/*!40000 ALTER TABLE `manufacture_product` DISABLE KEYS */;
+/*!40000 ALTER TABLE `manufacture_product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `manufacture_status`
+--
+
+DROP TABLE IF EXISTS `manufacture_status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `manufacture_status` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `manufacture_status`
+--
+
+LOCK TABLES `manufacture_status` WRITE;
+/*!40000 ALTER TABLE `manufacture_status` DISABLE KEYS */;
+/*!40000 ALTER TABLE `manufacture_status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `material_inbound`
 --
 
@@ -1186,41 +1245,6 @@ CREATE TABLE `product_image` (
 LOCK TABLES `product_image` WRITE;
 /*!40000 ALTER TABLE `product_image` DISABLE KEYS */;
 /*!40000 ALTER TABLE `product_image` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `product_manufacture`
---
-
-DROP TABLE IF EXISTS `product_manufacture`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `product_manufacture` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `code` varchar(255) NOT NULL,
-  `product_id` int unsigned NOT NULL,
-  `date_start` datetime NOT NULL,
-  `date_end` datetime NOT NULL,
-  `target` int unsigned NOT NULL,
-  `achieved` int unsigned NOT NULL,
-  `sso_id` varchar(200) NOT NULL,
-  `status` int DEFAULT '0',
-  `material_standard` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `material_real` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `in_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  PRIMARY KEY (`id`),
-  KEY `code` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `product_manufacture`
---
-
-LOCK TABLES `product_manufacture` WRITE;
-/*!40000 ALTER TABLE `product_manufacture` DISABLE KEYS */;
-/*!40000 ALTER TABLE `product_manufacture` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1918,4 +1942,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-21 16:46:36
+-- Dump completed on 2025-10-21 17:51:54
