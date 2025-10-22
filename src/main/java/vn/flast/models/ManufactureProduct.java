@@ -30,6 +30,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
+
+import java.math.BigDecimal;
 import java.util.Date;
 
 @DynamicInsert
@@ -73,11 +75,14 @@ public class ManufactureProduct {
     @Column(name = "status")
     private Integer status = 0;
 
-    @Column(name = "material_standard")
-    private String materialStandard;
+    @Column(name = "price_standard")
+    private BigDecimal priceStandard;
 
-    @Column(name = "material_real")
-    private String materialReal;
+    @Column(name = "price_real")
+    private BigDecimal priceReal;
+
+    @Column(name = "material")
+    private String material;
 
     @CreationTimestamp
     @Column(name = "in_time")

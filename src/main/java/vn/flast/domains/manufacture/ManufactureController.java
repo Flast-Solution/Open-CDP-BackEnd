@@ -47,7 +47,7 @@ public class ManufactureController extends BaseController {
     private final ManufactureStatusRepository manufactureStatusRepository;
     private final ManufactureProductRepository manufactureProductRepository;
 
-    @PostMapping("/status")
+    @GetMapping("/status")
     public MyResponse<?> allStatus() {
         var status = manufactureStatusRepository.findAll();
         return MyResponse.response(status, "Trạng thái sản suất !");

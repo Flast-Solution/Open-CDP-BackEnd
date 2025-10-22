@@ -906,8 +906,9 @@ CREATE TABLE `manufacture_product` (
   `achieved` int unsigned NOT NULL,
   `sso_id` varchar(200) NOT NULL,
   `status` int DEFAULT '0',
-  `material_standard` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `material_real` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `price_standard` int DEFAULT NULL,
+  `price_real` int DEFAULT NULL,
+  `material` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `in_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   PRIMARY KEY (`id`),
@@ -1942,4 +1943,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-10-21 17:51:54
+-- Dump completed on 2025-10-22 18:27:34
