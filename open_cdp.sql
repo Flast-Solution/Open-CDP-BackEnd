@@ -127,7 +127,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (10008,0,'Cafe Laman',NULL,0,'',NULL,0,'','',NULL,'2024-11-13 05:05:31','2025-10-29 06:53:50');
+INSERT INTO `category` VALUES (10008,0,'Cafe Laman','cafe-laman',0,'',NULL,0,'Cafe cao cấp','Cafe tây nguyên - nguyên chất 100%',NULL,'2024-11-13 05:05:31','2025-11-24 09:55:06');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2003,4 +2003,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-05 16:14:02
+-- Dump completed on 2025-11-24 17:02:54
